@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:customview="clr-namespace:Notes.Views"
+             mc:Ignorable="d"
+             x:Class="Notes.MainPage">
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="header"/>
+        <ToolbarItem Text="bold"/>
+        <ToolbarItem Text="italic"/>
+        <ToolbarItem Text="underlined"/>
+        <ToolbarItem Text="save"/>
+        <ToolbarItem Text="header"/>
+        <ToolbarItem Text="header"/>
+        <ToolbarItem Text="header"/>
+        <ToolbarItem Text="header"/>
+        <ToolbarItem Text="header"/>
+    </ContentPage.ToolbarItems>
+
+    <StackLayout BackgroundColor="White" Padding="0, 10, 0, 0" IsTabStop="False">
+        <FlexLayout IsTabStop="False">
+            <Button Text="+" WidthRequest="30"/>
+            <Button Text="Header" Clicked="HeaderToggled"/>
+            <Picker SelectedIndex="1" x:Name="picker" WidthRequest="100">
+                <Picker.Items>
+                    <x:String>Header</x:String>
+                    <x:String>Text</x:String>
+                </Picker.Items>
+            </Picker>
+        </FlexLayout>
+        <StackLayout x:Name="contentLayout" Margin="10,0,10,0" Spacing="0">
+            <customview:CustomView/>
+        </StackLayout>
+        <Button Text="Add image" Clicked="AddButton_Clicked"/>
+    </StackLayout>
+
+</ContentPage>
