@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 using Notes.Views;
+using Notes.Models;
 
 namespace Notes
 {
@@ -37,6 +38,21 @@ namespace Notes
         public void HeaderToggled(object sender, EventArgs e)
         {
             //
+        }
+
+        async void OnSaveButtonClicked(object sender, EventArgs e)
+        {
+            var note = (Note)BindingContext;
+            note.DateTime = DateTime.UtcNow;
+            await App.Database.SaveNoteAsync(note);
+            await Navigation.PopAsync();
+        }
+
+        async void OnDeleteButtonClicked(object sender, EventArgs e)
+        {
+            var note = (Note)BindingContext;
+            await App.Database.DeleteNoteAsync(note);
+            await Navigation.PopAsync();
         }
     }
 }
