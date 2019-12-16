@@ -28,7 +28,7 @@ namespace Notes.Views
             Type = type;
             if (type == CustomViewTypes.Header1)
             {
-                View = new Renderers.TextEditor
+                TextEditor = new Renderers.TextEditor
                 {
                     FontSize = 20,
                     Placeholder = "Header 1",
@@ -37,7 +37,7 @@ namespace Notes.Views
             }
             else if (type == CustomViewTypes.Header2)
             {
-                View = new Renderers.TextEditor
+                TextEditor = new Renderers.TextEditor
                 {
                     FontSize = 18,
                     Placeholder = "Header 2",
@@ -46,58 +46,40 @@ namespace Notes.Views
             }
             else if (type == CustomViewTypes.Header3)
             {
-                View = new Renderers.TextEditor
+                TextEditor = new Renderers.TextEditor
                 {
                     FontSize = 16,
                     Placeholder = "Header 3",
                     PlaceholderColor = Color.Gray
                 };
             }
-            else if (type == CustomViewTypes.Paragraph)
+            else
             {
-                View = new Renderers.TextEditor
+                TextEditor = new Renderers.TextEditor
                 {
-                    Placeholder = "Paragraph",
+                    Placeholder = "|",
                     PlaceholderColor = Color.Gray
                 };
             }
-            else if (type == CustomViewTypes.Image)
+            TextEditor.WidthRequest = 270;
+            if (type == CustomViewTypes.Image)
             {
-                View = new Image();
+                meat.Children.Insert(0, new BoxView { HeightRequest = 100, BackgroundColor = Color.DarkOrchid}); // TODO: заменить тестовый BoxView обратно на Image
+                TextEditor.FontSize = 12;
+                TextEditor.TextColor = Color.Red;
             }
-            View.WidthRequest = 270;
-            (Content as FlexLayout).Children.Insert(0, View);
         }
 
         public int Index { get; set; }
 
-        public View View { get; set; }
+        //public Renderers.TextEditor TextEditor { get; set; }
 
-        public CustomViewTypes Type
-        {
-            get => Type;
-            set
-            {
-                Type = value;
-                (View as Renderers.TextEditor).FontSize = 20 - 2 * (int)value;
-            }
-        }
+        public CustomViewTypes Type { get; set; } /* TODO: размер текста должен меняться при изменении этого значения. Когда я пишу это в set, эмулятор убивает программу молча */
 
         public string Text
         {
-            get {
-                if (Type == CustomViewTypes.Image)
-                {
-                    return "image";
-                }
-                return ((Content as FlexLayout).Children.First() as CustomView).Text;
-            }
-            set {
-                if (Type == CustomViewTypes.Paragraph)
-                {
-                    ((Content as FlexLayout).Children.First() as CustomView).Text = value;
-                }
-            }
+            get => TextEditor.Text;
+            set => TextEditor.Text = value;
         }
 
         private void Button_Clicked(object sender, EventArgs e)

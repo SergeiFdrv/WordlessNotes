@@ -29,7 +29,7 @@ namespace Notes
                 "Header 1", "Header 2", "Header 3", "Text"
             };
             picker.ItemsSource = TextOptions;
-            picker.SelectedItem = "Text";
+            picker.SelectedItem = picker.Items[0];
             contentLayout.Children.Add(new CustomView(contentLayout.Children.Count, CustomViewTypes.Header1));
             contentLayout.Children.Add(new CustomView(contentLayout.Children.Count, CustomViewTypes.Header2));
             contentLayout.Children.Add(new CustomView(contentLayout.Children.Count, CustomViewTypes.Header3));
@@ -52,7 +52,7 @@ namespace Notes
                 (contentLayout.Children[i] as CustomView).Index--;
             }
         }
-
+        
         async void OnSaveButtonClicked(object sender, EventArgs e)
         {
             var note = (Note)BindingContext;
@@ -67,7 +67,7 @@ namespace Notes
             await App.Database.DeleteNoteAsync(note);
             await Navigation.PopAsync();
         }
-
+        
         private void OpenMaster_Clicked(object sender, EventArgs e)
         {
             (Parent as MasterDetailPage).IsPresented = true;
