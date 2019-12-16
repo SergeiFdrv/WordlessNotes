@@ -11,61 +11,86 @@ namespace Notes.Views
 {
     public enum CustomViewTypes
     {
-        Paragraph = 0,
-        Image = 1
+        Header1 = 0,
+        Header2 = 1,
+        Header3 = 2,
+        Paragraph = 3,
+        Image = 4
     }
 
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class CustomView : ContentView
     {
-        public CustomView()
-        {
-            InitializeComponent();
-            Type = CustomViewTypes.Paragraph;
-            Renderers.TextEditor TXT = new Renderers.TextEditor
-            {
-                WidthRequest = 270
-            };
-            (Content as FlexLayout).Children.Insert(0, TXT);
-        }
-
         public CustomView(int index, CustomViewTypes type = CustomViewTypes.Paragraph)
         {
             InitializeComponent();
             Index = index;
             Type = type;
-            if (type == CustomViewTypes.Paragraph)
+            if (type == CustomViewTypes.Header1)
             {
-                Renderers.TextEditor TXT = new Renderers.TextEditor
+                View = new Renderers.TextEditor
                 {
-                    WidthRequest = 270
+                    FontSize = 20,
+                    Placeholder = "Header 1",
+                    PlaceholderColor = Color.Gray
                 };
-                (Content as FlexLayout).Children.Insert(0, TXT);
+            }
+            else if (type == CustomViewTypes.Header2)
+            {
+                View = new Renderers.TextEditor
+                {
+                    FontSize = 18,
+                    Placeholder = "Header 2",
+                    PlaceholderColor = Color.Gray
+                };
+            }
+            else if (type == CustomViewTypes.Header3)
+            {
+                View = new Renderers.TextEditor
+                {
+                    FontSize = 16,
+                    Placeholder = "Header 3",
+                    PlaceholderColor = Color.Gray
+                };
+            }
+            else if (type == CustomViewTypes.Paragraph)
+            {
+                View = new Renderers.TextEditor
+                {
+                    Placeholder = "Paragraph",
+                    PlaceholderColor = Color.Gray
+                };
             }
             else if (type == CustomViewTypes.Image)
             {
-                Image image = new Image
-                {
-                    WidthRequest = 270
-                };
-                (Content as FlexLayout).Children.Insert(0, image);
+                View = new Image();
             }
+            View.WidthRequest = 270;
+            (Content as FlexLayout).Children.Insert(0, View);
         }
 
         public int Index { get; set; }
 
+        public View View { get; set; }
+
+        public CustomViewTypes Type
+        {
+            get => Type;
+            set
+            {
+                Type = value;
+                (View as Renderers.TextEditor).FontSize = 20 - 2 * (int)value;
+            }
+        }
+
         public string Text
         {
             get {
-                if (Type == CustomViewTypes.Paragraph)
-                {
-                    return ((Content as FlexLayout).Children.First() as CustomView).Text;
-                }
-                else if (Type == CustomViewTypes.Image)
+                if (Type == CustomViewTypes.Image)
                 {
                     return "image";
                 }
-                return string.Empty;
+                return ((Content as FlexLayout).Children.First() as CustomView).Text;
             }
             set {
                 if (Type == CustomViewTypes.Paragraph)
@@ -75,11 +100,14 @@ namespace Notes.Views
             }
         }
 
-        public CustomViewTypes Type { get; set; }
-
         private void Button_Clicked(object sender, EventArgs e)
         {
             (Application.Current.MainPage as MainPage).DelEl(Index);
+        }
+
+        private void FlexLayout_Focused(object sender, FocusEventArgs e)
+        {
+            (Application.Current.MainPage as MainPage).Selected.Index = Index;
         }
     }
 }

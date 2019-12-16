@@ -12,12 +12,12 @@ namespace Notes
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class NotePickPage : ContentPage
     {
-        //public ObservableCollection<string> Items { get; set; }
+        public ObservableCollection<string> Items { get; set; }
 
         public NotePickPage()
         {
             InitializeComponent();
-            /*
+            
             Items = new ObservableCollection<string>
             {
                 "Item 1",
@@ -27,15 +27,15 @@ namespace Notes
                 "Item 5"
             };
 
-            MyListView.ItemsSource = Items;*/
+            MyListView.ItemsSource = Items;
         }
 
         // ОТОБРАЗИТЬ СПИСОК ЗАМЕТОК
-        protected override async void OnAppearing()
+        protected override void OnAppearing()
         {
             base.OnAppearing();
 
-            MyListView.ItemsSource = await App.Database.GetNotesAsync();
+            //MyListView.ItemsSource = await App.Database.GetNotesAsync();
         }
 
         async void Handle_ItemTapped(object sender, ItemTappedEventArgs e)

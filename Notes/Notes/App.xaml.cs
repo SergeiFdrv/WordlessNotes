@@ -27,7 +27,11 @@ namespace Notes
         {
             InitializeComponent();
 
-            MainPage = new NavigationPage(new MainPage());
+            MainPage = new MasterDetailPage
+            {
+                Master = new MasterViewPage(),
+                Detail = new MainPage()
+            };
         }
 
         protected override void OnStart()

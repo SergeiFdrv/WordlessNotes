@@ -7,8 +7,8 @@
              mc:Ignorable="d"
              x:Class="Notes.Views.CustomView">
     <ContentView.Content>
-        <FlexLayout HorizontalOptions="Center">
-            <Button Text="X" WidthRequest="35" HeightRequest="35" Clicked="Button_Clicked"/>
+        <FlexLayout HorizontalOptions="Center" Focused="FlexLayout_Focused">
+            <Button x:Name="XBtn" Text="X" WidthRequest="35" HeightRequest="35" Clicked="Button_Clicked"/>
         </FlexLayout>
     </ContentView.Content>
 </ContentView>

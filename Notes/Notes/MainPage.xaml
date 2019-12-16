@@ -19,20 +19,16 @@
         <ToolbarItem Text="header"/>
     </ContentPage.ToolbarItems>
 
-    <StackLayout BackgroundColor="White" Padding="0, 10, 0, 0" IsTabStop="False">
+    <StackLayout BackgroundColor="White" IsTabStop="False">
         <FlexLayout IsTabStop="False">
-            <Button Text="+" WidthRequest="30"/>
-            <Button Text="Header" Clicked="HeaderToggled"/>
-            <Picker SelectedIndex="1" x:Name="picker" WidthRequest="100">
-                <Picker.Items>
-                    <x:String>Header</x:String>
-                    <x:String>Text</x:String>
-                </Picker.Items>
-            </Picker>
+            <Button Text="+" WidthRequest="30" Clicked="OpenMaster_Clicked"/>
+            <Picker x:Name="picker" WidthRequest="100" SelectedIndexChanged="picker_SelectedIndexChanged"/>
+            <!-- Dropdown control tutorial: https://www.c-sharpcorner.com/article/dropdown-control-in-xamarin-forms-part-one/ -->
         </FlexLayout>
-        <StackLayout x:Name="contentLayout" Margin="10,0,10,0" Spacing="0">
-            <customview:CustomView/>
-        </StackLayout>
+        <ScrollView>
+            <StackLayout x:Name="contentLayout" Spacing="0">
+            </StackLayout>
+        </ScrollView>
         <Button Text="Add image" Clicked="AddButton_Clicked"/>
     </StackLayout>
 
