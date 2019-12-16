@@ -9,7 +9,6 @@
     <ContentView.Content>
         <FlexLayout HorizontalOptions="Center" Focused="FlexLayout_Focused">
             <StackLayout x:Name="meat" WidthRequest="270">
-                <customrenderer:TextEditor x:Name="TextEditor"/>
             </StackLayout>
             <Button x:Name="XBtn" Text="X" WidthRequest="35" HeightRequest="35" Clicked="Button_Clicked"/>
         </FlexLayout>

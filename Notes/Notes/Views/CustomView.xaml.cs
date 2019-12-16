@@ -31,8 +31,7 @@ namespace Notes.Views
                 TextEditor = new Renderers.TextEditor
                 {
                     FontSize = 20,
-                    Placeholder = "Header 1",
-                    PlaceholderColor = Color.Gray
+                    Placeholder = "Header 1"
                 };
             }
             else if (type == CustomViewTypes.Header2)
@@ -40,8 +39,7 @@ namespace Notes.Views
                 TextEditor = new Renderers.TextEditor
                 {
                     FontSize = 18,
-                    Placeholder = "Header 2",
-                    PlaceholderColor = Color.Gray
+                    Placeholder = "Header 2"
                 };
             }
             else if (type == CustomViewTypes.Header3)
@@ -49,32 +47,46 @@ namespace Notes.Views
                 TextEditor = new Renderers.TextEditor
                 {
                     FontSize = 16,
-                    Placeholder = "Header 3",
-                    PlaceholderColor = Color.Gray
+                    Placeholder = "Header 3"
                 };
             }
-            else
+            else if (type == CustomViewTypes.Paragraph)
             {
                 TextEditor = new Renderers.TextEditor
                 {
-                    Placeholder = "|",
-                    PlaceholderColor = Color.Gray
+                    Placeholder = "Paragraph"
                 };
             }
-            TextEditor.WidthRequest = 270;
-            if (type == CustomViewTypes.Image)
+            else if (type == CustomViewTypes.Image)
             {
-                meat.Children.Insert(0, new BoxView { HeightRequest = 100, BackgroundColor = Color.DarkOrchid}); // TODO: заменить тестовый BoxView обратно на Image
-                TextEditor.FontSize = 12;
-                TextEditor.TextColor = Color.Red;
+                TextEditor = new Renderers.TextEditor
+                {
+                    FontSize = 12,
+                    Placeholder = "Title",
+                    TextColor = Color.Red
+                };
+                meat.Children.Add(new BoxView { HeightRequest = 100, BackgroundColor = Color.DarkOrchid, Margin = 0 }); // TODO: заменить тестовый BoxView обратно на Image
             }
+            TextEditor.WidthRequest = 270;
+            TextEditor.PlaceholderColor = Color.Gray;
+            meat.Children.Add(TextEditor); // Вариант, в котором TextEditor объявлялся в xaml, приводил к тому, что весь код в этом методе не срабатывал
         }
 
         public int Index { get; set; }
 
-        //public Renderers.TextEditor TextEditor { get; set; }
+        public Renderers.TextEditor TextEditor { get; set; }
 
-        public CustomViewTypes Type { get; set; } /* TODO: размер текста должен меняться при изменении этого значения. Когда я пишу это в set, эмулятор убивает программу молча */
+        public CustomViewTypes Type
+        {
+            get
+            {
+                return Type;
+            }
+            set
+            {
+                Type = value;
+            }
+        } /* TODO: размер текста должен меняться при изменении этого значения. Когда я пишу это в set, эмулятор убивает программу молча */
 
         public string Text
         {
