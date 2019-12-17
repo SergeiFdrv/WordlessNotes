@@ -15,18 +15,12 @@ namespace Notes
     [DesignTimeVisible(false)]
     public partial class MainPage : ContentPage
     {
-        public List<string> TextOptions { get; }
-
-        //public int SelectedIndex { get; set; }
-
-        public CustomView Selected { get; set; }
-
         public MainPage()
         { /* TODO: РЕАЛИЗОВАТЬ СОХРАНЕНИЕ ДАННЫХ ПРИ СВОРАЧИВАНИИ (в app.xaml.cs) */
             InitializeComponent();
             TextOptions = new List<string>()
             {
-                "Header 1", "Header 2", "Header 3", "Text"
+                "Header 1", "Header 2", "Header 3", "Text", "List", "Image"
             };
             picker.ItemsSource = TextOptions;
             picker.SelectedItem = picker.Items[0];
@@ -34,14 +28,31 @@ namespace Notes
             contentLayout.Children.Add(new CustomView(contentLayout.Children.Count, CustomViewTypes.Header2));
             contentLayout.Children.Add(new CustomView(contentLayout.Children.Count, CustomViewTypes.Header3));
             contentLayout.Children.Add(new CustomView(contentLayout.Children.Count));
-            Selected = contentLayout.Children.Last() as CustomView;
+        }
+
+        public List<string> TextOptions { get; }
+
+        private CustomView SelectedView;
+
+        public CustomView Selected
+        {
+            get => SelectedView;
+            set
+            {
+                SelectedView = value;
+                Console.WriteLine((int)SelectedView.Type);
+                picker.SelectedIndex = (int)SelectedView.Type;
+            }
         }
 
         private void AddButton_Clicked(object sender, EventArgs e)
         {
-            contentLayout.Children.Add(new CustomView(contentLayout.Children.Count, CustomViewTypes.Image));
             contentLayout.Children.Add(new CustomView(contentLayout.Children.Count));
-            Selected = contentLayout.Children.Last() as CustomView;
+        }
+
+        public void SelectElement(object sender, EventArgs e)
+        {
+             if (Selected == null) (contentLayout.Children.Last() as CustomView).Focus();
         }
 
         public void DelEl(int index)
@@ -75,7 +86,20 @@ namespace Notes
 
         private void picker_SelectedIndexChanged(object sender, EventArgs e)
         {
-            //contentLayout.Children.OfType<CustomView>().Where((view) => view.Index == Selected.Index).FirstOrDefault().Type = (CustomViewTypes)(sender as Picker).SelectedIndex;
+            if (Selected != null) Selected.Type = (CustomViewTypes)((sender as Picker).SelectedIndex);
+        }
+
+        public async void SwipeGestureRecognizer_Swiped(object sender, SwipedEventArgs e)
+        {
+            Console.WriteLine("--- ELEMENT TOUCHED ---");
+            await DisplayAlert("Item Tapped", "An item was tapped.", "OK");
         }
     }
 }
+
+// TODO:
+// Добавление элемента перед текущим (свайп, кнопка и т.п.)
+// Прокручивать ScrollView кновому элементу
+// Картинки
+// Списки
+// База данных

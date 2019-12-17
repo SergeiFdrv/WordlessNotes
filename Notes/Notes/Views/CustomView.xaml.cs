@@ -15,7 +15,8 @@ namespace Notes.Views
         Header2 = 1,
         Header3 = 2,
         Paragraph = 3,
-        Image = 4
+        List = 4,
+        Image = 5
     }
 
     [XamlCompilation(XamlCompilationOptions.Compile)]
@@ -26,67 +27,71 @@ namespace Notes.Views
             InitializeComponent();
             Index = index;
             Type = type;
-            if (type == CustomViewTypes.Header1)
+            if (ParentPage != null) ParentPage.Selected = this;
+        }
+
+        public MainPage ParentPage
+        {
+            get
             {
-                TextEditor = new Renderers.TextEditor
+                var parent = Parent;
+                while (parent != null)
                 {
-                    FontSize = 20,
-                    Placeholder = "Header 1"
-                };
+                    if (parent is MainPage)
+                    {
+                        return parent as MainPage;
+                    }
+                    parent = parent.Parent;
+                }
+                return null;
             }
-            else if (type == CustomViewTypes.Header2)
-            {
-                TextEditor = new Renderers.TextEditor
-                {
-                    FontSize = 18,
-                    Placeholder = "Header 2"
-                };
-            }
-            else if (type == CustomViewTypes.Header3)
-            {
-                TextEditor = new Renderers.TextEditor
-                {
-                    FontSize = 16,
-                    Placeholder = "Header 3"
-                };
-            }
-            else if (type == CustomViewTypes.Paragraph)
-            {
-                TextEditor = new Renderers.TextEditor
-                {
-                    Placeholder = "Paragraph"
-                };
-            }
-            else if (type == CustomViewTypes.Image)
-            {
-                TextEditor = new Renderers.TextEditor
-                {
-                    FontSize = 12,
-                    Placeholder = "Title",
-                    TextColor = Color.Red
-                };
-                meat.Children.Add(new BoxView { HeightRequest = 100, BackgroundColor = Color.DarkOrchid, Margin = 0 }); // TODO: заменить тестовый BoxView обратно на Image
-            }
-            TextEditor.WidthRequest = 270;
-            TextEditor.PlaceholderColor = Color.Gray;
-            meat.Children.Add(TextEditor); // Вариант, в котором TextEditor объявлялся в xaml, приводил к тому, что весь код в этом методе не срабатывал
         }
 
         public int Index { get; set; }
 
-        public Renderers.TextEditor TextEditor { get; set; }
+        private CustomViewTypes ViewType;
 
         public CustomViewTypes Type
         {
             get
             {
-                return Type;
+                return ViewType;
             }
             set
             {
-                Type = value;
+                ViewType = value;
+                if (value == CustomViewTypes.Image)
+                {
+                    TextEditor.FontSize = 12;
+                    TextEditor.Placeholder = "Image description";
+                    TextEditor.TextColor = Color.Red;
+                    Img.HeightRequest = 100; // TODO: заменить тестовый BoxView обратно на Image
+                    return;
+                }
+                Img.HeightRequest = 0;
+                TextEditor.TextColor = Color.Black;
+                if (value == CustomViewTypes.Header1)
+                {
+                    TextEditor.FontSize = 20;
+                    TextEditor.Placeholder = "Header 1";
+                }
+                else if (value == CustomViewTypes.Header2)
+                {
+                    TextEditor.FontSize = 18;
+                    TextEditor.Placeholder = "Header 2";
+                }
+                else if (value == CustomViewTypes.Header3)
+                {
+                    TextEditor.FontSize = 16;
+                    TextEditor.Placeholder = "Header 3";
+                }
+                else
+                {
+                    TextEditor.FontSize = 14;
+                    TextEditor.Placeholder = "Paragraph";
+                }
             }
-        } /* TODO: размер текста должен меняться при изменении этого значения. Когда я пишу это в set, эмулятор убивает программу молча */
+        }
 
         public string Text
         {
@@ -96,12 +101,13 @@ namespace Notes.Views
 
         private void Button_Clicked(object sender, EventArgs e)
         {
-            (Application.Current.MainPage as MainPage).DelEl(Index);
+            if (ParentPage != null) ParentPage.DelEl(Index);
         }
 
-        private void FlexLayout_Focused(object sender, FocusEventArgs e)
+        private void Item_Focused(object sender, FocusEventArgs e)
         {
-            (Application.Current.MainPage as MainPage).Selected.Index = Index;
+            Console.WriteLine("--- ELEMENT TAPPED ---");
+            if (ParentPage != null) ParentPage.Selected = this;
         }
     }
 }
