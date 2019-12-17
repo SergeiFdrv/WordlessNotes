@@ -68,8 +68,16 @@ namespace Notes.Views
                     Img.HeightRequest = 100; // TODO: заменить тестовый BoxView обратно на Image
                     return;
                 }
+                else if (value == CustomViewTypes.List)
+                {
+                    TextEditor.FontSize = 14;
+                    TextEditor.Placeholder = "List";
+                    List.IsVisible = true;
+                    return;
+                }
                 Img.HeightRequest = 0;
                 TextEditor.TextColor = Color.Black;
+                List.IsVisible = false;
                 if (value == CustomViewTypes.Header1)
                 {
                     TextEditor.FontSize = 20;

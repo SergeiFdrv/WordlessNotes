@@ -19,7 +19,7 @@
         <ToolbarItem Text="header"/>
     </ContentPage.ToolbarItems>
 
-    <StackLayout BackgroundColor="Khaki" IsTabStop="False" Spacing="0">
+    <StackLayout BackgroundColor="Cornsilk" IsTabStop="False" Spacing="0"> <!-- Chartreuse -->
         <StackLayout.GestureRecognizers>
             <SwipeGestureRecognizer Swiped="SwipeGestureRecognizer_Swiped"/>
         </StackLayout.GestureRecognizers>
