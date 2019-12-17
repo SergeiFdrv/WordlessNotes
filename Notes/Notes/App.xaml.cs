@@ -8,6 +8,17 @@ namespace Notes
 {
     public partial class App : Application
     {
+        public App()
+        {
+            InitializeComponent();
+
+            MainPage = new MasterDetailPage
+            {
+                Master = new MasterViewPage(),
+                Detail = new MainPage()
+            };
+        }
+
         private static NoteDatabase DB { get; set; }
 
         public static NoteDatabase Database
@@ -23,23 +34,12 @@ namespace Notes
             }
         }
 
-        public App()
-        {
-            InitializeComponent();
-
-            MainPage = new MasterDetailPage
-            {
-                Master = new MasterViewPage(),
-                Detail = new MainPage()
-            };
-        }
-
         protected override void OnStart()
         {
         }
 
         protected override void OnSleep()
-        {
+        { // TODO: РЕАЛИЗОВАТЬ СОХРАНЕНИЕ ДАННЫХ ПРИ СВОРАЧИВАНИИ
         }
 
         protected override void OnResume()

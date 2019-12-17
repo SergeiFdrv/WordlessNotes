@@ -7,8 +7,11 @@
              mc:Ignorable="d"
              x:Class="Notes.Views.CustomView">
     <ContentView.Content>
-        <FlexLayout HorizontalOptions="Center" Focused="FlexLayout_Focused">
-            <StackLayout x:Name="meat" WidthRequest="270">
+        <FlexLayout HorizontalOptions="Center" Focused="Item_Focused">
+            <StackLayout x:Name="meat" WidthRequest="270" Spacing="0">
+                <BoxView x:Name="Img" BackgroundColor="DarkOrchid" Margin="0" Focused="Item_Focused"/>
+                <!-- Изучить плагин для вставки изображений: https://github.com/jamesmontemagno/MediaPlugin -->
+                <customrenderer:TextEditor x:Name="TextEditor" WidthRequest="270" Placeholder="Paragraph" PlaceholderColor="Gray" Focused="Item_Focused"/>
             </StackLayout>
             <Button x:Name="XBtn" Text="X" WidthRequest="35" HeightRequest="35" Clicked="Button_Clicked"/>
         </FlexLayout>
