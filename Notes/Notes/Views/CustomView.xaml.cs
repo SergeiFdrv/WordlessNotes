@@ -76,17 +76,20 @@ namespace Notes.Views
 
         public Renderers.TextEditor TextEditor { get; set; }
 
+        private CustomViewTypes ViewType;
         public CustomViewTypes Type
         {
             get
             {
-                return Type;
+                return ViewType;
             }
             set
             {
-                Type = value;
+                ViewType = value;
+                // TODO: размер текста должен меняться при изменении этого значения
+                // Проблема с сеттером была решена разделением private и public Type
             }
-        } /* TODO: размер текста должен меняться при изменении этого значения. Когда я пишу это в set, эмулятор убивает программу молча */
+        }
 
         public string Text
         {
