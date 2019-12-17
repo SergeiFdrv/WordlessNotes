@@ -11,75 +11,111 @@ namespace Notes.Views
 {
     public enum CustomViewTypes
     {
-        Paragraph = 0,
-        Image = 1
+        Header1 = 0,
+        Header2 = 1,
+        Header3 = 2,
+        Paragraph = 3,
+        List = 4,
+        Image = 5
     }
 
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class CustomView : ContentView
     {
-        public CustomView()
-        {
-            InitializeComponent();
-            Type = CustomViewTypes.Paragraph;
-            Renderers.TextEditor TXT = new Renderers.TextEditor
-            {
-                WidthRequest = 270
-            };
-            (Content as FlexLayout).Children.Insert(0, TXT);
-        }
-
         public CustomView(int index, CustomViewTypes type = CustomViewTypes.Paragraph)
         {
             InitializeComponent();
             Index = index;
             Type = type;
-            if (type == CustomViewTypes.Paragraph)
+            if (ParentPage != null) ParentPage.Selected = this;
+        }
+
+        public MainPage ParentPage
+        {
+            get
             {
-                Renderers.TextEditor TXT = new Renderers.TextEditor
+                var parent = Parent;
+                while (parent != null)
                 {
-                    WidthRequest = 270
-                };
-                (Content as FlexLayout).Children.Insert(0, TXT);
-            }
-            else if (type == CustomViewTypes.Image)
-            {
-                Image image = new Image
-                {
-                    WidthRequest = 270
-                };
-                (Content as FlexLayout).Children.Insert(0, image);
+                    if (parent is MainPage)
+                    {
+                        return parent as MainPage;
+                    }
+                    parent = parent.Parent;
+                }
+                return null;
             }
         }
 
         public int Index { get; set; }
 
-        public string Text
+        private CustomViewTypes ViewType;
+
+        public CustomViewTypes Type
         {
-            get {
-                if (Type == CustomViewTypes.Paragraph)
-                {
-                    return ((Content as FlexLayout).Children.First() as CustomView).Text;
-                }
-                else if (Type == CustomViewTypes.Image)
-                {
-                    return "image";
-                }
-                return string.Empty;
+            get
+            {
+                return ViewType;
             }
-            set {
-                if (Type == CustomViewTypes.Paragraph)
+            set
+            {
+                ViewType = value;
+                if (value == CustomViewTypes.Image)
                 {
-                    ((Content as FlexLayout).Children.First() as CustomView).Text = value;
+                    TextEditor.FontSize = 12;
+                    TextEditor.Placeholder = "Image description";
+                    TextEditor.TextColor = Color.Red;
+                    Img.HeightRequest = 100; // TODO: заменить тестовый BoxView обратно на Image
+                    return;
+                }
+                else if (value == CustomViewTypes.List)
+                {
+                    TextEditor.FontSize = 14;
+                    TextEditor.Placeholder = "List";
+                    List.IsVisible = true;
+                    return;
+                }
+                Img.HeightRequest = 0;
+                TextEditor.TextColor = Color.Black;
+                List.IsVisible = false;
+                if (value == CustomViewTypes.Header1)
+                {
+                    TextEditor.FontSize = 20;
+                    TextEditor.Placeholder = "Header 1";
+                }
+                else if (value == CustomViewTypes.Header2)
+                {
+                    TextEditor.FontSize = 18;
+                    TextEditor.Placeholder = "Header 2";
+                }
+                else if (value == CustomViewTypes.Header3)
+                {
+                    TextEditor.FontSize = 16;
+                    TextEditor.Placeholder = "Header 3";
+                }
+                else
+                {
+                    TextEditor.FontSize = 14;
+                    TextEditor.Placeholder = "Paragraph";
                 }
             }
         }
 
-        public CustomViewTypes Type { get; set; }
+        public string Text
+        {
+            get => TextEditor.Text;
+            set => TextEditor.Text = value;
+        }
 
         private void Button_Clicked(object sender, EventArgs e)
         {
-            (Application.Current.MainPage as MainPage).DelEl(Index);
+            if (ParentPage != null) ParentPage.DelEl(Index);
+        }
+
+        private void Item_Focused(object sender, FocusEventArgs e)
+        {
+            Console.WriteLine("--- ELEMENT TAPPED ---");
+            if (ParentPage != null) ParentPage.Selected = this;
         }
     }
 }

@@ -28,7 +28,7 @@ namespace Notes.Droid.Resources.renderers
 
             if (Control != null)
             {
-                Control.SetBackgroundColor(global::Android.Graphics.Color.GhostWhite);
+                Control.SetBackgroundColor(global::Android.Graphics.Color.White);
                 Control.SetTextColor(global::Android.Graphics.Color.Black);
             }
         }

@@ -7,8 +7,41 @@
              mc:Ignorable="d"
              x:Class="Notes.Views.CustomView">
     <ContentView.Content>
-        <FlexLayout HorizontalOptions="Center">
-            <Button Text="X" WidthRequest="35" HeightRequest="35" Clicked="Button_Clicked"/>
+        <FlexLayout HorizontalOptions="Center" Focused="Item_Focused">
+            <StackLayout x:Name="meat" WidthRequest="270" Spacing="0">
+                <BoxView x:Name="Img" BackgroundColor="DarkOrchid" Margin="0" Focused="Item_Focused"/>
+                <!-- Изучить плагин для вставки изображений: https://github.com/jamesmontemagno/MediaPlugin -->
+                <customrenderer:TextEditor x:Name="TextEditor" WidthRequest="270" Placeholder="Paragraph" PlaceholderColor="Gray" Focused="Item_Focused"/>
+                <ListView x:Name="List" IsVisible="False" VerticalOptions="Start">
+                    <ListView.ItemsSource>
+                        <x:Array Type="{x:Type x:String}">
+                            <x:String>List item</x:String>
+                            <x:String>List item</x:String>
+                            <x:String>List item</x:String>
+                            <x:String>List item</x:String>
+                            <x:String>List item</x:String>
+                            <x:String>List item</x:String>
+                            <x:String>List item</x:String>
+                            <x:String>List item</x:String>
+                        </x:Array>
+                    </ListView.ItemsSource>
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <ViewCell>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Label Text="-" VerticalTextAlignment="Center" Margin="10, 0, 0, 0"/>
+                                    <customrenderer:TextEditor Grid.Column="1" VerticalOptions="Center" Placeholder="{Binding}" PlaceholderColor="Gray"/>
+                                </Grid>
+                            </ViewCell>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </StackLayout>
+            <Button x:Name="XBtn" Text="X" WidthRequest="35" HeightRequest="35" Clicked="Button_Clicked"/>
         </FlexLayout>
     </ContentView.Content>
 </ContentView>
