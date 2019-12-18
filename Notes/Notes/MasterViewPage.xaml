@@ -6,11 +6,11 @@
              mc:Ignorable="d"
              x:Class="Notes.MasterViewPage">
     <StackLayout>
-        <ListView x:Name="MyListView"
+        <ListView x:Name="MyListView" BackgroundColor="Chartreuse"
             ItemTapped="Handle_ItemTapped"
             CachingStrategy="RecycleElement">
             <ListView.Header  BackgroundColor="GhostWhite">
-                <Label Text="Wordless" TextColor="Black" Margin="10" FontSize="18"/>
+                <Label Text="Wordless" TextColor="Navy" Margin="10" FontSize="18"/>
             </ListView.Header>
             <ListView.ItemsSource>
                 <x:Array Type="{x:Type x:String}">
@@ -22,22 +22,15 @@
             </ListView.ItemsSource>
 
             <!--Custom View Cells-->
-            <!--
+            
             <ListView.ItemTemplate>
               <DataTemplate>
-                <ViewCell>
-                  <StackLayout>
-                    <Label Text="{Binding Text}" 
-                           d:Text="{Binding .}"
-                           Style="{DynamicResource ListItemTextStyle}" />
-                    <Label Text="{Binding Detail}" 
-                           d:Text="Detail"
-                           Style="{DynamicResource ListItemDetailTextStyle}"/>
-                  </StackLayout>
-                </ViewCell>
+                  <ViewCell>
+                      <Label Text="{Binding}" TextColor="Black" Margin="10, 0, 0, 0" VerticalTextAlignment="Center"/>
+                  </ViewCell>
               </DataTemplate>
             </ListView.ItemTemplate>
-            -->
+            
         </ListView>
     </StackLayout>
 </ContentPage>
