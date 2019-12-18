@@ -12,38 +12,27 @@ namespace Notes
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class NotePickPage : ContentPage
     {
-        public ObservableCollection<string> Items { get; set; }
-
         public NotePickPage()
         {
             InitializeComponent();
-            
-            Items = new ObservableCollection<string>
-            {
-                "Item 1",
-                "Item 2",
-                "Item 3",
-                "Item 4",
-                "Item 5"
-            };
-
-            MyListView.ItemsSource = Items;
         }
 
+        public ObservableCollection<string> Items { get; set; }
+
         // ОТОБРАЗИТЬ СПИСОК ЗАМЕТОК
-        protected override void OnAppearing()
+        protected async override void OnAppearing()
         {
             base.OnAppearing();
 
-            //MyListView.ItemsSource = await App.Database.GetNotesAsync();
+            if (App.Database.GetNotesAsync().Result.Count == 0) Content = new Label { Text = "Nothing found", VerticalTextAlignment = TextAlignment.Center, HorizontalTextAlignment = TextAlignment.Center };
+            else MyListView.ItemsSource = await App.Database.GetNotesAsync();
         }
 
-        async void Handle_ItemTapped(object sender, ItemTappedEventArgs e)
+        void Handle_ItemTapped(object sender, ItemTappedEventArgs e)
         {
-            if (e.Item == null)
-                return;
+            if (e.Item == null) return;
 
-            await DisplayAlert("Item Tapped", "An item was tapped.", "OK");
+            //await DisplayAlert("Item Tapped", "An item was tapped.", "OK");
 
             //Deselect Item
             ((ListView)sender).SelectedItem = null;

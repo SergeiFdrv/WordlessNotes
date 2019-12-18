@@ -5,6 +5,9 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
              x:Class="Notes.NotePickPage">
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Open"/>
+    </ContentPage.ToolbarItems>
     <ListView x:Name="MyListView"
             ItemTapped="Handle_ItemTapped"
             CachingStrategy="RecycleElement">
