@@ -16,6 +16,9 @@ namespace Notes
             {
                 Master = new MasterViewPage(),
                 Detail = new NavigationPage(new MainPage())
+                {
+                    BarBackgroundColor = Color.Orange
+                }
             };
         }
 
