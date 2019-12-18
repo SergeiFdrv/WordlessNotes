@@ -9,7 +9,6 @@ using Notes.Models;
 
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
-using SQLite;
 
 namespace Notes
 {
@@ -34,6 +33,12 @@ namespace Notes
                 await (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(page);
                 (Application.Current.MainPage as MasterDetailPage).IsPresented = false;
             }
+            else if (e.Item.ToString() == "Delete")
+            {
+                var p = await DisplayActionSheet("Delete note?", null, null, "Yes", "No");
+                if (p == "Yes") await DisplayAlert(p, "Note deleted", "Got it");//OnDeleteButtonClicked(sender, e);
+                else await DisplayAlert(p, "Deleting canceled", "OK");
+            }
             else
             {
                 await DisplayAlert("Item Tapped", $"The {e.Item} item was tapped.", "OK");
@@ -41,6 +46,13 @@ namespace Notes
 
             //Deselect Item
             ((ListView)sender).SelectedItem = null;
+        }
+
+        async void OnDeleteButtonClicked(object sender, EventArgs e)
+        {
+            var note = (Note)BindingContext;
+            await App.Database.DeleteNoteAsync(note);
+            await Navigation.PopAsync();
         }
     }
 }

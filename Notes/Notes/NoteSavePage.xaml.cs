@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
+using Notes.Models;
 
 namespace Notes
 {
@@ -15,6 +16,14 @@ namespace Notes
         public NoteSavePage()
         {
             InitializeComponent();
+        }
+
+        async void OnSaveButtonClicked(object sender, EventArgs e)
+        {
+            var note = (Note)BindingContext;
+            note.DateTime = DateTime.UtcNow;
+            await App.Database.SaveNoteAsync(note);
+            await Navigation.PopAsync();
         }
     }
 }

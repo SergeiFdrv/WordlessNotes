@@ -17,7 +17,7 @@
                     <x:String>New</x:String>
                     <x:String>Open</x:String>
                     <x:String>Save</x:String>
-                    <x:String>Export</x:String>
+                    <x:String>Delete</x:String>
                 </x:Array>
             </ListView.ItemsSource>
 
