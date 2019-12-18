@@ -78,11 +78,6 @@ namespace Notes
             await App.Database.DeleteNoteAsync(note);
             await Navigation.PopAsync();
         }
-        
-        private void OpenMaster_Clicked(object sender, EventArgs e)
-        {
-            (Parent as MasterDetailPage).IsPresented = true;
-        }
 
         private void picker_SelectedIndexChanged(object sender, EventArgs e)
         {

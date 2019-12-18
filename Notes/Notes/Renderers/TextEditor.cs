@@ -10,7 +10,6 @@ namespace Notes.Renderers
         public TextEditor ()
         {
             AutoSize = EditorAutoSizeOption.TextChanges;
-            HorizontalOptions = LayoutOptions.StartAndExpand;
             BackgroundColor = Color.GhostWhite;
             TextColor = Color.Black;
         }

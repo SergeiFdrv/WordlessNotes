@@ -15,7 +15,7 @@ namespace Notes
             MainPage = new MasterDetailPage
             {
                 Master = new MasterViewPage(),
-                Detail = new MainPage()
+                Detail = new NavigationPage(new MainPage())
             };
         }
 
