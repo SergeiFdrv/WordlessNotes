@@ -13,26 +13,13 @@
             CachingStrategy="RecycleElement">
         <ListView.ItemTemplate>
             <DataTemplate>
-                <TextCell Text="{Binding .}" d:Text="{Binding .}" />
+                <ViewCell>
+                    <StackLayout Padding="4" Spacing="0">
+                        <Label Text="{Binding Name}" TextColor="Black" FontSize="14"/>
+                        <Label Text="{Binding Path}" TextColor="Gray" FontSize="12"/>
+                    </StackLayout>
+                </ViewCell>
             </DataTemplate>
         </ListView.ItemTemplate>
-    
-    <!--Custom View Cells-->
-    <!--
-    <ListView.ItemTemplate>
-      <DataTemplate>
-        <ViewCell>
-          <StackLayout>
-            <Label Text="{Binding Text}" 
-                   d:Text="{Binding .}"
-                   Style="{DynamicResource ListItemTextStyle}" />
-            <Label Text="{Binding Detail}" 
-                   d:Text="Detail"
-                   Style="{DynamicResource ListItemDetailTextStyle}"/>
-          </StackLayout>
-        </ViewCell>
-      </DataTemplate>
-    </ListView.ItemTemplate>
-    -->
-  </ListView>
+    </ListView>
 </ContentPage>

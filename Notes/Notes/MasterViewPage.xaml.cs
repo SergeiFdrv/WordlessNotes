@@ -33,6 +33,13 @@ namespace Notes
                 await (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(page);
                 (Application.Current.MainPage as MasterDetailPage).IsPresented = false;
             }
+            else if (e.Item.ToString() == "Save")
+            {
+                NoteSavePage page = new NoteSavePage();
+                NavigationPage.SetHasBackButton((Application.Current.MainPage as MasterDetailPage).Detail, true);
+                await (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(page);
+                (Application.Current.MainPage as MasterDetailPage).IsPresented = false;
+            }
             else if (e.Item.ToString() == "Delete")
             {
                 var p = await DisplayActionSheet("Delete note?", null, null, "Yes", "No");

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
@@ -17,23 +18,27 @@ namespace Notes
             InitializeComponent();
         }
 
-        public ObservableCollection<string> Items { get; set; }
+        public List<Models.Note> Items { get; set; }
 
         // ОТОБРАЗИТЬ СПИСОК ЗАМЕТОК
-        protected async override void OnAppearing()
+        protected override void OnAppearing()
         {
             base.OnAppearing();
-
-            if (App.Database.GetNotesAsync().Result.Count == 0) Content = new Label { Text = "Nothing found", VerticalTextAlignment = TextAlignment.Center, HorizontalTextAlignment = TextAlignment.Center };
-            else MyListView.ItemsSource = await App.Database.GetNotesAsync();
+            Items = App.Database.GetNotesAsync().Result;
+            if (Items.Count == 0) Content = new Label { Text = "Nothing found", VerticalTextAlignment = TextAlignment.Center, HorizontalTextAlignment = TextAlignment.Center };
+            else MyListView.ItemsSource = Items;
         }
 
-        void Handle_ItemTapped(object sender, ItemTappedEventArgs e)
+        async void Handle_ItemTapped(object sender, ItemTappedEventArgs e)
         {
             if (e.Item == null) return;
 
-            //await DisplayAlert("Item Tapped", "An item was tapped.", "OK");
-
+            string responce = await DisplayActionSheet("Delete?", null, null, "Yes", "No");
+            if (responce == "Yes")
+            {
+                Items.RemoveAt(e.ItemIndex);
+                //await Navigation.PopAsync();
+            }
             //Deselect Item
             ((ListView)sender).SelectedItem = null;
         }

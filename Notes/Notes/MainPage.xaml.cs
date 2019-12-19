@@ -28,6 +28,7 @@ namespace Notes
             contentLayout.Children.Add(new CustomView(contentLayout.Children.Count, CustomViewTypes.Header2));
             contentLayout.Children.Add(new CustomView(contentLayout.Children.Count, CustomViewTypes.Header3));
             contentLayout.Children.Add(new CustomView(contentLayout.Children.Count));
+            contentLayout.Children.Add(new CustomView(contentLayout.Children.Count, CustomViewTypes.List));
         }
 
         public List<string> TextOptions { get; }
@@ -82,12 +83,6 @@ namespace Notes
         private void picker_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (Selected != null) Selected.Type = (CustomViewTypes)((sender as Picker).SelectedIndex);
-        }
-
-        public async void SwipeGestureRecognizer_Swiped(object sender, SwipedEventArgs e)
-        {
-            Console.WriteLine("--- ELEMENT TOUCHED ---");
-            await DisplayAlert("Item Tapped", "An item was tapped.", "OK");
         }
     }
 }

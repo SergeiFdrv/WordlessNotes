@@ -11,9 +11,6 @@
     </ContentPage.ToolbarItems>
 
     <StackLayout BackgroundColor="Gainsboro" IsTabStop="False" Spacing="0">
-        <StackLayout.GestureRecognizers>
-            <SwipeGestureRecognizer Swiped="SwipeGestureRecognizer_Swiped"/>
-        </StackLayout.GestureRecognizers>
         <ScrollView Orientation="Horizontal">
             <FlexLayout>
                 <Picker x:Name="picker" WidthRequest="100" SelectedIndexChanged="picker_SelectedIndexChanged"/>
@@ -28,9 +25,9 @@
                 <StackLayout x:Name="contentLayout" ChildAdded="SelectElement">
                 </StackLayout>
                 <BoxView HeightRequest="1" BackgroundColor="DodgerBlue"/>
+                <Button Text="Add" Clicked="AddButton_Clicked"/>
             </StackLayout>
         </ScrollView>
-        <Button Text="Add" Clicked="AddButton_Clicked"/>
     </StackLayout>
 
 </ContentPage>

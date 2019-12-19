@@ -66,6 +66,7 @@ namespace Notes.Views
                     TextEditor.Placeholder = "Image description";
                     TextEditor.TextColor = Color.Red;
                     Img.HeightRequest = 100; // TODO: заменить тестовый BoxView обратно на Image
+                    Img.IsVisible = true;
                     return;
                 }
                 else if (value == CustomViewTypes.List)
@@ -75,7 +76,7 @@ namespace Notes.Views
                     List.IsVisible = true;
                     return;
                 }
-                Img.HeightRequest = 0;
+                Img.IsVisible = false;
                 TextEditor.TextColor = Color.Black;
                 List.IsVisible = false;
                 if (value == CustomViewTypes.Header1)
@@ -114,7 +115,7 @@ namespace Notes.Views
 
         private void Item_Focused(object sender, FocusEventArgs e)
         {
-            Console.WriteLine("--- ELEMENT TAPPED ---");
+            Console.WriteLine("--- ELEMENT FOCUSED ---");
             if (ParentPage != null) ParentPage.Selected = this;
         }
     }

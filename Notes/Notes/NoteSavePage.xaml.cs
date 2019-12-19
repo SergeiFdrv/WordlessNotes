@@ -20,9 +20,14 @@ namespace Notes
 
         async void OnSaveButtonClicked(object sender, EventArgs e)
         {
-            var note = (Note)BindingContext;
-            note.DateTime = DateTime.UtcNow;
+            Note note = new Note
+            {
+                Name = NameEntry.Text,
+                Path = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), NameEntry.Text + ".txt"),
+                DateTime = DateTime.UtcNow
+            };//(Note)BindingContext;
             await App.Database.SaveNoteAsync(note);
+            await DisplayAlert("Saved", "Note saved", "OK");
             await Navigation.PopAsync();
         }
     }

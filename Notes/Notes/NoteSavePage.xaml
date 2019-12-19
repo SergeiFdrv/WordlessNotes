@@ -8,7 +8,7 @@
     <ContentPage.Content>
         <StackLayout>
             <Label Text="Name"/>
-            <Label Text="Path"/>
+            <Entry x:Name="NameEntry"/>
             <Button x:Name="SaveButton" Text="Save" Clicked="OnSaveButtonClicked"/>
         </StackLayout>
     </ContentPage.Content>
