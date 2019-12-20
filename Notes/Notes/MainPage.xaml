@@ -15,8 +15,6 @@
             <FlexLayout>
                 <Picker x:Name="picker" WidthRequest="100" SelectedIndexChanged="picker_SelectedIndexChanged"/>
                 <!-- Dropdown control tutorial: https://www.c-sharpcorner.com/article/dropdown-control-in-xamarin-forms-part-one/ -->
-                <Button Text="bold" FontAttributes="Bold"/>
-                <Button Text="italic" FontAttributes="Italic"/>
             </FlexLayout>
         </ScrollView>
         <ScrollView>
@@ -25,9 +23,9 @@
                 <StackLayout x:Name="contentLayout" ChildAdded="SelectElement">
                 </StackLayout>
                 <BoxView HeightRequest="1" BackgroundColor="DodgerBlue"/>
-                <Button Text="Add" Clicked="AddButton_Clicked"/>
             </StackLayout>
         </ScrollView>
+        <Button Text="Add" Clicked="AddButton_Clicked"/>
     </StackLayout>
 
 </ContentPage>
