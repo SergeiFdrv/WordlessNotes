@@ -14,6 +14,10 @@
         <ScrollView Orientation="Horizontal">
             <FlexLayout>
                 <Picker x:Name="picker" WidthRequest="100" SelectedIndexChanged="picker_SelectedIndexChanged"/>
+                <Button x:Name="savebtn" Text="Save"/>
+                <Button x:Name="newbtn" Text="New"/>
+                <Button x:Name="openbtn" Text="Open"/>
+                <Button x:Name="delbtn" Text="Delete"/>
                 <!-- Dropdown control tutorial: https://www.c-sharpcorner.com/article/dropdown-control-in-xamarin-forms-part-one/ -->
             </FlexLayout>
         </ScrollView>

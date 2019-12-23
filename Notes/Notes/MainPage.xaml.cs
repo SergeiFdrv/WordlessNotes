@@ -46,6 +46,8 @@ namespace Notes
             }
         }
 
+        public string NoteContent { get; set; }
+
         private void AddButton_Clicked(object sender, EventArgs e)
         {
             contentLayout.Children.Add(new CustomView(contentLayout.Children.Count));

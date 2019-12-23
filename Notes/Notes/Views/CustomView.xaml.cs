@@ -27,7 +27,6 @@ namespace Notes.Views
             InitializeComponent();
             Index = index;
             Type = type;
-            if (ParentPage != null) ParentPage.Selected = this;
         }
 
         public MainPage ParentPage
