@@ -36,8 +36,10 @@ namespace Notes
             string responce = await DisplayActionSheet("Delete?", null, null, "Yes", "No");
             if (responce == "Yes")
             {
-                Items.RemoveAt(e.ItemIndex);
-                //await Navigation.PopAsync();
+                //Items.RemoveAt(e.ItemIndex);
+                await App.Database.DeleteNoteAsync(e.Item as Models.Note);
+                //Items = App.Database.GetNotesAsync().Result;
+                await Navigation.PopAsync();
             }
             //Deselect Item
             ((ListView)sender).SelectedItem = null;

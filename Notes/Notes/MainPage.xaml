@@ -13,11 +13,11 @@
     <StackLayout BackgroundColor="Gainsboro" IsTabStop="False" Spacing="0">
         <ScrollView Orientation="Horizontal">
             <FlexLayout>
-                <Picker x:Name="picker" WidthRequest="100" SelectedIndexChanged="picker_SelectedIndexChanged"/>
-                <Button x:Name="savebtn" Text="Save"/>
-                <Button x:Name="newbtn" Text="New"/>
-                <Button x:Name="openbtn" Text="Open"/>
-                <Button x:Name="delbtn" Text="Delete"/>
+                <Picker x:Name="picker" WidthRequest="100" SelectedIndexChanged="Picker_SelectedIndexChanged"/>
+                <Button x:Name="savebtn" Text="Save" Clicked="OnSaveButtonClicked"/>
+                <Button x:Name="newbtn" Text="New" Clicked="OnNewButtonClicked"/>
+                <Button x:Name="openbtn" Text="Open" Clicked="OnOpenButtonClicked"/>
+                <Button x:Name="delbtn" Text="Delete" Clicked="OnDeleteButtonClicked"/>
                 <!-- Dropdown control tutorial: https://www.c-sharpcorner.com/article/dropdown-control-in-xamarin-forms-part-one/ -->
             </FlexLayout>
         </ScrollView>

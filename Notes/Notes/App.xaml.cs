@@ -12,14 +12,7 @@ namespace Notes
         {
             InitializeComponent();
 
-            MainPage = new MasterDetailPage
-            {
-                Master = new MasterViewPage(),
-                Detail = new NavigationPage(new MainPage())
-                {
-                    BarBackgroundColor = Color.Orange
-                }
-            };
+            MainPage = new NavigationPage(new MainPage()) { BarBackgroundColor = Color.Orange };
         }
 
         private static NoteDatabase DB { get; set; }

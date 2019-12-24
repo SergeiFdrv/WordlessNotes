@@ -18,11 +18,11 @@ namespace Notes
         public MainPage()
         { /* TODO: РЕАЛИЗОВАТЬ СОХРАНЕНИЕ ДАННЫХ ПРИ СВОРАЧИВАНИИ (в app.xaml.cs) */
             InitializeComponent();
-            TextOptions = new List<string>()
+            DocumentItemOptions = new List<string>()
             {
                 "Header 1", "Header 2", "Header 3", "Text", "List", "Image"
             };
-            picker.ItemsSource = TextOptions;
+            picker.ItemsSource = DocumentItemOptions;
             picker.SelectedItem = picker.Items[0];
             contentLayout.Children.Add(new CustomView(contentLayout.Children.Count, CustomViewTypes.Header1));
             contentLayout.Children.Add(new CustomView(contentLayout.Children.Count, CustomViewTypes.Header2));
@@ -31,7 +31,9 @@ namespace Notes
             contentLayout.Children.Add(new CustomView(contentLayout.Children.Count, CustomViewTypes.List));
         }
 
-        public List<string> TextOptions { get; }
+        public List<string> DocumentItemOptions { get; }
+
+        public bool Unsaved { get; set; } = true;
 
         private CustomView SelectedView;
 
@@ -46,7 +48,7 @@ namespace Notes
             }
         }
 
-        public string NoteContent { get; set; }
+        public string NoteContent { get; set; } // ?
 
         private void AddButton_Clicked(object sender, EventArgs e)
         {
@@ -66,25 +68,36 @@ namespace Notes
                 (contentLayout.Children[i] as CustomView).Index--;
             }
         }
-        
+
+        private void Picker_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (Selected != null) Selected.Type = (CustomViewTypes)((sender as Picker).SelectedIndex);
+        }
+
         async void OnSaveButtonClicked(object sender, EventArgs e)
         {
-            var note = (Note)BindingContext;
-            note.DateTime = DateTime.UtcNow;
-            await App.Database.SaveNoteAsync(note);
-            await Navigation.PopAsync();
+            NoteSavePage page = new NoteSavePage();
+            NavigationPage.SetHasBackButton(this, true);
+            await Navigation.PushAsync(page);
+        }
+
+        void OnNewButtonClicked(object sender, EventArgs e)
+        {
+            return;
+        }
+
+        async void OnOpenButtonClicked(object sender, EventArgs e)
+        {
+            NotePickPage page = new NotePickPage();
+            NavigationPage.SetHasBackButton(this, true);
+            await Navigation.PushAsync(page);
         }
 
         async void OnDeleteButtonClicked(object sender, EventArgs e)
         {
-            var note = (Note)BindingContext;
-            await App.Database.DeleteNoteAsync(note);
-            await Navigation.PopAsync();
-        }
-
-        private void picker_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (Selected != null) Selected.Type = (CustomViewTypes)((sender as Picker).SelectedIndex);
+            var p = await DisplayActionSheet("Delete note?", null, null, "Yes", "No");
+            if (p == "Yes") await DisplayAlert(p, "Note deleted", "Got it");//OnDeleteButtonClicked(sender, e);
+            else await DisplayAlert(p, "Deleting canceled", "OK");
         }
     }
 }
