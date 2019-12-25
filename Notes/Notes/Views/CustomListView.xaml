@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:customrenderer="clr-namespace:Notes.Renderers"
+             xmlns:customview="clr-namespace:Notes.Views"
+             mc:Ignorable="d"
+             x:Class="Notes.Views.CustomListView">
+    <ContentView.Content>
+        <StackLayout Focused="Item_Focused">
+            <StackLayout x:Name="SL" Spacing="0">
+            </StackLayout>
+            <Button x:Name="AddToListButton" Text="Add" Clicked="AddButton_Clicked" IsVisible="False"/>
+        </StackLayout>
+    </ContentView.Content>
+</ContentView>

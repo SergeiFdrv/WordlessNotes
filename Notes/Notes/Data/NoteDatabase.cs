@@ -26,3 +26,6 @@ namespace Notes.Data
         public Task<int> DeleteNoteAsync(Note note) => _database.DeleteAsync(note);
     }
 }
+
+// SQLite.NET tutorial: https://docs.microsoft.com/ru-ru/xamarin/get-started/quickstarts/database?pivots=windows
+// For Android: https://docs.microsoft.com/ru-ru/xamarin/android/data-cloud/data-access/using-sqlite-orm

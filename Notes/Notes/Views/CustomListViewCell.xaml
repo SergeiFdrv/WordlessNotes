@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:customrenderer="clr-namespace:Notes.Renderers"
+             mc:Ignorable="d"
+             x:Class="Notes.Views.CustomListViewCell">
+    <ContentView.Content>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Label Text="-" VerticalOptions="Start" VerticalTextAlignment="Center" Margin="10, 5, 0, 0" Focused="Item_Focused"/>
+            <customrenderer:TextEditor x:Name="TXT" Grid.Column="1" VerticalOptions="Center" Placeholder="List item" PlaceholderColor="Gray" Focused="Item_Focused"/>
+        </Grid>
+    </ContentView.Content>
+</ContentView>
