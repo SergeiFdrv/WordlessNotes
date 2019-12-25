@@ -20,7 +20,6 @@ namespace Notes
 
         public List<Models.Note> Items { get; set; }
 
-        // ОТОБРАЗИТЬ СПИСОК ЗАМЕТОК
         protected override void OnAppearing()
         {
             base.OnAppearing();
@@ -38,11 +37,19 @@ namespace Notes
             {
                 //Items.RemoveAt(e.ItemIndex);
                 await App.Database.DeleteNoteAsync(e.Item as Models.Note);
+                System.IO.File.Delete((e.Item as Models.Note).Path);
                 //Items = App.Database.GetNotesAsync().Result;
+                //Deselect Item
+                //((ListView)sender).SelectedItem = null;
                 await Navigation.PopAsync();
             }
-            //Deselect Item
-            ((ListView)sender).SelectedItem = null;
+        }
+
+        private async void Open_Clicked(object sender, EventArgs e)
+        {
+            Models.Note note = MyListView.SelectedItem as Models.Note;
+            (Navigation.NavigationStack[0] as MainPage).TryPopulate(note);
+            await Navigation.PopAsync();
         }
     }
 }

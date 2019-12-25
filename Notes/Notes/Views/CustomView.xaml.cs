@@ -46,6 +46,8 @@ namespace Notes.Views
             }
         }
 
+        public CustomListView ListV => List;
+
         public int Index { get; set; }
 
         private CustomViewTypes ViewType;

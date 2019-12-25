@@ -33,7 +33,14 @@ namespace Notes
 
         public List<string> DocumentItemOptions { get; }
 
-        public bool Unsaved { get; set; } = true;
+        public bool UnsavedData
+        {
+            get => savebtn.IsEnabled;
+            set
+            {
+                savebtn.IsEnabled = value;
+            }
+        }
 
         private CustomView SelectedView;
 
@@ -48,7 +55,7 @@ namespace Notes
             }
         }
 
-        public string NoteContent { get; set; } // ?
+        public string NoteContent { get; set; }
 
         private void AddButton_Clicked(object sender, EventArgs e)
         {
@@ -76,13 +83,56 @@ namespace Notes
 
         async void OnSaveButtonClicked(object sender, EventArgs e)
         {
-            NoteSavePage page = new NoteSavePage();
+            NoteContent = string.Empty;
+            for (int i = 0; i < contentLayout.Children.Count; i++)
+            {
+                CustomView view = contentLayout.Children[i] as CustomView;
+                if (view.Type == CustomViewTypes.Header1)
+                {
+                    NoteContent += $"<h1>{view.Text}</h1><br>";
+                }
+                else if (view.Type == CustomViewTypes.Header2)
+                {
+                    NoteContent += $"<h2>{view.Text}</h2><br>";
+                }
+                else if (view.Type == CustomViewTypes.Header3)
+                {
+                    NoteContent += $"<h3>{view.Text}</h3><br>";
+                }
+                else if (view.Type == CustomViewTypes.Image)
+                {
+                    NoteContent += $"<img src=\"\"/><br><p class=\"imgdesc\">{view.Text}</p><br>";
+                }
+                else
+                {
+                    NoteContent += $"<p>{view.Text}</p><br>";
+                    if (view.Type == CustomViewTypes.List)
+                    {
+                        NoteContent += "<ul><br>";
+                        for (int j = 0; j < view.ListV.StackL.Children.Count; j++)
+                        {
+                            NoteContent += $"<li>{(view.ListV.StackL.Children[j] as CustomListViewCell).Text}</li><br>";
+                        }
+                        NoteContent += "</ul><br>";
+                    }
+                }
+            }
+            if (NoteContent == "")
+            {
+                UnsavedData = false;
+                return;
+            }
+            NoteSavePage page = new NoteSavePage
+            {
+                Name = ToolbarItems[0].Text
+            };
             NavigationPage.SetHasBackButton(this, true);
             await Navigation.PushAsync(page);
         }
 
         void OnNewButtonClicked(object sender, EventArgs e)
         {
+            ToolbarItems[0].Text = "New note";
             return;
         }
 
@@ -98,6 +148,84 @@ namespace Notes
             var p = await DisplayActionSheet("Delete note?", null, null, "Yes", "No");
             if (p == "Yes") await DisplayAlert(p, "Note deleted", "Got it");//OnDeleteButtonClicked(sender, e);
             else await DisplayAlert(p, "Deleting canceled", "OK");
+        }
+
+        public async void TryPopulate(Note note)
+        {
+            try
+            {
+                NoteContent = System.IO.File.ReadAllText(note.Path);
+                Populate();
+                ToolbarItems[0].Text = note.Name;
+            }
+            catch (System.IO.FileNotFoundException)
+            {
+                await DisplayAlert("Error", "File not found", "OK");
+            }
+            catch (Exception e)
+            {
+                await DisplayAlert("Error", e.ToString(), "OK");
+            }
+        }
+
+        private void Populate()
+        {
+            contentLayout.Children.Clear();
+            string[] lines = NoteContent.Split(new string[] { "<br>" }, StringSplitOptions.None);
+            for (int i = 0; i < lines.Length; i++)
+            {
+                if (lines[i].StartsWith("<h1>"))
+                {
+                    contentLayout.Children.Add(
+                        new CustomView(contentLayout.Children.Count, CustomViewTypes.Header1)
+                        {
+                            Text = lines[i].Substring(4, lines[i].Length - 9)
+                        });
+                }
+                else if (lines[i].StartsWith("<h2>"))
+                {
+                    contentLayout.Children.Add(
+                        new CustomView(contentLayout.Children.Count, CustomViewTypes.Header2)
+                        {
+                            Text = lines[i].Substring(4, lines[i].Length - 9)
+                        });
+                }
+                else if (lines[i].StartsWith("<h3>"))
+                {
+                    contentLayout.Children.Add(
+                        new CustomView(contentLayout.Children.Count, CustomViewTypes.Header3)
+                        {
+                            Text = lines[i].Substring(4, lines[i].Length - 9)
+                        });
+                }
+                else if (lines[i].StartsWith("<p>"))
+                {
+                    contentLayout.Children.Add(
+                        new CustomView(contentLayout.Children.Count, CustomViewTypes.Paragraph)
+                        {
+                            Text = lines[i].Substring(3, lines[i].Length - 7)
+                        });
+                }
+                else if (lines[i].StartsWith("<ul>"))
+                {
+                    (contentLayout.Children.Last() as CustomView).Type = CustomViewTypes.List;
+                    List<string> listlines = new List<string>();
+                    int j = i + 1;
+                    for (; j < lines.Length && lines[j] != "</ul>"; j++)
+                    {
+                        listlines.Add(lines[j].Substring(4, lines[j].Length - 9));
+                    }
+                    (contentLayout.Children.Last() as CustomView).ListV.PopulateList(listlines);
+                    i = j + 1;
+                }
+                else if (lines[i].StartsWith("<img"))
+                {
+                    contentLayout.Children.Add(new CustomView(contentLayout.Children.Count, CustomViewTypes.Image)
+                    {
+                        Text = lines[i + 1].Substring(20, lines[i + 1].Length - 24)
+                    });
+                }
+            }
         }
     }
 }

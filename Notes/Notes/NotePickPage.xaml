@@ -6,7 +6,7 @@
              mc:Ignorable="d"
              x:Class="Notes.NotePickPage">
     <ContentPage.ToolbarItems>
-        <ToolbarItem Text="Open"/>
+        <ToolbarItem Text="Open" Clicked="Open_Clicked"/>
     </ContentPage.ToolbarItems>
     <ListView x:Name="MyListView"
             ItemTapped="Handle_ItemTapped"
@@ -15,8 +15,8 @@
             <DataTemplate>
                 <ViewCell>
                     <StackLayout Padding="4" Spacing="0">
-                        <Label Text="{Binding Name}" TextColor="Black" FontSize="14"/>
-                        <Label Text="{Binding Path}" TextColor="Gray" FontSize="12"/>
+                        <Label Text="{Binding Name}" TextColor="Black" FontSize="14" LineBreakMode="MiddleTruncation"/>
+                        <Label Text="{Binding Path}" TextColor="Gray" FontSize="12" LineBreakMode="MiddleTruncation"/>
                     </StackLayout>
                 </ViewCell>
             </DataTemplate>

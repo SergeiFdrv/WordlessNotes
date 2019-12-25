@@ -35,6 +35,8 @@ namespace Notes.Views
             }
         }
 
+        public StackLayout StackL => SL;
+
         public Button AddButton => AddToListButton;
 
         private void Item_Focused(object sender, FocusEventArgs e)
@@ -47,6 +49,14 @@ namespace Notes.Views
         private void AddButton_Clicked(object sender, EventArgs e)
         {
             SL.Children.Add(new CustomListViewCell());
+        }
+
+        public void PopulateList(List<string> lines)
+        {
+            for (int i = 0; i < lines.Count; i++)
+            {
+                SL.Children.Add(new CustomListViewCell(lines[i]));
+            }
         }
     }
 }

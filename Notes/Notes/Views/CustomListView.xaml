@@ -10,7 +10,6 @@
     <ContentView.Content>
         <StackLayout Focused="Item_Focused">
             <StackLayout x:Name="SL" Spacing="0">
-                <customview:CustomListViewCell/>
             </StackLayout>
             <Button x:Name="AddToListButton" Text="Add" Clicked="AddButton_Clicked" IsVisible="False"/>
         </StackLayout>

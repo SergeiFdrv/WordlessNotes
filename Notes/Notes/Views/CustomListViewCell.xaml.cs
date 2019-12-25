@@ -17,6 +17,12 @@ namespace Notes.Views
             InitializeComponent();
         }
 
+        public CustomListViewCell(string Value)
+        {
+            InitializeComponent();
+            TXT.Text = Value;
+        }
+
         public CustomListView ParentList
         {
             get
@@ -34,6 +40,8 @@ namespace Notes.Views
             }
         }
 
+        public string Text => TXT.Text;
+
         private void Item_Focused(object sender, FocusEventArgs e)
         {
             Console.WriteLine("--- LIST CELL FOCUSED ---");
@@ -42,7 +50,6 @@ namespace Notes.Views
                 ParentList.ParentView.ParentPage.Selected = ParentList.ParentView;
                 if (!ParentList.AddButton.IsVisible) ParentList.AddButton.IsVisible = true;
             }
-            //if (ParentList.)
         }
     }
 }

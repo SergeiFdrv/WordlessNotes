@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,16 +19,25 @@ namespace Notes
             InitializeComponent();
         }
 
+        public string Name
+        {
+            get => NameEntry.Text;
+            set => NameEntry.Text = value;
+        }
+
         async void OnSaveButtonClicked(object sender, EventArgs e)
         {
             Note note = new Note
             {
-                Name = NameEntry.Text,
-                Path = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), NameEntry.Text + ".txt"),
+                Name = Name,
+                Path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), Name + ".html"),
                 DateTime = DateTime.UtcNow
-            };//(Note)BindingContext;
+            };
+            File.WriteAllText(note.Path, (Navigation.NavigationStack.ElementAt(0) as MainPage).NoteContent);
             await App.Database.SaveNoteAsync(note);
             await DisplayAlert("Saved", "Note saved", "OK");
+            (Navigation.NavigationStack.ElementAt(0) as MainPage).UnsavedData = false;
+            (Navigation.NavigationStack.ElementAt(0) as MainPage).ToolbarItems[0].Text = Name;
             await Navigation.PopAsync();
         }
     }
