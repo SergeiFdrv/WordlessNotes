@@ -15,8 +15,10 @@ namespace Notes.Data
         {
             _database = new SQLiteAsyncConnection(dbPath);
             _database.CreateTableAsync<Note>().Wait();
+            _database.CreateTableAsync<Image>().Wait();
         }
 
+        // Note
         public Task<List<Note>> GetNotesAsync() => _database.Table<Note>().ToListAsync();
 
         public Task<Note> GetNoteAsync(int id) => _database.Table<Note>().Where(i => i.ID == id).FirstOrDefaultAsync();
@@ -24,6 +26,11 @@ namespace Notes.Data
         public Task<int> SaveNoteAsync(Note note) => (note.ID == 0) ? _database.InsertAsync(note) : _database.UpdateAsync(note);
 
         public Task<int> DeleteNoteAsync(Note note) => _database.DeleteAsync(note);
+
+        // Image
+        public Task<Image> GetImageAsync(int id) => _database.Table<Image>().Where(i => i.ID == id).FirstOrDefaultAsync();
+
+        public Task<int> SaveImageAsync(Image image) => (image.ID == 0) ? _database.InsertAsync(image) : _database.UpdateAsync(image);
     }
 }
 

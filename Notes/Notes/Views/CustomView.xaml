@@ -14,7 +14,11 @@
                 <ColumnDefinition Width="35"/>
             </Grid.ColumnDefinitions>
             <StackLayout x:Name="meat" Spacing="0" Grid.Column="0">
-                <BoxView x:Name="Img" BackgroundColor="DarkOrchid" Margin="0" Focused="Item_Focused" IsVisible="False"/>
+                <Image x:Name="Img" BackgroundColor="DarkOrchid" Margin="0" Focused="Item_Focused" IsVisible="False" Source="https://i.ytimg.com/vi/-C43Ez6WH-4/maxresdefault.jpg">
+                    <Image.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="Image_Tapped"/>
+                    </Image.GestureRecognizers>
+                </Image>
                 <!-- Изучить плагин для вставки изображений: https://github.com/jamesmontemagno/MediaPlugin -->
                 <customrenderer:TextEditor x:Name="TextEditor" Placeholder="Paragraph" PlaceholderColor="Gray" Focused="Item_Focused"/>
                 <customview:CustomListView x:Name="List" IsVisible="False"/>

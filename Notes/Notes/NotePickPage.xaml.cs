@@ -28,25 +28,23 @@ namespace Notes
             else MyListView.ItemsSource = Items;
         }
 
-        async void Handle_ItemTapped(object sender, ItemTappedEventArgs e)
+        public async void Delete_Clicked(object sender, EventArgs e)
         {
-            if (e.Item == null) return;
-
+            if (MyListView.SelectedItem == null) return;
             string responce = await DisplayActionSheet("Delete?", null, null, "Yes", "No");
             if (responce == "Yes")
             {
-                //Items.RemoveAt(e.ItemIndex);
-                await App.Database.DeleteNoteAsync(e.Item as Models.Note);
-                System.IO.File.Delete((e.Item as Models.Note).Path);
-                //Items = App.Database.GetNotesAsync().Result;
-                //Deselect Item
-                //((ListView)sender).SelectedItem = null;
+                Models.Note note = MyListView.SelectedItem as Models.Note;
+                await App.Database.DeleteNoteAsync(note);
+                if (System.IO.File.Exists(note.Path))
+                    System.IO.File.Delete(note.Path);
                 await Navigation.PopAsync();
             }
         }
 
         private async void Open_Clicked(object sender, EventArgs e)
         {
+            if (MyListView.SelectedItem == null) return;
             Models.Note note = MyListView.SelectedItem as Models.Note;
             (Navigation.NavigationStack[0] as MainPage).TryPopulate(note);
             await Navigation.PopAsync();

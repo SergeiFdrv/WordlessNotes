@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
+
+using Plugin.Media;
 
 namespace Notes.Views
 {
@@ -48,6 +51,12 @@ namespace Notes.Views
 
         public CustomListView ListV => List;
 
+        public string ImgPath { get; set; }
+
+        public int ImgID { get; set; }
+
+        public Image ImageBox => Img;
+
         public int Index { get; set; }
 
         private CustomViewTypes ViewType;
@@ -63,11 +72,12 @@ namespace Notes.Views
                 ViewType = value;
                 if (value == CustomViewTypes.Image)
                 {
+                    Img.IsVisible = true;
+                    //Image_Tapped(Img, new EventArgs());
+                    Img.HeightRequest = 200;
                     TextEditor.FontSize = 12;
                     TextEditor.Placeholder = "Image description";
                     TextEditor.TextColor = Color.Red;
-                    Img.HeightRequest = 100; // TODO: заменить тестовый BoxView обратно на Image
-                    Img.IsVisible = true;
                     return;
                 }
                 else if (value == CustomViewTypes.List)
@@ -118,6 +128,28 @@ namespace Notes.Views
         {
             Console.WriteLine("--- ELEMENT FOCUSED ---");
             if (ParentPage != null) ParentPage.Selected = this;
+        }
+
+        private void Image_Tapped(object sender, EventArgs e)
+        {
+            Console.WriteLine("--- IMAGE FOCUSED ---");
+            if (ParentPage != null) ParentPage.Selected = this;
+            if (!CrossMedia.Current.IsPickPhotoSupported) return;
+            var file = CrossMedia.Current.PickPhotoAsync();
+
+            if (file == null)
+            {
+                return;
+            }
+
+            Img.Source = ImageSource.FromStream(() =>
+            {
+                Models.Image image = new Models.Image { Path = file.Result.Path };
+                ImgPath = file.Result.Path;
+                ImgID = App.Database.SaveImageAsync(image).Result;
+                var stream = file.Result.GetStream();
+                return stream;
+            });
         }
     }
 }

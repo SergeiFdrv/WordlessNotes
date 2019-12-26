@@ -6,10 +6,10 @@
              mc:Ignorable="d"
              x:Class="Notes.NotePickPage">
     <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Delete" Clicked="Delete_Clicked"/>
         <ToolbarItem Text="Open" Clicked="Open_Clicked"/>
     </ContentPage.ToolbarItems>
     <ListView x:Name="MyListView"
-            ItemTapped="Handle_ItemTapped"
             CachingStrategy="RecycleElement">
         <ListView.ItemTemplate>
             <DataTemplate>

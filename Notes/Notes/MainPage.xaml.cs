@@ -101,7 +101,7 @@ namespace Notes
                 }
                 else if (view.Type == CustomViewTypes.Image)
                 {
-                    NoteContent += $"<img src=\"\"/><br><p class=\"imgdesc\">{view.Text}</p><br>";
+                    NoteContent += $"<img src=\"{(contentLayout.Children[i] as CustomView).ImgID}\"/><br><p class=\"imgdesc\">{view.Text}</p><br>";
                 }
                 else
                 {
@@ -216,14 +216,17 @@ namespace Notes
                         listlines.Add(lines[j].Substring(4, lines[j].Length - 9));
                     }
                     (contentLayout.Children.Last() as CustomView).ListV.PopulateList(listlines);
-                    i = j + 1;
+                    i = j;
                 }
                 else if (lines[i].StartsWith("<img"))
                 {
                     contentLayout.Children.Add(new CustomView(contentLayout.Children.Count, CustomViewTypes.Image)
                     {
-                        Text = lines[i + 1].Substring(20, lines[i + 1].Length - 24)
+                        Text = lines[i + 1].Substring(19, lines[i + 1].Length - 23)
                     });
+                    Models.Image image = App.Database.GetImageAsync(int.Parse(lines[i].Substring(10, lines[i].Length - 13))).Result;
+                    ImageSource ImgSource = new ImageSourceConverter().ConvertFromInvariantString(image.Path) as ImageSource;
+                    (contentLayout.Children.Last() as CustomView).ImageBox.Source = ImgSource;
                 }
             }
         }

@@ -11,7 +11,7 @@
         <StackLayout Focused="Item_Focused">
             <StackLayout x:Name="SL" Spacing="0">
             </StackLayout>
-            <Button x:Name="AddToListButton" Text="Add" Clicked="AddButton_Clicked" IsVisible="False"/>
+            <Button x:Name="AddToListButton" Text="Add to list" Clicked="AddButton_Clicked"/>
         </StackLayout>
     </ContentView.Content>
 </ContentView>
