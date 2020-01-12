@@ -133,8 +133,12 @@ namespace Notes.Views
         private void Image_Tapped(object sender, EventArgs e)
         {
             Console.WriteLine("--- IMAGE FOCUSED ---");
-            if (ParentPage != null) ParentPage.Selected = this;
             if (!CrossMedia.Current.IsPickPhotoSupported) return;
+            if (ParentPage != null)
+            {
+                ParentPage.Selected = this;
+                ParentPage.UnsavedData = true;
+            }
             var file = CrossMedia.Current.PickPhotoAsync();
 
             if (file == null)

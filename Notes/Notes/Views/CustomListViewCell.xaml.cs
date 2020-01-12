@@ -51,5 +51,10 @@ namespace Notes.Views
                 if (!ParentList.AddButton.IsVisible) ParentList.AddButton.IsVisible = true;
             }
         }
+
+        private void TapGestureRecognizer_Tapped(object sender, EventArgs e)
+        {
+            ParentList.StackL.Children.Remove(this);
+        }
     }
 }

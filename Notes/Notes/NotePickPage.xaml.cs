@@ -18,12 +18,12 @@ namespace Notes
             InitializeComponent();
         }
 
-        public List<Models.Note> Items { get; set; }
+        public ObservableCollection<Models.Note> Items { get; set; }
 
         protected override void OnAppearing()
         {
             base.OnAppearing();
-            Items = App.Database.GetNotesAsync().Result;
+            Items = new ObservableCollection<Models.Note>(App.Database.GetNotesAsync().Result);
             if (Items.Count == 0) Content = new Label { Text = "Nothing found", VerticalTextAlignment = TextAlignment.Center, HorizontalTextAlignment = TextAlignment.Center };
             else MyListView.ItemsSource = Items;
         }
@@ -36,9 +36,10 @@ namespace Notes
             {
                 Models.Note note = MyListView.SelectedItem as Models.Note;
                 await App.Database.DeleteNoteAsync(note);
+                Items.Remove(note);
                 if (System.IO.File.Exists(note.Path))
                     System.IO.File.Delete(note.Path);
-                await Navigation.PopAsync();
+                Content = new Label { Text = "Nothing found", VerticalTextAlignment = TextAlignment.Center, HorizontalTextAlignment = TextAlignment.Center };
             }
         }
 
