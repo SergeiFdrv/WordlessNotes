@@ -133,7 +133,6 @@ namespace Notes
         void OnNewButtonClicked(object sender, EventArgs e)
         {
             ToolbarItems[0].Text = "New note";
-            return;
         }
 
         async void OnOpenButtonClicked(object sender, EventArgs e)
@@ -229,6 +228,12 @@ namespace Notes
                     (contentLayout.Children.Last() as CustomView).ImageBox.Source = ImgSource;
                 }
             }
+        }
+
+        private async void ToolbarItem_Clicked(object sender, EventArgs e)
+        {
+            string rename = await DisplayPromptAsync("Rename", null);
+            if (!string.IsNullOrEmpty(rename)) (sender as MenuItem).Text = rename;
         }
     }
 }

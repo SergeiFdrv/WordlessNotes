@@ -7,7 +7,7 @@
              mc:Ignorable="d"
              x:Class="Notes.MainPage">
     <ContentPage.ToolbarItems>
-        <ToolbarItem Text="31.12.2019. Сис. прог. Процедуры и функции"/>
+        <ToolbarItem Text="New note" Clicked="ToolbarItem_Clicked"/>
     </ContentPage.ToolbarItems>
 
     <StackLayout BackgroundColor="Gainsboro" IsTabStop="False" Spacing="0">
@@ -23,10 +23,10 @@
         </ScrollView>
         <ScrollView>
             <StackLayout BackgroundColor="White">
-                <BoxView HeightRequest="1" BackgroundColor="DodgerBlue"/>
+                <BoxView HeightRequest="1" BackgroundColor="Black"/>
                 <StackLayout x:Name="contentLayout" ChildAdded="SelectElement">
                 </StackLayout>
-                <BoxView HeightRequest="1" BackgroundColor="DodgerBlue"/>
+                <BoxView HeightRequest="1" BackgroundColor="Black"/>
             </StackLayout>
         </ScrollView>
         <Button Text="Add" Clicked="AddButton_Clicked"/>

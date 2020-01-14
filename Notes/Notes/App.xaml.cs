@@ -12,7 +12,11 @@ namespace Notes
         {
             InitializeComponent();
 
-            MainPage = new NavigationPage(new MainPage()) { BarBackgroundColor = Color.FromHex("#008888") };
+            Random random = new Random();
+            MainPage = new NavigationPage(new MainPage())
+            {
+                BarBackgroundColor = Color.FromRgb(random.Next(192), random.Next(192), random.Next(192))
+            };
         }
 
         private static NoteDatabase DB { get; set; }
