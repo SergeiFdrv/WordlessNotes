@@ -12,12 +12,15 @@ namespace Notes
         {
             InitializeComponent();
 
-            Random random = new Random();
             MainPage = new NavigationPage(new MainPage())
             {
-                BarBackgroundColor = Color.FromRgb(random.Next(192), random.Next(192), random.Next(192))
+                BarBackgroundColor = Color.FromRgb(Random.Next(192), Random.Next(192), Random.Next(192))
             };
         }
+
+        public static int FontSize = 20;
+
+        public static Random Random = new Random();
 
         private static NoteDatabase DB { get; set; }
 

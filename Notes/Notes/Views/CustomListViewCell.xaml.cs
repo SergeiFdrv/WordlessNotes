@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
+using Xamarin.Essentials;
 
 namespace Notes.Views
 {
@@ -15,12 +16,16 @@ namespace Notes.Views
         public CustomListViewCell()
         {
             InitializeComponent();
+            (Content as Grid).ColumnDefinitions[1].Width = DeviceDisplay.MainDisplayInfo.Width * 0.8 /
+                                                           DeviceDisplay.MainDisplayInfo.Density;
         }
 
         public CustomListViewCell(string Value)
         {
             InitializeComponent();
             TXT.Text = Value;
+            (Content as Grid).ColumnDefinitions[1].Width = DeviceDisplay.MainDisplayInfo.Width * 0.8 /
+                                                           DeviceDisplay.MainDisplayInfo.Density;
         }
 
         public CustomListView ParentList
@@ -53,6 +58,11 @@ namespace Notes.Views
         }
 
         private void TapGestureRecognizer_Tapped(object sender, EventArgs e)
+        {
+            ParentList.StackL.Children.Remove(this);
+        }
+
+        private void SwipeGestureRecognizer_Swiped(object sender, SwipedEventArgs e)
         {
             ParentList.StackL.Children.Remove(this);
         }

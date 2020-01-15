@@ -144,8 +144,28 @@ namespace Notes
 
         async void OnDeleteButtonClicked(object sender, EventArgs e)
         {
+            try
+            {
+                DeleteThisNote(sender, e);
+            }
+            catch
+            {
+                await DisplayAlert("Not found", "Notes with this name were not found", "OK");
+            }
+        }
+
+        async void DeleteThisNote(object sender, EventArgs e)
+        {
+            List<Note> notes = App.Database.GetNotesAsync().Result;                     // Из всех заметок
+            Note note = notes.First(i => i.Name == ToolbarItems[0].Text);               // найти одну по имени
             var p = await DisplayActionSheet("Delete note?", null, null, "Yes", "No");
-            if (p == "Yes") await DisplayAlert(p, "Note deleted", "Got it");//OnDeleteButtonClicked(sender, e);
+            if (p == "Yes")
+            {
+                await App.Database.DeleteNoteAsync(note);
+                if (System.IO.File.Exists(note.Path))
+                    System.IO.File.Delete(note.Path);
+                await DisplayAlert(p, "Note deleted", "Got it");
+            }
             else await DisplayAlert(p, "Deleting canceled", "OK");
         }
 

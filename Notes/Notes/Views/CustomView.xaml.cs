@@ -9,6 +9,7 @@ using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
 using Plugin.Media;
+using Xamarin.Essentials;
 
 namespace Notes.Views
 {
@@ -30,6 +31,7 @@ namespace Notes.Views
             InitializeComponent();
             Index = index;
             Type = type;
+            (Content as Grid).ColumnDefinitions[0].Width = DeviceDisplay.MainDisplayInfo.Width * 0.9 / DeviceDisplay.MainDisplayInfo.Density;
         }
 
         public MainPage ParentPage
@@ -75,14 +77,14 @@ namespace Notes.Views
                     Img.IsVisible = true;
                     //Image_Tapped(Img, new EventArgs());
                     Img.HeightRequest = 200;
-                    TextEditor.FontSize = 12;
+                    TextEditor.FontSize = App.FontSize - 2;
                     TextEditor.Placeholder = "Image description";
                     TextEditor.TextColor = Color.Red;
                     return;
                 }
                 else if (value == CustomViewTypes.List)
                 {
-                    TextEditor.FontSize = 14;
+                    TextEditor.FontSize = App.FontSize;
                     TextEditor.Placeholder = "List";
                     List.IsVisible = true;
                     return;
@@ -92,22 +94,22 @@ namespace Notes.Views
                 List.IsVisible = false;
                 if (value == CustomViewTypes.Header1)
                 {
-                    TextEditor.FontSize = 20;
+                    TextEditor.FontSize = App.FontSize + 6;
                     TextEditor.Placeholder = "Header 1";
                 }
                 else if (value == CustomViewTypes.Header2)
                 {
-                    TextEditor.FontSize = 18;
+                    TextEditor.FontSize = App.FontSize + 4;
                     TextEditor.Placeholder = "Header 2";
                 }
                 else if (value == CustomViewTypes.Header3)
                 {
-                    TextEditor.FontSize = 16;
+                    TextEditor.FontSize = App.FontSize + 2;
                     TextEditor.Placeholder = "Header 3";
                 }
                 else
                 {
-                    TextEditor.FontSize = 14;
+                    TextEditor.FontSize = App.FontSize;
                     TextEditor.Placeholder = "Paragraph";
                 }
             }

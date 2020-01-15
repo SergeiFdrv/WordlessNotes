@@ -13,6 +13,7 @@ namespace Notes.Renderers
             BackgroundColor = Color.GhostWhite;
             TextColor = Color.Black;
             TextChanged += TextChange;
+            FontSize = App.FontSize;
         }
 
         public MainPage ParentPage
