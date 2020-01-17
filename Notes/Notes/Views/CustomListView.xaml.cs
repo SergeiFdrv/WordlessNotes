@@ -39,11 +39,15 @@ namespace Notes.Views
 
         public Button AddButton => AddToListButton;
 
-        private void Item_Focused(object sender, FocusEventArgs e)
+        public void CLV_Focused(object sender, FocusEventArgs e)
         {
-            Console.WriteLine("--- LIST FOCUSED ---");
             if (ParentView != null) ParentView.ParentPage.Selected = ParentView;
             if (!AddToListButton.IsVisible) AddToListButton.IsVisible = true;
+        }
+
+        public void CLV_Unfocused(object sender, FocusEventArgs e)
+        {
+            if (AddToListButton.IsVisible) AddToListButton.IsVisible = false;
         }
 
         private void AddButton_Clicked(object sender, EventArgs e)

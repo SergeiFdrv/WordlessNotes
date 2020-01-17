@@ -49,11 +49,17 @@ namespace Notes.Views
 
         private void Item_Focused(object sender, FocusEventArgs e)
         {
-            Console.WriteLine("--- LIST CELL FOCUSED ---");
             if (ParentList != null)
             {
-                ParentList.ParentView.ParentPage.Selected = ParentList.ParentView;
-                if (!ParentList.AddButton.IsVisible) ParentList.AddButton.IsVisible = true;
+                ParentList.CLV_Focused(sender, e);
+            }
+        }
+
+        private void Item_Unfocused(object sender, FocusEventArgs e)
+        {
+            if (ParentList != null)
+            {
+                ParentList.CLV_Unfocused(sender, e);
             }
         }
 

@@ -19,7 +19,7 @@
                     <TapGestureRecognizer Tapped="TapGestureRecognizer_Tapped"/>
                 </Label.GestureRecognizers>
             </Label>
-            <customrenderer:TextEditor x:Name="TXT" Grid.Column="1" VerticalOptions="Center" Placeholder="List item" PlaceholderColor="Gray" Focused="Item_Focused">
+            <customrenderer:TextEditor x:Name="TXT" Grid.Column="1" VerticalOptions="Center" Placeholder="List item" PlaceholderColor="Gray" Focused="Item_Focused" Unfocused="Item_Unfocused">
                 <customrenderer:TextEditor.GestureRecognizers>
                     <SwipeGestureRecognizer Direction="Right" Threshold="30" Swiped="SwipeGestureRecognizer_Swiped"/>
                 </customrenderer:TextEditor.GestureRecognizers>

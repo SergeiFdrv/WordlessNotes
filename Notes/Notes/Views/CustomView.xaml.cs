@@ -72,27 +72,21 @@ namespace Notes.Views
             set
             {
                 ViewType = value;
-                if (value == CustomViewTypes.Image)
+                List.IsVisible = value == CustomViewTypes.List;
+                TextEditor.IsVisible = !(List.IsVisible = value == CustomViewTypes.List);
+                TextEditor.TextColor = Color.Black;
+                if (Img.IsVisible = value == CustomViewTypes.Image)
                 {
-                    Img.IsVisible = true;
-                    //Image_Tapped(Img, new EventArgs());
                     Img.HeightRequest = 200;
                     TextEditor.FontSize = App.FontSize - 2;
                     TextEditor.Placeholder = "Image description";
                     TextEditor.TextColor = Color.Red;
-                    return;
                 }
-                else if (value == CustomViewTypes.List)
+                else if (List.IsVisible && !(TextEditor.Text == string.Empty || List.StackL.Children.Any()))
                 {
-                    TextEditor.FontSize = App.FontSize;
-                    TextEditor.Placeholder = "List";
-                    List.IsVisible = true;
-                    return;
+                    List.StackL.Children.Add(new CustomListViewCell(TextEditor.Text));
                 }
-                Img.IsVisible = false;
-                TextEditor.TextColor = Color.Black;
-                List.IsVisible = false;
-                if (value == CustomViewTypes.Header1)
+                else if (value == CustomViewTypes.Header1)
                 {
                     TextEditor.FontSize = App.FontSize + 6;
                     TextEditor.Placeholder = "Header 1";
@@ -111,6 +105,10 @@ namespace Notes.Views
                 {
                     TextEditor.FontSize = App.FontSize;
                     TextEditor.Placeholder = "Paragraph";
+                }
+                if (ParentPage != null)
+                {
+                    ParentPage.UnsavedData = true;
                 }
             }
         }
@@ -142,12 +140,7 @@ namespace Notes.Views
                 ParentPage.UnsavedData = true;
             }
             var file = CrossMedia.Current.PickPhotoAsync();
-
-            if (file == null)
-            {
-                return;
-            }
-
+            if (file == null) return;
             Img.Source = ImageSource.FromStream(() =>
             {
                 Models.Image image = new Models.Image { Path = file.Result.Path };

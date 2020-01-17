@@ -18,10 +18,6 @@ namespace Notes
         public MainPage()
         { /* TODO: РЕАЛИЗОВАТЬ СОХРАНЕНИЕ ДАННЫХ ПРИ СВОРАЧИВАНИИ (в app.xaml.cs) */
             InitializeComponent();
-            DocumentItemOptions = new List<string>()
-            {
-                "Header 1", "Header 2", "Header 3", "Text", "List", "Image"
-            };
             picker.ItemsSource = DocumentItemOptions;
             picker.SelectedItem = picker.Items[0];
             contentLayout.Children.Add(new CustomView(contentLayout.Children.Count, CustomViewTypes.Header1));
@@ -31,7 +27,8 @@ namespace Notes
             contentLayout.Children.Add(new CustomView(contentLayout.Children.Count, CustomViewTypes.List));
         }
 
-        public List<string> DocumentItemOptions { get; }
+        public List<string> DocumentItemOptions =>
+            new List<string> { "Header 1", "Header 2", "Header 3", "Paragraph", "List", "Image" };
 
         public bool UnsavedData
         {
@@ -60,6 +57,7 @@ namespace Notes
         private void AddButton_Clicked(object sender, EventArgs e)
         {
             contentLayout.Children.Add(new CustomView(contentLayout.Children.Count));
+            UnsavedData = true;
         }
 
         public void SelectElement(object sender, EventArgs e)
@@ -74,6 +72,7 @@ namespace Notes
             {
                 (contentLayout.Children[i] as CustomView).Index--;
             }
+            UnsavedData = true;
         }
 
         private void Picker_SelectedIndexChanged(object sender, EventArgs e)
@@ -83,10 +82,18 @@ namespace Notes
 
         async void OnSaveButtonClicked(object sender, EventArgs e)
         {
-            NoteContent = string.Empty;
+            string name = NoteContent = string.Empty;
             for (int i = 0; i < contentLayout.Children.Count; i++)
             {
                 CustomView view = contentLayout.Children[i] as CustomView;
+                if (!string.IsNullOrEmpty(view.Text) && name == string.Empty)
+                {
+                    for (int j = 0; j < view.Text.Length; j++)
+                    {
+                        if (char.IsLetterOrDigit(view.Text[j])) name += view.Text[j];
+                        else if (char.IsWhiteSpace(view.Text[j])) name += '_';
+                    }
+                }
                 if (view.Type == CustomViewTypes.Header1)
                 {
                     NoteContent += $"<h1>{view.Text}</h1><br>";
@@ -103,28 +110,24 @@ namespace Notes
                 {
                     NoteContent += $"<img src=\"{(contentLayout.Children[i] as CustomView).ImgID}\"/><br><p class=\"imgdesc\">{view.Text}</p><br>";
                 }
-                else
+                else if (view.Type == CustomViewTypes.List)
                 {
-                    NoteContent += $"<p>{view.Text}</p><br>";
-                    if (view.Type == CustomViewTypes.List)
+                    NoteContent += "<ul><br>";
+                    for (int j = 0; j < view.ListV.StackL.Children.Count; j++)
                     {
-                        NoteContent += "<ul><br>";
-                        for (int j = 0; j < view.ListV.StackL.Children.Count; j++)
-                        {
-                            NoteContent += $"<li>{(view.ListV.StackL.Children[j] as CustomListViewCell).Text}</li><br>";
-                        }
-                        NoteContent += "</ul><br>";
+                        NoteContent += $"<li>{(view.ListV.StackL.Children[j] as CustomListViewCell).Text}</li><br>";
                     }
+                    NoteContent += "</ul><br>";
                 }
+                else NoteContent += $"<p>{view.Text}</p><br>";
             }
-            if (NoteContent == "")
+            if (NoteContent == "" || string.IsNullOrEmpty(name))
             {
-                UnsavedData = false;
-                return;
+                UnsavedData = false; return;
             }
             NoteSavePage page = new NoteSavePage
             {
-                Name = ToolbarItems[0].Text
+                Name = name
             };
             NavigationPage.SetHasBackButton(this, true);
             await Navigation.PushAsync(page);
@@ -133,6 +136,7 @@ namespace Notes
         void OnNewButtonClicked(object sender, EventArgs e)
         {
             ToolbarItems[0].Text = "New note";
+            contentLayout.Children.Clear();
         }
 
         async void OnOpenButtonClicked(object sender, EventArgs e)
@@ -144,29 +148,20 @@ namespace Notes
 
         async void OnDeleteButtonClicked(object sender, EventArgs e)
         {
-            try
-            {
-                DeleteThisNote(sender, e);
-            }
-            catch
-            {
-                await DisplayAlert("Not found", "Notes with this name were not found", "OK");
-            }
-        }
-
-        async void DeleteThisNote(object sender, EventArgs e)
-        {
             List<Note> notes = App.Database.GetNotesAsync().Result;                     // Из всех заметок
-            Note note = notes.First(i => i.Name == ToolbarItems[0].Text);               // найти одну по имени
-            var p = await DisplayActionSheet("Delete note?", null, null, "Yes", "No");
-            if (p == "Yes")
+            if (!notes.Any(i => i.Name == ToolbarItems[0].Text))
             {
-                await App.Database.DeleteNoteAsync(note);
-                if (System.IO.File.Exists(note.Path))
-                    System.IO.File.Delete(note.Path);
-                await DisplayAlert(p, "Note deleted", "Got it");
+                await DisplayAlert("Not found", "Notes with this name were not found", "OK"); return;
             }
-            else await DisplayAlert(p, "Deleting canceled", "OK");
+            Note note = notes.First(i => i.Name == ToolbarItems[0].Text);               // найти одну по имени
+            if (await DisplayActionSheet("Delete note?", null, null, "Yes", "No") == "Yes")
+            {
+                await App.Database.DeleteNoteAsync(note);                               // Удалить её из БД
+                if (System.IO.File.Exists(note.Path))
+                    System.IO.File.Delete(note.Path);                                   // Удалить файл
+                await DisplayAlert("Note deleted", null, "Got it");
+            }
+            UnsavedData = true;
         }
 
         public async void TryPopulate(Note note)
@@ -250,10 +245,9 @@ namespace Notes
             }
         }
 
-        private async void ToolbarItem_Clicked(object sender, EventArgs e)
+        private void ToolbarItem_Clicked(object sender, EventArgs e)
         {
-            string rename = await DisplayPromptAsync("Rename", null);
-            if (!string.IsNullOrEmpty(rename)) (sender as MenuItem).Text = rename;
+            (App.Current.MainPage as NavigationPage).BarBackgroundColor = Color.FromRgb(App.Random.Next(192), App.Random.Next(192), App.Random.Next(192));
         }
     }
 }

@@ -6,17 +6,17 @@
              mc:Ignorable="d"
              x:Class="Notes.NotePickPage">
     <ContentPage.ToolbarItems>
-        <ToolbarItem Text="Delete" Clicked="Delete_Clicked"/>
-        <ToolbarItem Text="Open" Clicked="Open_Clicked"/>
     </ContentPage.ToolbarItems>
     <ListView x:Name="MyListView"
-            CachingStrategy="RecycleElement">
+            CachingStrategy="RecycleElement"
+            HasUnevenRows="True"
+            ItemSelected="MyListView_ItemSelected">
         <ListView.ItemTemplate>
             <DataTemplate>
                 <ViewCell>
-                    <StackLayout Padding="4" Spacing="0">
-                        <Label Text="{Binding Name}" TextColor="Black" FontSize="14" LineBreakMode="MiddleTruncation"/>
-                        <Label Text="{Binding Path}" TextColor="Gray" FontSize="12" LineBreakMode="MiddleTruncation"/>
+                    <StackLayout Padding="8" Spacing="0">
+                        <Label Text="{Binding Name}" TextColor="Black" FontSize="Large" LineBreakMode="WordWrap"/>
+                        <Label Text="{Binding Path}" TextColor="Gray"  FontSize="Small" LineBreakMode="MiddleTruncation"/>
                     </StackLayout>
                 </ViewCell>
             </DataTemplate>

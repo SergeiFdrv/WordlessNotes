@@ -14,7 +14,7 @@
                 <ColumnDefinition Width="25"/>
             </Grid.ColumnDefinitions>
             <StackLayout x:Name="meat" Spacing="0" Grid.Column="0">
-                <Image x:Name="Img" BackgroundColor="DarkOrchid" Margin="0" Focused="Item_Focused" IsVisible="False" Source="https://i.ytimg.com/vi/-C43Ez6WH-4/maxresdefault.jpg">
+                <Image x:Name="Img" BackgroundColor="DarkOrchid" Margin="0" Focused="Item_Focused" IsVisible="False">
                     <Image.GestureRecognizers>
                         <TapGestureRecognizer Tapped="Image_Tapped"/>
                     </Image.GestureRecognizers>
