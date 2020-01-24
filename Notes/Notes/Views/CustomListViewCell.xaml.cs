@@ -42,7 +42,11 @@ namespace Notes.Views
             }
         }
 
-        public string Text => TXT.Text;
+        public string Text
+        {
+            get => TXT.Text;
+            set => TXT.Text = value;
+        }
 
         private void Item_Focused(object sender, FocusEventArgs e)
         {
@@ -63,6 +67,20 @@ namespace Notes.Views
         private void SwipeGestureRecognizer_Swiped(object sender, SwipedEventArgs e)
         {
             ParentList.StackL.Children.Remove(this);
+        }
+
+        private void TXT_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (Text.Contains('\n'))
+            {
+                CustomListViewCell listCell = new CustomListViewCell()
+                {
+                    Text = Text.Substring(Text.LastIndexOf('\n') + 1)
+                };
+                TXT.Unfocus();
+                ParentList.StackL.Children.Insert(ParentList.StackL.Children.IndexOf(this) + 1, listCell);
+                TXT.Text = Text.Substring(0, Text.LastIndexOf('\n'));
+            }
         }
     }
 }

@@ -133,5 +133,19 @@ namespace Notes.Views
             await App.Database.SaveImageAsync(Image);
             Img.Source = ImageSource.FromFile(Image.Path);
         }
+
+        private void TextEditor_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (Text.Contains('\n'))
+            {
+                CustomView customView = new CustomView(Index + 1, Type)
+                {
+                    Text = Text.Substring(Text.LastIndexOf('\n') + 1)
+                };
+                TextEditor.Unfocus();
+                ParentPage.AddElement(Index + 1, customView);
+                Text = Text.Substring(0, Text.LastIndexOf('\n'));
+            }
+        }
     }
 }

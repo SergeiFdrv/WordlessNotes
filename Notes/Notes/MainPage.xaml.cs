@@ -68,10 +68,25 @@ namespace Notes
                 AddElement(contentLayout.Children.Count, (CustomViewTypes)DocumentItemOptions.FindIndex(_ => _ == res));
         }
 
-        private void AddElement(int count, CustomViewTypes type)
+        public void AddElement(int index, CustomViewTypes type)
         {
-            contentLayout.Children.Add(new CustomView(count, type));
+            contentLayout.Children.Insert(index, new CustomView(index, type));
+            IncrementIndicesFrom(index + 1);
+            //(contentLayout.Children[index] as CustomView).Focus();
             UnsavedData = true;
+        }
+
+        public void AddElement(int index, CustomView view)
+        {
+            contentLayout.Children.Insert(index, view);
+            IncrementIndicesFrom(index + 1);
+            //(contentLayout.Children[index] as CustomView).Focus();
+            UnsavedData = true;
+        }
+
+        private void IncrementIndicesFrom(int index)
+        {
+            for (int i = index; i < contentLayout.Children.Count; i++) (contentLayout.Children[i] as CustomView).Index++;
         }
 
         public void SelectAddedElement(object sender, EventArgs e)
