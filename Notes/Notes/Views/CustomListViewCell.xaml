@@ -12,10 +12,8 @@
                 <ColumnDefinition Width="25"/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            <!--<Button Text="x" FontSize="20" VerticalOptions="Start" Focused="Item_Focused" Clicked="TapGestureRecognizer_Tapped"/>-->
             <Label Text="x" VerticalOptions="Start" VerticalTextAlignment="Center" Margin="10, 5, 0, 0" Focused="Item_Focused" FontSize="20">
                 <Label.GestureRecognizers>
-                    <SwipeGestureRecognizer Direction="Right" Swiped="SwipeGestureRecognizer_Swiped"/>
                     <TapGestureRecognizer Tapped="TapGestureRecognizer_Tapped"/>
                 </Label.GestureRecognizers>
             </Label>

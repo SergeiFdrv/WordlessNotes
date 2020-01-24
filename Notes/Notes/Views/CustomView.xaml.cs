@@ -41,28 +41,23 @@ namespace Notes.Views
                 var parent = Parent;
                 while (parent != null)
                 {
-                    if (parent is MainPage)
-                    {
-                        return parent as MainPage;
-                    }
+                    if (parent is MainPage) return parent as MainPage;
                     parent = parent.Parent;
                 }
                 return null;
             }
         }
 
+        // List
         public CustomListView ListV => List;
 
-        public string ImgPath { get; set; }
-
-        public int ImgID { get; set; }
-
+        // Image
+        public Models.Image Image { get; set; }
         public Image ImageBox => Img;
 
+        // Общее
         public int Index { get; set; }
-
         private CustomViewTypes ViewType;
-
         public CustomViewTypes Type
         {
             get
@@ -75,12 +70,10 @@ namespace Notes.Views
                 List.IsVisible = value == CustomViewTypes.List;
                 TextEditor.IsVisible = !(List.IsVisible = value == CustomViewTypes.List);
                 TextEditor.TextColor = Color.Black;
-                if (Img.IsVisible = value == CustomViewTypes.Image)
+                if (Img.IsVisible = ImgBtn.IsVisible = value == CustomViewTypes.Image)
                 {
-                    Img.HeightRequest = 200;
                     TextEditor.FontSize = App.FontSize - 2;
                     TextEditor.Placeholder = "Image description";
-                    TextEditor.TextColor = Color.Red;
                 }
                 else if (List.IsVisible && !(TextEditor.Text == string.Empty || List.StackL.Children.Any()))
                 {
@@ -106,10 +99,7 @@ namespace Notes.Views
                     TextEditor.FontSize = App.FontSize;
                     TextEditor.Placeholder = "Paragraph";
                 }
-                if (ParentPage != null)
-                {
-                    ParentPage.UnsavedData = true;
-                }
+                if (ParentPage != null) ParentPage.UnsavedData = true;
             }
         }
 
@@ -121,34 +111,27 @@ namespace Notes.Views
 
         private void Button_Clicked(object sender, EventArgs e)
         {
-            if (ParentPage != null) ParentPage.DelEl(Index);
+            if (ParentPage != null) ParentPage.DeleteElement(Index);
         }
 
         private void Item_Focused(object sender, FocusEventArgs e)
         {
-            Console.WriteLine("--- ELEMENT FOCUSED ---");
             if (ParentPage != null) ParentPage.Selected = this;
         }
 
-        private void Image_Tapped(object sender, EventArgs e)
+        private async void Image_Tapped(object sender, EventArgs e)
         {
-            Console.WriteLine("--- IMAGE FOCUSED ---");
             if (!CrossMedia.Current.IsPickPhotoSupported) return;
             if (ParentPage != null)
             {
                 ParentPage.Selected = this;
                 ParentPage.UnsavedData = true;
             }
-            var file = CrossMedia.Current.PickPhotoAsync();
+            var file = await CrossMedia.Current.PickPhotoAsync();
             if (file == null) return;
-            Img.Source = ImageSource.FromStream(() =>
-            {
-                Models.Image image = new Models.Image { Path = file.Result.Path };
-                ImgPath = file.Result.Path;
-                ImgID = App.Database.SaveImageAsync(image).Result;
-                var stream = file.Result.GetStream();
-                return stream;
-            });
+            Image = new Models.Image { Path = file.Path, Name = file.Path.Substring(file.Path.LastIndexOf('/') + 1) };
+            await App.Database.SaveImageAsync(Image);
+            Img.Source = ImageSource.FromFile(Image.Path);
         }
     }
 }

@@ -11,7 +11,8 @@
         <StackLayout Focused="CLV_Focused" Unfocused="CLV_Unfocused">
             <StackLayout x:Name="SL" Spacing="0">
             </StackLayout>
-            <Button x:Name="AddToListButton" Text="Add to list" Clicked="AddButton_Clicked" IsVisible="False" Focused="CLV_Focused" Unfocused="CLV_Unfocused"/>
+            <Button x:Name="AddToListButton" Text="Add to list" IsVisible="False" HorizontalOptions="Start" Margin="10,0,0,0"
+                    Clicked="AddButton_Clicked" Focused="CLV_Focused" Unfocused="CLV_Unfocused"/>
         </StackLayout>
     </ContentView.Content>
 </ContentView>

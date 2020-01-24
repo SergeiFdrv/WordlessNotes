@@ -61,11 +61,11 @@ namespace Notes.Properties {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на .
+        ///   Ищет локализованную строку, похожую на New note.
         /// </summary>
-        internal static string dbPath {
+        internal static string NewNote {
             get {
-                return ResourceManager.GetString("dbPath", resourceCulture);
+                return ResourceManager.GetString("NewNote", resourceCulture);
             }
         }
     }

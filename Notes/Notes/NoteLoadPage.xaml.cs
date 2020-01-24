@@ -11,9 +11,9 @@ using Xamarin.Forms.Xaml;
 namespace Notes
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class NotePickPage : ContentPage
+    public partial class NoteLoadPage : ContentPage
     {
-        public NotePickPage()
+        public NoteLoadPage()
         {
             InitializeComponent();
         }
@@ -46,6 +46,7 @@ namespace Notes
         private async void Open_Clicked(object sender, EventArgs e)
         {
             Models.Note note = MyListView.SelectedItem as Models.Note;
+            (Navigation.NavigationStack[0] as MainPage).Note = note;
             (Navigation.NavigationStack[0] as MainPage).TryPopulate(note);
             await Navigation.PopAsync();
         }

@@ -42,7 +42,7 @@ namespace Notes
         }
 
         protected override void OnSleep()
-        { // TODO: РЕАЛИЗОВАТЬ СОХРАНЕНИЕ ДАННЫХ ПРИ СВОРАЧИВАНИИ
+        { // TODO: ПРОВЕРИТЬ СОХРАНЕНИЕ ДАННЫХ ПРИ СВОРАЧИВАНИИ
         }
 
         protected override void OnResume()

@@ -35,10 +35,7 @@ namespace Notes.Views
                 var parent = Parent;
                 while (parent != null)
                 {
-                    if (parent is CustomListView)
-                    {
-                        return parent as CustomListView;
-                    }
+                    if (parent is CustomListView) return parent as CustomListView;
                     parent = parent.Parent;
                 }
                 return null;
@@ -49,22 +46,17 @@ namespace Notes.Views
 
         private void Item_Focused(object sender, FocusEventArgs e)
         {
-            if (ParentList != null)
-            {
-                ParentList.CLV_Focused(sender, e);
-            }
+            if (ParentList != null) ParentList.CLV_Focused(sender, e);
         }
 
         private void Item_Unfocused(object sender, FocusEventArgs e)
         {
-            if (ParentList != null)
-            {
-                ParentList.CLV_Unfocused(sender, e);
-            }
+            if (ParentList != null) ParentList.CLV_Unfocused(sender, e);
         }
 
         private void TapGestureRecognizer_Tapped(object sender, EventArgs e)
         {
+            if (ParentList.StackL.Children.Count == 1) ParentList.ParentView.ParentPage.DeleteElement(ParentList.ParentView.Index);
             ParentList.StackL.Children.Remove(this);
         }
 

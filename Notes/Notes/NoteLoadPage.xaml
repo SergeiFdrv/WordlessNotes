@@ -4,7 +4,7 @@
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
-             x:Class="Notes.NotePickPage">
+             x:Class="Notes.NoteLoadPage">
     <ContentPage.ToolbarItems>
     </ContentPage.ToolbarItems>
     <ListView x:Name="MyListView"
@@ -15,8 +15,8 @@
             <DataTemplate>
                 <ViewCell>
                     <StackLayout Padding="8" Spacing="0">
-                        <Label Text="{Binding Name}" TextColor="Black" FontSize="Large" LineBreakMode="WordWrap"/>
-                        <Label Text="{Binding Path}" TextColor="Gray"  FontSize="Small" LineBreakMode="MiddleTruncation"/>
+                        <Label Text="{Binding Name}"     TextColor="Black" FontSize="Large" LineBreakMode="WordWrap"/>
+                        <Label Text="{Binding DateTime}" TextColor="Gray" FontSize="Medium" LineBreakMode="MiddleTruncation"/>
                     </StackLayout>
                 </ViewCell>
             </DataTemplate>

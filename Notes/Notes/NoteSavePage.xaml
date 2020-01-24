@@ -10,14 +10,7 @@
             <Label Text="Name"/>
             <Entry x:Name="NameEntry"/>
             <Button x:Name="SaveButton" Text="Save" Clicked="OnSaveButtonClicked"/>
+            <Button x:Name="HTMLButton" Text="Export as HTML" Clicked="HTMLButton_Clicked"/>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>
-<!--
-    Сохранение записи:
-    - Выбор имени
-        - Entry
-    - Выбор пути
-        -
-    - Кнопка Save
--->

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Xamarin.Forms;
 using Notes.Views;
 using Notes.Models;
+using Notes.Interfaces;
 
 namespace Notes
 {
@@ -16,7 +17,7 @@ namespace Notes
     public partial class MainPage : ContentPage
     {
         public MainPage()
-        { /* TODO: РЕАЛИЗОВАТЬ СОХРАНЕНИЕ ДАННЫХ ПРИ СВОРАЧИВАНИИ (в app.xaml.cs) */
+        {
             InitializeComponent();
             picker.ItemsSource = DocumentItemOptions;
             picker.SelectedItem = picker.Items[0];
@@ -27,16 +28,14 @@ namespace Notes
             contentLayout.Children.Add(new CustomView(contentLayout.Children.Count, CustomViewTypes.List));
         }
 
+        #region Properties
         public List<string> DocumentItemOptions =>
             new List<string> { "Header 1", "Header 2", "Header 3", "Paragraph", "List", "Image" };
 
         public bool UnsavedData
         {
             get => savebtn.IsEnabled;
-            set
-            {
-                savebtn.IsEnabled = value;
-            }
+            set => savebtn.IsEnabled = value;
         }
 
         private CustomView SelectedView;
@@ -47,25 +46,41 @@ namespace Notes
             set
             {
                 SelectedView = value;
-                Console.WriteLine((int)SelectedView.Type);
                 picker.SelectedIndex = (int)SelectedView.Type;
             }
         }
 
         public string NoteContent { get; set; }
 
-        private void AddButton_Clicked(object sender, EventArgs e)
+        public Note Note { get; set; }
+        #endregion
+
+        #region AddingElement
+        private void AddParagraphClicked(object sender, EventArgs e)
         {
-            contentLayout.Children.Add(new CustomView(contentLayout.Children.Count));
+            AddElement(contentLayout.Children.Count, CustomViewTypes.Paragraph);
+        }
+
+        private async void AddElementClicked(object sender, EventArgs e)
+        {
+            string res = await DisplayActionSheet(null, "Cancel", null, DocumentItemOptions.ToArray());
+            if (!string.IsNullOrEmpty(res))
+                AddElement(contentLayout.Children.Count, (CustomViewTypes)DocumentItemOptions.FindIndex(_ => _ == res));
+        }
+
+        private void AddElement(int count, CustomViewTypes type)
+        {
+            contentLayout.Children.Add(new CustomView(count, type));
             UnsavedData = true;
         }
 
-        public void SelectElement(object sender, EventArgs e)
+        public void SelectAddedElement(object sender, EventArgs e)
         {
              if (Selected == null) (contentLayout.Children.Last() as CustomView).Focus();
         }
-
-        public void DelEl(int index)
+        #endregion
+        #region DeletingElement
+        public void DeleteElement(int index)
         {
             contentLayout.Children.Remove(contentLayout.Children.ElementAt(index));
             for (int i = index; i < contentLayout.Children.Count; i++)
@@ -74,96 +89,9 @@ namespace Notes
             }
             UnsavedData = true;
         }
+        #endregion
 
-        private void Picker_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (Selected != null) Selected.Type = (CustomViewTypes)((sender as Picker).SelectedIndex);
-        }
-
-        async void OnSaveButtonClicked(object sender, EventArgs e)
-        {
-            string name = NoteContent = string.Empty;
-            for (int i = 0; i < contentLayout.Children.Count; i++)
-            {
-                CustomView view = contentLayout.Children[i] as CustomView;
-                if (!string.IsNullOrEmpty(view.Text) && name == string.Empty)
-                {
-                    for (int j = 0; j < view.Text.Length; j++)
-                    {
-                        if (char.IsLetterOrDigit(view.Text[j])) name += view.Text[j];
-                        else if (char.IsWhiteSpace(view.Text[j])) name += '_';
-                    }
-                }
-                if (view.Type == CustomViewTypes.Header1)
-                {
-                    NoteContent += $"<h1>{view.Text}</h1><br>";
-                }
-                else if (view.Type == CustomViewTypes.Header2)
-                {
-                    NoteContent += $"<h2>{view.Text}</h2><br>";
-                }
-                else if (view.Type == CustomViewTypes.Header3)
-                {
-                    NoteContent += $"<h3>{view.Text}</h3><br>";
-                }
-                else if (view.Type == CustomViewTypes.Image)
-                {
-                    NoteContent += $"<img src=\"{(contentLayout.Children[i] as CustomView).ImgID}\"/><br><p class=\"imgdesc\">{view.Text}</p><br>";
-                }
-                else if (view.Type == CustomViewTypes.List)
-                {
-                    NoteContent += "<ul><br>";
-                    for (int j = 0; j < view.ListV.StackL.Children.Count; j++)
-                    {
-                        NoteContent += $"<li>{(view.ListV.StackL.Children[j] as CustomListViewCell).Text}</li><br>";
-                    }
-                    NoteContent += "</ul><br>";
-                }
-                else NoteContent += $"<p>{view.Text}</p><br>";
-            }
-            if (NoteContent == "" || string.IsNullOrEmpty(name))
-            {
-                UnsavedData = false; return;
-            }
-            NoteSavePage page = new NoteSavePage
-            {
-                Name = name
-            };
-            NavigationPage.SetHasBackButton(this, true);
-            await Navigation.PushAsync(page);
-        }
-
-        void OnNewButtonClicked(object sender, EventArgs e)
-        {
-            ToolbarItems[0].Text = "New note";
-            contentLayout.Children.Clear();
-        }
-
-        async void OnOpenButtonClicked(object sender, EventArgs e)
-        {
-            NotePickPage page = new NotePickPage();
-            NavigationPage.SetHasBackButton(this, true);
-            await Navigation.PushAsync(page);
-        }
-
-        async void OnDeleteButtonClicked(object sender, EventArgs e)
-        {
-            List<Note> notes = App.Database.GetNotesAsync().Result;                     // Из всех заметок
-            if (!notes.Any(i => i.Name == ToolbarItems[0].Text))
-            {
-                await DisplayAlert("Not found", "Notes with this name were not found", "OK"); return;
-            }
-            Note note = notes.First(i => i.Name == ToolbarItems[0].Text);               // найти одну по имени
-            if (await DisplayActionSheet("Delete note?", null, null, "Yes", "No") == "Yes")
-            {
-                await App.Database.DeleteNoteAsync(note);                               // Удалить её из БД
-                if (System.IO.File.Exists(note.Path))
-                    System.IO.File.Delete(note.Path);                                   // Удалить файл
-                await DisplayAlert("Note deleted", null, "Got it");
-            }
-            UnsavedData = true;
-        }
-
+        #region Loading
         public async void TryPopulate(Note note)
         {
             try
@@ -222,7 +150,7 @@ namespace Notes
                 }
                 else if (lines[i].StartsWith("<ul>"))
                 {
-                    (contentLayout.Children.Last() as CustomView).Type = CustomViewTypes.List;
+                    contentLayout.Children.Add(new CustomView(contentLayout.Children.Count, CustomViewTypes.List));
                     List<string> listlines = new List<string>();
                     int j = i + 1;
                     for (; j < lines.Length && lines[j] != "</ul>"; j++)
@@ -234,27 +162,142 @@ namespace Notes
                 }
                 else if (lines[i].StartsWith("<img"))
                 {
-                    contentLayout.Children.Add(new CustomView(contentLayout.Children.Count, CustomViewTypes.Image)
+                    CustomView customView = new CustomView(contentLayout.Children.Count, CustomViewTypes.Image)
                     {
-                        Text = lines[i + 1].Substring(19, lines[i + 1].Length - 23)
-                    });
-                    Models.Image image = App.Database.GetImageAsync(int.Parse(lines[i].Substring(10, lines[i].Length - 13))).Result;
-                    ImageSource ImgSource = new ImageSourceConverter().ConvertFromInvariantString(image.Path) as ImageSource;
-                    (contentLayout.Children.Last() as CustomView).ImageBox.Source = ImgSource;
+                        Text = lines[i + 1].Substring(19, lines[i + 1].Length - 23),
+                        Image = App.Database.GetImageByNameAsync(lines[i].Substring(14, lines[i].Length - 17)).Result
+                    };
+                    customView.ImageBox.Source = ImageSource.FromFile(customView.Image.Path);
+                    contentLayout.Children.Add(customView);
                 }
             }
         }
+        #endregion
+        #region Saving
+        private string ContentParse(out string name)
+        {
+            string content = name = string.Empty;
+            if (Note != null) name = Note.Name; // TODO: при замене Export на Save As... удалить эту строку?
+            for (int i = 0; i < contentLayout.Children.Count; i++)
+            {
+                CustomView view = contentLayout.Children[i] as CustomView;
+                if (string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(view.Text))
+                {
+                    name = view.Text;
+                }
+                if (view.Type == CustomViewTypes.Header1)
+                {
+                    content += $"<h1>{view.Text}</h1><br>";
+                }
+                else if (view.Type == CustomViewTypes.Header2)
+                {
+                    content += $"<h2>{view.Text}</h2><br>";
+                }
+                else if (view.Type == CustomViewTypes.Header3)
+                {
+                    content += $"<h3>{view.Text}</h3><br>";
+                }
+                else if (view.Type == CustomViewTypes.Image)
+                {
+                    content += $"<img src=\"img/{(contentLayout.Children[i] as CustomView).Image.Name}\"/><br><p class=\"imgdesc\">{view.Text}</p><br>";
+                }
+                else if (view.Type == CustomViewTypes.List)
+                {
+                    content += "<ul><br>";
+                    for (int j = 0; j < view.ListV.StackL.Children.Count; j++)
+                    {
+                        content += $"<li>{(view.ListV.StackL.Children[j] as CustomListViewCell).Text}</li><br>";
+                    }
+                    content += "</ul><br>";
+                }
+                else content += $"<p>{view.Text}</p><br>";
+            }
+            return content;
+        }
+        #endregion
 
         private void ToolbarItem_Clicked(object sender, EventArgs e)
         {
             (App.Current.MainPage as NavigationPage).BarBackgroundColor = Color.FromRgb(App.Random.Next(192), App.Random.Next(192), App.Random.Next(192));
         }
+
+        #region HeaderMenuInteraction
+        private void Picker_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (Selected != null) Selected.Type = (CustomViewTypes)((sender as Picker).SelectedIndex);
+        }
+
+        void OnNewButtonClicked(object sender, EventArgs e)
+        {
+            Note = null;
+            ToolbarItems[0].Text = "New note";
+            contentLayout.Children.Clear();
+        }
+
+        async void OnOpenButtonClicked(object sender, EventArgs e)
+        {
+            NoteLoadPage page = new NoteLoadPage();
+            NavigationPage.SetHasBackButton(this, true);
+            await Navigation.PushAsync(page);
+        }
+
+        async void OnSaveButtonClicked(object sender, EventArgs e)
+        {
+            NoteContent = ContentParse(out string name);
+            if (string.IsNullOrEmpty(NoteContent) || string.IsNullOrEmpty(name))
+            {
+                UnsavedData = false; return;
+            }
+            if (Note == null)
+            {
+                NoteSavePage page = new NoteSavePage { Name = name };
+                NavigationPage.SetHasBackButton(this, true);
+                await Navigation.PushAsync(page);
+            }
+            else if (App.Database.GetNoteAsync(Note.ID).Result != null &&
+                await DisplayActionSheet("Do you want to overwrite the existing note?", null, null, "Yes", "No") == "Yes")
+            {
+                await App.Database.DeleteNoteAsync(Note);
+                Note.DateTime = DateTime.UtcNow;
+                await App.Database.SaveNoteAsync(Note);
+                System.IO.File.WriteAllText(Note.Path, NoteContent);
+                UnsavedData = false;
+            }
+        }
+
+        private async void OnExportButtonClicked(object sender, EventArgs e)
+        {
+            NoteContent = ContentParse(out string name);
+            if (string.IsNullOrEmpty(name)) return;//name = "Empty note";
+            List<Models.Image> imgs = new List<Models.Image>();
+            for (int i = 0; i < contentLayout.Children.Count; i++)
+                if ((contentLayout.Children[i] as CustomView).Type == CustomViewTypes.Image)
+                    imgs.Add((contentLayout.Children[i] as CustomView).Image);
+            NoteSavePage page = new NoteSavePage
+            {
+                Name = name, Imgs = imgs
+            };
+            NavigationPage.SetHasBackButton(this, true);
+            await Navigation.PushAsync(page);
+        }
+
+        async void OnDeleteButtonClicked(object sender, EventArgs e)
+        {
+            if (Note == null) { DependencyService.Get<IPlatformSpecific>().SayShort("Can't do that"); return; }
+            if (await DisplayActionSheet("Delete note?", null, null, "Yes", "No") == "Yes")
+            {
+                await App.Database.DeleteNoteAsync(Note);
+                if (System.IO.File.Exists(Note.Path))
+                    System.IO.File.Delete(Note.Path);
+                DependencyService.Get<IPlatformSpecific>().SayShort("Note deleted");
+                Note = null;
+            }
+            UnsavedData = true;
+        }
+        #endregion
     }
 }
 
 // TODO:
 // Добавление элемента перед текущим (свайп, кнопка и т.п.)
 // Прокручивать ScrollView к новому элементу
-// Картинки
-// Списки
-// База данных
