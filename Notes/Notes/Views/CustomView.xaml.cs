@@ -138,13 +138,12 @@ namespace Notes.Views
         {
             if (Text.Contains('\n'))
             {
-                CustomView customView = new CustomView(Index + 1, Type)
+                CustomView customView = new CustomView(Index, Type)
                 {
-                    Text = Text.Substring(Text.LastIndexOf('\n') + 1)
+                    Text = Text.Substring(0, Text.LastIndexOf('\n'))
                 };
-                TextEditor.Unfocus();
-                ParentPage.AddElement(Index + 1, customView);
-                Text = Text.Substring(0, Text.LastIndexOf('\n'));
+                ParentPage.AddElement(Index, customView);
+                Text = Text.Substring(Text.LastIndexOf('\n') + 1);
             }
         }
     }
