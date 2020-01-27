@@ -15,10 +15,10 @@ namespace Notes.Views
 {
     public enum CustomViewTypes
     {
-        Header1 = 0,
-        Header2 = 1,
-        Header3 = 2,
-        Paragraph = 3,
+        Paragraph = 0,
+        Header1 = 1,
+        Header2 = 2,
+        Header3 = 3,
         List = 4,
         Image = 5
     }
@@ -31,7 +31,8 @@ namespace Notes.Views
             InitializeComponent();
             Index = index;
             Type = type;
-            (Content as Grid).ColumnDefinitions[0].Width = DeviceDisplay.MainDisplayInfo.Width * 0.9 / DeviceDisplay.MainDisplayInfo.Density;
+            (Content as Grid).ColumnDefinitions[0].Width =
+                DeviceDisplay.MainDisplayInfo.Width * 0.9 / DeviceDisplay.MainDisplayInfo.Density;
         }
 
         public MainPage ParentPage

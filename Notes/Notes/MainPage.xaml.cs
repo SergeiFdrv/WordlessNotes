@@ -21,16 +21,12 @@ namespace Notes
             InitializeComponent();
             picker.ItemsSource = DocumentItemOptions;
             picker.SelectedItem = picker.Items[0];
-            contentLayout.Children.Add(new CustomView(contentLayout.Children.Count, CustomViewTypes.Header1));
-            contentLayout.Children.Add(new CustomView(contentLayout.Children.Count, CustomViewTypes.Header2));
-            contentLayout.Children.Add(new CustomView(contentLayout.Children.Count, CustomViewTypes.Header3));
             contentLayout.Children.Add(new CustomView(contentLayout.Children.Count));
-            contentLayout.Children.Add(new CustomView(contentLayout.Children.Count, CustomViewTypes.List));
         }
 
         #region Properties
         public List<string> DocumentItemOptions =>
-            new List<string> { "Header 1", "Header 2", "Header 3", "Paragraph", "List", "Image" };
+            new List<string> { "Paragraph", "Header 1", "Header 2", "Header 3", "List", "Image" };
 
         public bool UnsavedData
         {
@@ -72,7 +68,6 @@ namespace Notes
         {
             contentLayout.Children.Insert(index, new CustomView(index, type));
             IncrementIndicesFrom(index + 1);
-            //(contentLayout.Children[index] as CustomView).Focus();
             UnsavedData = true;
         }
 
@@ -80,7 +75,6 @@ namespace Notes
         {
             contentLayout.Children.Insert(index, view);
             IncrementIndicesFrom(index + 1);
-            //(contentLayout.Children[index] as CustomView).Focus();
             UnsavedData = true;
         }
 
@@ -272,7 +266,6 @@ namespace Notes
             else if (App.Database.GetNoteAsync(Note.ID).Result != null &&
                 await DisplayActionSheet("Do you want to overwrite the existing note?", null, null, "Yes", "No") == "Yes")
             {
-                await App.Database.DeleteNoteAsync(Note);
                 Note.DateTime = DateTime.UtcNow;
                 await App.Database.SaveNoteAsync(Note);
                 System.IO.File.WriteAllText(Note.Path, NoteContent);
@@ -283,7 +276,7 @@ namespace Notes
         private async void OnExportButtonClicked(object sender, EventArgs e)
         {
             NoteContent = ContentParse(out string name);
-            if (string.IsNullOrEmpty(name)) return;//name = "Empty note";
+            if (string.IsNullOrEmpty(name)) return;
             List<Models.Image> imgs = new List<Models.Image>();
             for (int i = 0; i < contentLayout.Children.Count; i++)
                 if ((contentLayout.Children[i] as CustomView).Type == CustomViewTypes.Image)
