@@ -52,35 +52,35 @@ namespace Notes
         #endregion
 
         #region AddingElement
-        private void AddParagraphClicked(object sender, EventArgs e)
-        {
+        private void AddParagraphClicked(object sender, EventArgs e) =>
             AddElement(contentLayout.Children.Count, CustomViewTypes.Paragraph);
-        }
 
         private async void AddElementClicked(object sender, EventArgs e)
         {
             string res = await DisplayActionSheet(null, "Cancel", null, DocumentItemOptions.ToArray());
             if (!string.IsNullOrEmpty(res))
+            {
                 AddElement(contentLayout.Children.Count, (CustomViewTypes)DocumentItemOptions.FindIndex(_ => _ == res));
+                (contentLayout.Children.Last() as CustomView).Focus();
+            }
         }
 
         public void AddElement(int index, CustomViewTypes type)
         {
             contentLayout.Children.Insert(index, new CustomView(index, type));
             IncrementIndicesFrom(index + 1);
-            UnsavedData = true;
         }
 
         public void AddElement(int index, CustomView view)
         {
             contentLayout.Children.Insert(index, view);
             IncrementIndicesFrom(index + 1);
-            UnsavedData = true;
         }
 
         private void IncrementIndicesFrom(int index)
         {
             for (int i = index; i < contentLayout.Children.Count; i++) (contentLayout.Children[i] as CustomView).Index++;
+            UnsavedData = true;
         }
 
         public void SelectAddedElement(object sender, EventArgs e)
@@ -206,7 +206,7 @@ namespace Notes
                 {
                     content += $"<h3>{view.Text}</h3><br>";
                 }
-                else if (view.Type == CustomViewTypes.Image)
+                else if (view.Type == CustomViewTypes.Image && (contentLayout.Children[i] as CustomView).Image != null)
                 {
                     content += $"<img src=\"img/{(contentLayout.Children[i] as CustomView).Image.Name}\"/><br><p class=\"imgdesc\">{view.Text}</p><br>";
                 }

@@ -84,7 +84,7 @@ namespace Notes
             string path = Path.Combine(DependencyService.Get<IPlatformSpecific>().GetDocsDirectory(), name + ".html");
             if (File.Exists(path) && await DisplayActionSheet("Do you want to overwrite the existing file?", "No", "Yes") != "Yes")
                 return;
-            try
+            if (Imgs != null)
             {
                 string imgpath = Path.Combine(DependencyService.Get<IPlatformSpecific>().GetDocsDirectory(), "img"), imgname;
                 if (!Directory.Exists(imgpath)) Directory.CreateDirectory(imgpath);
@@ -94,13 +94,9 @@ namespace Notes
                     if (File.Exists(imgname)) File.Delete(imgname);
                     File.Copy(Imgs[i].Path, imgname);
                 }
-                File.WriteAllText(path, html);
-                await DisplayAlert("Saved at:", path, "OK");
             }
-            catch (Exception x)
-            {
-                await DisplayAlert(x.GetType().Name, x.Message, "OK");
-            }
+            File.WriteAllText(path, html);
+            await DisplayAlert("Saved at:", path, "OK");
         }
         #endregion
     }
