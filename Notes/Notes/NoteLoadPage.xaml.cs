@@ -61,6 +61,7 @@ namespace Notes
 
         private void MyListView_ItemSelected(object sender, SelectedItemChangedEventArgs e)
         {
+            ToolbarItems.Clear();
             ToolbarItems.Add(new ToolbarItem { Text = Properties.Resources.Delete });
             ToolbarItems.Add(new ToolbarItem { Text = Properties.Resources.Open });
             ToolbarItems[0].Clicked += Delete_Clicked; ToolbarItems[1].Clicked += Open_Clicked;
