@@ -61,11 +61,74 @@ namespace Notes.Properties {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Can&apos;t do that.
+        /// </summary>
+        internal static string CantDo {
+            get {
+                return ResourceManager.GetString("CantDo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Delete.
+        /// </summary>
+        internal static string Delete {
+            get {
+                return ResourceManager.GetString("Delete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на File not found.
+        /// </summary>
+        internal static string FileNotFound {
+            get {
+                return ResourceManager.GetString("FileNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на New note.
         /// </summary>
         internal static string NewNote {
             get {
                 return ResourceManager.GetString("NewNote", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Note deleted.
+        /// </summary>
+        internal static string NoteDeleted {
+            get {
+                return ResourceManager.GetString("NoteDeleted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Note saved.
+        /// </summary>
+        internal static string NoteSaved {
+            get {
+                return ResourceManager.GetString("NoteSaved", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Nothing found.
+        /// </summary>
+        internal static string NothingFound {
+            get {
+                return ResourceManager.GetString("NothingFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Open.
+        /// </summary>
+        internal static string Open {
+            get {
+                return ResourceManager.GetString("Open", resourceCulture);
             }
         }
     }

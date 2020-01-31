@@ -13,7 +13,7 @@ using Xamarin.Essentials;
 
 namespace Notes.Views
 {
-    public enum CustomViewTypes
+    public enum CustomViewType
     {
         Paragraph = 0,
         Header1 = 1,
@@ -26,11 +26,12 @@ namespace Notes.Views
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class CustomView : ContentView
     {
-        public CustomView(int index, CustomViewTypes type = CustomViewTypes.Paragraph)
+        public CustomView(int index, CustomViewType type = CustomViewType.Paragraph)
         {
             InitializeComponent();
             Index = index;
             Type = type;
+            ListMark.FontSize = App.FontSize;
             (Content as Grid).ColumnDefinitions[0].Width =
                 DeviceDisplay.MainDisplayInfo.Width * 0.9 / DeviceDisplay.MainDisplayInfo.Density;
         }
@@ -49,17 +50,14 @@ namespace Notes.Views
             }
         }
 
-        // List
-        public CustomListView ListV => List;
-
         // Image
         public Models.Image Image { get; set; }
         public Image ImageBox => Img;
 
         // Общее
         public int Index { get; set; }
-        private CustomViewTypes ViewType;
-        public CustomViewTypes Type
+        private CustomViewType ViewType;
+        public CustomViewType Type
         {
             get
             {
@@ -68,29 +66,31 @@ namespace Notes.Views
             set
             {
                 ViewType = value;
-                List.IsVisible = value == CustomViewTypes.List;
-                TextEditor.IsVisible = !(List.IsVisible = value == CustomViewTypes.List);
+                TextEditor.WidthRequest = DeviceDisplay.MainDisplayInfo.Width * 0.9 /
+                                          DeviceDisplay.MainDisplayInfo.Density;
                 TextEditor.TextColor = Color.Black;
-                if (Img.IsVisible = ImgBtn.IsVisible = value == CustomViewTypes.Image)
+                if (Img.IsVisible = ImgBtn.IsVisible = value == CustomViewType.Image)
                 {
                     TextEditor.FontSize = App.FontSize - 2;
                     TextEditor.Placeholder = "Image description";
                 }
-                else if (List.IsVisible && !(TextEditor.Text == string.Empty || List.StackL.Children.Any()))
+                else if (ListMark.IsVisible = value == CustomViewType.List)
                 {
-                    List.StackL.Children.Add(new CustomListViewCell(TextEditor.Text));
+                    TextEditor.WidthRequest -= ListMark.Width + 25;
+                    TextEditor.FontSize = App.FontSize;
+                    TextEditor.Placeholder = "List item";
                 }
-                else if (value == CustomViewTypes.Header1)
+                else if (value == CustomViewType.Header1)
                 {
                     TextEditor.FontSize = App.FontSize + 6;
                     TextEditor.Placeholder = "Header 1";
                 }
-                else if (value == CustomViewTypes.Header2)
+                else if (value == CustomViewType.Header2)
                 {
                     TextEditor.FontSize = App.FontSize + 4;
                     TextEditor.Placeholder = "Header 2";
                 }
-                else if (value == CustomViewTypes.Header3)
+                else if (value == CustomViewType.Header3)
                 {
                     TextEditor.FontSize = App.FontSize + 2;
                     TextEditor.Placeholder = "Header 3";
@@ -128,10 +128,10 @@ namespace Notes.Views
                 ParentPage.Selected = this;
                 ParentPage.UnsavedData = true;
             }
-            var file = await CrossMedia.Current.PickPhotoAsync();
+            var file = await CrossMedia.Current.PickPhotoAsync().ConfigureAwait(false);
             if (file == null) return;
             Image = new Models.Image { Path = file.Path, Name = file.Path.Substring(file.Path.LastIndexOf('/') + 1) };
-            await App.Database.SaveImageAsync(Image);
+            await App.Database.SaveImageAsync(Image).ConfigureAwait(false);
             Img.Source = ImageSource.FromFile(Image.Path);
         }
 

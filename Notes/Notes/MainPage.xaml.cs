@@ -41,6 +41,7 @@ namespace Notes
             get => SelectedView;
             set
             {
+                if (value == null) return;
                 SelectedView = value;
                 picker.SelectedIndex = (int)SelectedView.Type;
             }
@@ -53,19 +54,19 @@ namespace Notes
 
         #region AddingElement
         private void AddParagraphClicked(object sender, EventArgs e) =>
-            AddElement(contentLayout.Children.Count, CustomViewTypes.Paragraph);
+            AddElement(contentLayout.Children.Count, CustomViewType.Paragraph);
 
         private async void AddElementClicked(object sender, EventArgs e)
         {
-            string res = await DisplayActionSheet(null, "Cancel", null, DocumentItemOptions.ToArray());
+            string res = await DisplayActionSheet(null, "Cancel", null, DocumentItemOptions.ToArray()).ConfigureAwait(false);
             if (!string.IsNullOrEmpty(res))
             {
-                AddElement(contentLayout.Children.Count, (CustomViewTypes)DocumentItemOptions.FindIndex(_ => _ == res));
+                AddElement(contentLayout.Children.Count, (CustomViewType)DocumentItemOptions.FindIndex(_ => _ == res));
                 (contentLayout.Children.Last() as CustomView).Focus();
             }
         }
 
-        public void AddElement(int index, CustomViewTypes type)
+        public void AddElement(int index, CustomViewType type)
         {
             contentLayout.Children.Insert(index, new CustomView(index, type));
             IncrementIndicesFrom(index + 1);
@@ -105,17 +106,14 @@ namespace Notes
         {
             try
             {
+                if (note == null) return;
                 NoteContent = System.IO.File.ReadAllText(note.Path);
                 Populate();
                 ToolbarItems[0].Text = note.Name;
             }
             catch (System.IO.FileNotFoundException)
             {
-                await DisplayAlert("Error", "File not found", "OK");
-            }
-            catch (Exception e)
-            {
-                await DisplayAlert("Error", e.ToString(), "OK");
+                await DisplayAlert("Error", Properties.Resources.FileNotFound, "OK").ConfigureAwait(false);
             }
         }
 
@@ -125,53 +123,53 @@ namespace Notes
             string[] lines = NoteContent.Split(new string[] { "<br>" }, StringSplitOptions.None);
             for (int i = 0; i < lines.Length; i++)
             {
-                if (lines[i].StartsWith("<h1>"))
+                if (lines[i].StartsWith("<h1>", StringComparison.OrdinalIgnoreCase))
                 {
                     contentLayout.Children.Add(
-                        new CustomView(contentLayout.Children.Count, CustomViewTypes.Header1)
+                        new CustomView(contentLayout.Children.Count, CustomViewType.Header1)
                         {
                             Text = lines[i].Substring(4, lines[i].Length - 9)
                         });
                 }
-                else if (lines[i].StartsWith("<h2>"))
+                else if (lines[i].StartsWith("<h2>", StringComparison.OrdinalIgnoreCase))
                 {
                     contentLayout.Children.Add(
-                        new CustomView(contentLayout.Children.Count, CustomViewTypes.Header2)
+                        new CustomView(contentLayout.Children.Count, CustomViewType.Header2)
                         {
                             Text = lines[i].Substring(4, lines[i].Length - 9)
                         });
                 }
-                else if (lines[i].StartsWith("<h3>"))
+                else if (lines[i].StartsWith("<h3>", StringComparison.OrdinalIgnoreCase))
                 {
                     contentLayout.Children.Add(
-                        new CustomView(contentLayout.Children.Count, CustomViewTypes.Header3)
+                        new CustomView(contentLayout.Children.Count, CustomViewType.Header3)
                         {
                             Text = lines[i].Substring(4, lines[i].Length - 9)
                         });
                 }
-                else if (lines[i].StartsWith("<p>"))
+                else if (lines[i].StartsWith("<p>", StringComparison.OrdinalIgnoreCase))
                 {
                     contentLayout.Children.Add(
-                        new CustomView(contentLayout.Children.Count, CustomViewTypes.Paragraph)
+                        new CustomView(contentLayout.Children.Count, CustomViewType.Paragraph)
                         {
                             Text = lines[i].Substring(3, lines[i].Length - 7)
                         });
                 }
-                else if (lines[i].StartsWith("<ul>"))
+                else if (lines[i].StartsWith("<ul>", StringComparison.OrdinalIgnoreCase))
                 {
-                    contentLayout.Children.Add(new CustomView(contentLayout.Children.Count, CustomViewTypes.List));
-                    List<string> listlines = new List<string>();
                     int j = i + 1;
                     for (; j < lines.Length && lines[j] != "</ul>"; j++)
                     {
-                        listlines.Add(lines[j].Substring(4, lines[j].Length - 9));
+                        contentLayout.Children.Add(new CustomView(contentLayout.Children.Count, CustomViewType.List)
+                        {
+                            Text = lines[j].Substring(4, lines[j].Length - 9)
+                        });
                     }
-                    (contentLayout.Children.Last() as CustomView).ListV.PopulateList(listlines);
                     i = j;
                 }
-                else if (lines[i].StartsWith("<img"))
+                else if (lines[i].StartsWith("<img", StringComparison.OrdinalIgnoreCase))
                 {
-                    CustomView customView = new CustomView(contentLayout.Children.Count, CustomViewTypes.Image)
+                    CustomView customView = new CustomView(contentLayout.Children.Count, CustomViewType.Image)
                     {
                         Text = lines[i + 1].Substring(19, lines[i + 1].Length - 23),
                         Image = App.Database.GetImageByNameAsync(lines[i].Substring(14, lines[i].Length - 17)).Result
@@ -194,30 +192,33 @@ namespace Notes
                 {
                     name = view.Text;
                 }
-                if (view.Type == CustomViewTypes.Header1)
+                if (view.Type == CustomViewType.Header1)
                 {
                     content += $"<h1>{view.Text}</h1><br>";
                 }
-                else if (view.Type == CustomViewTypes.Header2)
+                else if (view.Type == CustomViewType.Header2)
                 {
                     content += $"<h2>{view.Text}</h2><br>";
                 }
-                else if (view.Type == CustomViewTypes.Header3)
+                else if (view.Type == CustomViewType.Header3)
                 {
                     content += $"<h3>{view.Text}</h3><br>";
                 }
-                else if (view.Type == CustomViewTypes.Image && (contentLayout.Children[i] as CustomView).Image != null)
+                else if (view.Type == CustomViewType.Image && (contentLayout.Children[i] as CustomView).Image != null)
                 {
                     content += $"<img src=\"img/{(contentLayout.Children[i] as CustomView).Image.Name}\"/><br><p class=\"imgdesc\">{view.Text}</p><br>";
                 }
-                else if (view.Type == CustomViewTypes.List)
+                else if (view.Type == CustomViewType.List)
                 {
-                    content += "<ul><br>";
-                    for (int j = 0; j < view.ListV.StackL.Children.Count; j++)
+                    content += $"<ul><br><li>{view.Text}</li><br>";
+                    int j = i + 1;
+                    for (; j < contentLayout.Children.Count &&
+                        (contentLayout.Children[j] as CustomView).Type == CustomViewType.List; j++)
                     {
-                        content += $"<li>{(view.ListV.StackL.Children[j] as CustomListViewCell).Text}</li><br>";
+                        content += $"<li>{(contentLayout.Children[j] as CustomView).Text}</li><br>";
                     }
                     content += "</ul><br>";
+                    i = j;
                 }
                 else content += $"<p>{view.Text}</p><br>";
             }
@@ -233,13 +234,13 @@ namespace Notes
         #region HeaderMenuInteraction
         private void Picker_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (Selected != null) Selected.Type = (CustomViewTypes)((sender as Picker).SelectedIndex);
+            if (Selected != null) Selected.Type = (CustomViewType)((sender as Picker).SelectedIndex);
         }
 
         void OnNewButtonClicked(object sender, EventArgs e)
         {
             Note = null;
-            ToolbarItems[0].Text = "New note";
+            ToolbarItems[0].Text = Properties.Resources.NewNote;
             contentLayout.Children.Clear();
         }
 
@@ -247,7 +248,7 @@ namespace Notes
         {
             NoteLoadPage page = new NoteLoadPage();
             NavigationPage.SetHasBackButton(this, true);
-            await Navigation.PushAsync(page);
+            await Navigation.PushAsync(page).ConfigureAwait(false);
         }
 
         async void OnSaveButtonClicked(object sender, EventArgs e)
@@ -261,43 +262,44 @@ namespace Notes
             {
                 NoteSavePage page = new NoteSavePage { Name = name };
                 NavigationPage.SetHasBackButton(this, true);
-                await Navigation.PushAsync(page);
+                await Navigation.PushAsync(page).ConfigureAwait(false);
             }
-            else if (App.Database.GetNoteAsync(Note.ID).Result != null &&
-                await DisplayActionSheet("Do you want to overwrite the existing note?", null, null, "Yes", "No") == "Yes")
+            else if (App.Database.GetNoteAsync(Note.ID).Result != null && await DisplayActionSheet(
+                "Do you want to overwrite the existing note?", null, null, "Yes", "No").ConfigureAwait(true) == "Yes")
             {
                 Note.DateTime = DateTime.UtcNow;
-                await App.Database.SaveNoteAsync(Note);
+                await App.Database.SaveNoteAsync(Note).ConfigureAwait(true);
                 System.IO.File.WriteAllText(Note.Path, NoteContent);
                 UnsavedData = false;
+                await DisplayAlert(Properties.Resources.NoteSaved, null, "OK").ConfigureAwait(false);
             }
         }
 
-        private async void OnExportButtonClicked(object sender, EventArgs e)
+        private async void OnSaveAsButtonClicked(object sender, EventArgs e)
         {
             NoteContent = ContentParse(out string name);
-            if (string.IsNullOrEmpty(name)) return;
+            if (string.IsNullOrEmpty(name))
+            {
+                await DisplayAlert("Can not save empty note", null, "OK").ConfigureAwait(false); return;
+            }
             List<Models.Image> imgs = new List<Models.Image>();
             for (int i = 0; i < contentLayout.Children.Count; i++)
-                if ((contentLayout.Children[i] as CustomView).Type == CustomViewTypes.Image)
+                if ((contentLayout.Children[i] as CustomView).Type == CustomViewType.Image)
                     imgs.Add((contentLayout.Children[i] as CustomView).Image);
-            NoteSavePage page = new NoteSavePage
-            {
-                Name = name, Imgs = imgs
-            };
+            NoteSavePage page = new NoteSavePage(name, imgs);
             NavigationPage.SetHasBackButton(this, true);
-            await Navigation.PushAsync(page);
+            await Navigation.PushAsync(page).ConfigureAwait(false);
         }
 
         async void OnDeleteButtonClicked(object sender, EventArgs e)
         {
-            if (Note == null) { DependencyService.Get<IPlatformSpecific>().SayShort("Can't do that"); return; }
-            if (await DisplayActionSheet("Delete note?", null, null, "Yes", "No") == "Yes")
+            if (Note == null) { DependencyService.Get<IPlatformSpecific>().SayShort(Properties.Resources.CantDo); return; }
+            if (await DisplayActionSheet("Delete note?", null, null, "Yes", "No").ConfigureAwait(false) == "Yes")
             {
-                await App.Database.DeleteNoteAsync(Note);
+                await App.Database.DeleteNoteAsync(Note).ConfigureAwait(false);
                 if (System.IO.File.Exists(Note.Path))
                     System.IO.File.Delete(Note.Path);
-                DependencyService.Get<IPlatformSpecific>().SayShort("Note deleted");
+                DependencyService.Get<IPlatformSpecific>().SayShort(Properties.Resources.NoteDeleted);
                 Note = null;
             }
             UnsavedData = true;
@@ -306,6 +308,3 @@ namespace Notes
     }
 }
 
-// TODO:
-// Добавление элемента перед текущим (свайп, кнопка и т.п.)
-// Прокручивать ScrollView к новому элементу

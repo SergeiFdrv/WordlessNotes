@@ -117,7 +117,28 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="CantDo" xml:space="preserve">
+    <value>Can't do that</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="FileNotFound" xml:space="preserve">
+    <value>File not found</value>
+  </data>
   <data name="NewNote" xml:space="preserve">
     <value>New note</value>
+  </data>
+  <data name="NoteDeleted" xml:space="preserve">
+    <value>Note deleted</value>
+  </data>
+  <data name="NoteSaved" xml:space="preserve">
+    <value>Note saved</value>
+  </data>
+  <data name="NothingFound" xml:space="preserve">
+    <value>Nothing found</value>
+  </data>
+  <data name="Open" xml:space="preserve">
+    <value>Open</value>
   </data>
 </root>

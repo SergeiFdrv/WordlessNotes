@@ -17,8 +17,12 @@
                 <Image x:Name="Img" Margin="0" Focused="Item_Focused" IsVisible="False"/>
                 <Button x:Name="ImgBtn" Text="Choose image" Clicked="Image_Tapped" IsVisible="False"/>
                 <!-- Изучить плагин для вставки изображений: https://github.com/jamesmontemagno/MediaPlugin -->
-                <customrenderer:TextEditor x:Name="TextEditor" Placeholder="Paragraph" PlaceholderColor="Gray" Focused="Item_Focused" TextChanged="TextEditor_TextChanged"/>
-                <customview:CustomListView x:Name="List" IsVisible="False"/>
+                <StackLayout Orientation="Horizontal" Focused="Item_Focused" Spacing="0">
+                    <Label x:Name="ListMark" Text="-" HorizontalTextAlignment="End" WidthRequest="25" Padding="0,6,0,0"/>
+                    <customrenderer:TextEditor x:Name="TextEditor" Placeholder="Paragraph" PlaceholderColor="Gray"
+                                               Focused="Item_Focused" TextChanged="TextEditor_TextChanged"/>
+                    <!--<customview:CustomListView x:Name="List" IsVisible="False" Grid.Row="1"/>-->
+                </StackLayout>
             </StackLayout>
             <Button x:Name="XBtn" Text="X" HeightRequest="35" Clicked="Button_Clicked" Grid.Column="1" VerticalOptions="Start"/>
         </Grid>

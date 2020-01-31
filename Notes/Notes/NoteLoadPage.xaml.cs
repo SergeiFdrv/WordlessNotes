@@ -18,27 +18,35 @@ namespace Notes
             InitializeComponent();
         }
 
-        public ObservableCollection<Models.Note> Items { get; set; }
+        public ObservableCollection<Models.Note> Items { get; private set; }
 
         protected override void OnAppearing()
         {
             base.OnAppearing();
             Items = new ObservableCollection<Models.Note>(App.Database.GetNotesAsync().Result);
-            if (Items.Count == 0) Content = new Label { Text = "Nothing found", VerticalTextAlignment = TextAlignment.Center, HorizontalTextAlignment = TextAlignment.Center };
+            if (Items.Count == 0) Content = new Label
+            {
+                Text = Properties.Resources.NothingFound,
+                VerticalTextAlignment = TextAlignment.Center, HorizontalTextAlignment = TextAlignment.Center
+            };
             else MyListView.ItemsSource = Items;
         }
 
-        public async void Delete_Clicked(object sender, EventArgs e)
+        async void Delete_Clicked(object sender, EventArgs e)
         {
-            if (await DisplayActionSheet("Delete?", null, null, "Yes", "No") == "Yes")
+            if (await DisplayActionSheet("Delete?", null, null, "Yes", "No").ConfigureAwait(false) == "Yes")
             {
                 Models.Note note = MyListView.SelectedItem as Models.Note;
-                await App.Database.DeleteNoteAsync(note);
+                await App.Database.DeleteNoteAsync(note).ConfigureAwait(false);
                 Items.Remove(note);
                 if (System.IO.File.Exists(note.Path))
                     System.IO.File.Delete(note.Path);
                 if (Items.Count > 0) Content = MyListView;
-                else Content = new Label { Text = "Nothing found", VerticalTextAlignment = TextAlignment.Center, HorizontalTextAlignment = TextAlignment.Center };
+                else Content = new Label
+                {
+                    Text = Properties.Resources.NothingFound,
+                    VerticalTextAlignment = TextAlignment.Center, HorizontalTextAlignment = TextAlignment.Center
+                };
                 ToolbarItems.Clear();
             }
         }
@@ -48,13 +56,13 @@ namespace Notes
             Models.Note note = MyListView.SelectedItem as Models.Note;
             (Navigation.NavigationStack[0] as MainPage).Note = note;
             (Navigation.NavigationStack[0] as MainPage).TryPopulate(note);
-            await Navigation.PopAsync();
+            await Navigation.PopAsync().ConfigureAwait(false);
         }
 
         private void MyListView_ItemSelected(object sender, SelectedItemChangedEventArgs e)
         {
-            ToolbarItems.Add(new ToolbarItem { Text = "Delete" });
-            ToolbarItems.Add(new ToolbarItem { Text = "Open" });
+            ToolbarItems.Add(new ToolbarItem { Text = Properties.Resources.Delete });
+            ToolbarItems.Add(new ToolbarItem { Text = Properties.Resources.Open });
             ToolbarItems[0].Clicked += Delete_Clicked; ToolbarItems[1].Clicked += Open_Clicked;
         }
     }

@@ -17,7 +17,7 @@
                 <Button x:Name="newbtn" Text="New" Clicked="OnNewButtonClicked"/>
                 <Button x:Name="openbtn" Text="Open" Clicked="OnOpenButtonClicked"/>
                 <Button x:Name="savebtn" Text="Save" Clicked="OnSaveButtonClicked"/>
-                <Button x:Name="exportbtn" Text="Save as..." Clicked="OnExportButtonClicked"/>
+                <Button x:Name="exportbtn" Text="Save as..." Clicked="OnSaveAsButtonClicked"/>
                 <Button x:Name="delbtn" Text="Delete" Clicked="OnDeleteButtonClicked"/>
                 <!-- Dropdown control tutorial: https://www.c-sharpcorner.com/article/dropdown-control-in-xamarin-forms-part-one/ -->
             </FlexLayout>
