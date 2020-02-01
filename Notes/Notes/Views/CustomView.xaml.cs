@@ -26,11 +26,12 @@ namespace Notes.Views
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class CustomView : ContentView
     {
-        public CustomView(int index, CustomViewType type = CustomViewType.Paragraph)
+        public CustomView(int index, CustomViewType type = CustomViewType.Paragraph, string text = "")
         {
             InitializeComponent();
             Index = index;
-            Type = type;
+            ViewType = type;
+            Text = text;
             ListMark.FontSize = App.FontSize;
             (Content as Grid).ColumnDefinitions[0].Width =
                 DeviceDisplay.MainDisplayInfo.Width * 0.9 / DeviceDisplay.MainDisplayInfo.Density;
@@ -56,16 +57,16 @@ namespace Notes.Views
 
         // Общее
         public int Index { get; set; }
-        private CustomViewType ViewType;
-        public CustomViewType Type
+        private CustomViewType _ViewType;
+        public CustomViewType ViewType
         {
             get
             {
-                return ViewType;
+                return _ViewType;
             }
             set
             {
-                ViewType = value;
+                _ViewType = value;
                 TextEditor.WidthRequest = DeviceDisplay.MainDisplayInfo.Width * 0.9 /
                                           DeviceDisplay.MainDisplayInfo.Density;
                 TextEditor.TextColor = Color.Black;
@@ -74,7 +75,7 @@ namespace Notes.Views
                     TextEditor.FontSize = App.FontSize - 2;
                     TextEditor.Placeholder = "Image description";
                 }
-                else if (ListMark.IsVisible = value == CustomViewType.List)
+                if (ListMark.IsVisible = value == CustomViewType.List)
                 {
                     TextEditor.WidthRequest -= ListMark.Width + 25;
                     TextEditor.FontSize = App.FontSize;
@@ -95,7 +96,7 @@ namespace Notes.Views
                     TextEditor.FontSize = App.FontSize + 2;
                     TextEditor.Placeholder = "Header 3";
                 }
-                else
+                else if (value == CustomViewType.Paragraph)
                 {
                     TextEditor.FontSize = App.FontSize;
                     TextEditor.Placeholder = "Paragraph";
@@ -117,7 +118,7 @@ namespace Notes.Views
 
         private void Item_Focused(object sender, FocusEventArgs e)
         {
-            if (ParentPage != null) ParentPage.Selected = this;
+            if (ParentPage != null) ParentPage.SelectedView = this;
         }
 
         private async void Image_Tapped(object sender, EventArgs e)
@@ -125,13 +126,13 @@ namespace Notes.Views
             if (!CrossMedia.Current.IsPickPhotoSupported) return;
             if (ParentPage != null)
             {
-                ParentPage.Selected = this;
+                ParentPage.SelectedView = this;
                 ParentPage.UnsavedData = true;
             }
-            var file = await CrossMedia.Current.PickPhotoAsync().ConfigureAwait(false);
+            var file = await CrossMedia.Current.PickPhotoAsync().ConfigureAwait(true);
             if (file == null) return;
             Image = new Models.Image { Path = file.Path, Name = file.Path.Substring(file.Path.LastIndexOf('/') + 1) };
-            await App.Database.SaveImageAsync(Image).ConfigureAwait(false);
+            await App.Database.SaveImageAsync(Image).ConfigureAwait(true);
             Img.Source = ImageSource.FromFile(Image.Path);
         }
 
@@ -139,11 +140,7 @@ namespace Notes.Views
         {
             if (Text.Contains('\n'))
             {
-                CustomView customView = new CustomView(Index, Type)
-                {
-                    Text = Text.Substring(0, Text.LastIndexOf('\n'))
-                };
-                ParentPage.AddElement(Index, customView);
+                ParentPage.AddElement(Index, ViewType, Text.Substring(0, Text.LastIndexOf('\n')));
                 Text = Text.Substring(Text.LastIndexOf('\n') + 1);
             }
         }

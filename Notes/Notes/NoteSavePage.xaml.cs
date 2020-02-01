@@ -24,7 +24,7 @@ namespace Notes
         {
             InitializeComponent();
             Name = name;
-            Imgs.AddRange(images);
+            Images.AddRange(images);
         }
 
         public string Name
@@ -73,7 +73,7 @@ namespace Notes
         #endregion
 
         #region Export
-        public List<Models.Image> Imgs { get; } = new List<Models.Image>();
+        public List<Models.Image> Images { get; } = new List<Models.Image>();
 
         private async void HTMLButton_Clicked(object sender, EventArgs e)
         {
@@ -91,17 +91,17 @@ namespace Notes
                 $"<body>{content}</body></html>";
             string path = Path.Combine(DependencyService.Get<IPlatformSpecific>().GetDocsDirectory(), name + ".html");
             if (File.Exists(path) && await DisplayActionSheet(
-                "Do you want to overwrite the existing file?", "No", "Yes").ConfigureAwait(false) != "Yes")
+                "Do you want to overwrite the existing file?", "No", "Yes").ConfigureAwait(true) != "Yes")
                 return;
-            if (Imgs != null)
+            if (Images != null)
             {
                 string imgpath = Path.Combine(DependencyService.Get<IPlatformSpecific>().GetDocsDirectory(), "img"), imgname;
                 if (!Directory.Exists(imgpath)) Directory.CreateDirectory(imgpath);
-                for (i = 0; i < Imgs.Count; i++)
+                for (i = 0; i < Images.Count; i++)
                 {
-                    imgname = Path.Combine(imgpath, Imgs[i].Name);
+                    imgname = Path.Combine(imgpath, Images[i].Name);
                     if (File.Exists(imgname)) File.Delete(imgname);
-                    File.Copy(Imgs[i].Path, imgname);
+                    File.Copy(Images[i].Path, imgname);
                 }
             }
             File.WriteAllText(path, html);

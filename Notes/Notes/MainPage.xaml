@@ -7,31 +7,26 @@
              mc:Ignorable="d"
              x:Class="Notes.MainPage">
     <ContentPage.ToolbarItems>
-        <ToolbarItem Text="New note" Clicked="ToolbarItem_Clicked"/>
+        <ToolbarItem Text="New note" Clicked="NoteNameTapped"/>
+        <ToolbarItem Text="New"        Order="Secondary" Clicked="OnNewButtonClicked"/>
+        <ToolbarItem Text="Open"       Order="Secondary" Clicked="OnOpenButtonClicked"/>
+        <ToolbarItem Text="Save"       Order="Secondary" Clicked="OnSaveButtonClicked"/>
+        <ToolbarItem Text="Save as..." Order="Secondary" Clicked="OnSaveAsButtonClicked"/>
+        <ToolbarItem Text="Delete"     Order="Secondary" Clicked="OnDeleteButtonClicked"/>
     </ContentPage.ToolbarItems>
 
     <StackLayout BackgroundColor="Gainsboro" IsTabStop="False" Spacing="0">
-        <ScrollView Orientation="Horizontal">
-            <FlexLayout>
-                <Picker x:Name="picker" WidthRequest="100" SelectedIndexChanged="Picker_SelectedIndexChanged"/>
-                <Button x:Name="newbtn" Text="New" Clicked="OnNewButtonClicked"/>
-                <Button x:Name="openbtn" Text="Open" Clicked="OnOpenButtonClicked"/>
-                <Button x:Name="savebtn" Text="Save" Clicked="OnSaveButtonClicked"/>
-                <Button x:Name="exportbtn" Text="Save as..." Clicked="OnSaveAsButtonClicked"/>
-                <Button x:Name="delbtn" Text="Delete" Clicked="OnDeleteButtonClicked"/>
-                <!-- Dropdown control tutorial: https://www.c-sharpcorner.com/article/dropdown-control-in-xamarin-forms-part-one/ -->
-            </FlexLayout>
-        </ScrollView>
-        <ScrollView>
-            <StackLayout BackgroundColor="White">
+        <ScrollView VerticalOptions="FillAndExpand">
+            <StackLayout BackgroundColor="White" VerticalOptions="FillAndExpand">
                 <BoxView HeightRequest="1" BackgroundColor="Black"/>
-                <StackLayout x:Name="contentLayout">
+                <StackLayout x:Name="contentLayout" VerticalOptions="FillAndExpand">
                 </StackLayout>
-                <BoxView HeightRequest="1" BackgroundColor="Black"/>
+                <BoxView HeightRequest="1" BackgroundColor="Black" VerticalOptions="End"/>
             </StackLayout>
         </ScrollView>
-        <StackLayout Orientation="Horizontal" HorizontalOptions="Fill">
-            <Button Text="Paragraph" Clicked="AddParagraphClicked" HorizontalOptions="FillAndExpand"/>
+        <StackLayout Orientation="Horizontal" HorizontalOptions="Fill" VerticalOptions="End">
+            <Picker x:Name="ViewTypePicker" HorizontalOptions="CenterAndExpand"
+                    SelectedIndexChanged="Picker_SelectedIndexChanged"/>
             <Button Text="+" Clicked="AddElementClicked" HorizontalOptions="FillAndExpand"/>
         </StackLayout>
     </StackLayout>

@@ -34,20 +34,36 @@ namespace Notes
 
         async void Delete_Clicked(object sender, EventArgs e)
         {
-            if (await DisplayActionSheet("Delete?", null, null, "Yes", "No").ConfigureAwait(false) == "Yes")
+            if (await DisplayActionSheet("Delete note?", "No", "Yes").ConfigureAwait(false) == "Yes")
             {
                 Models.Note note = MyListView.SelectedItem as Models.Note;
+                DeleteImagesAndNote(note);
                 await App.Database.DeleteNoteAsync(note).ConfigureAwait(false);
                 Items.Remove(note);
-                if (System.IO.File.Exists(note.Path))
-                    System.IO.File.Delete(note.Path);
                 if (Items.Count > 0) Content = MyListView;
                 else Content = new Label
                 {
                     Text = Properties.Resources.NothingFound,
                     VerticalTextAlignment = TextAlignment.Center, HorizontalTextAlignment = TextAlignment.Center
                 };
-                ToolbarItems.Clear();
+                ToolbarItems[0].Clicked -= Delete_Clicked; ToolbarItems[1].Clicked -= Open_Clicked;
+            }
+        }
+
+        public static void DeleteImagesAndNote(Models.Note note)
+        {
+            if (note != null && System.IO.File.Exists(note.Path))
+            {
+                string[] lines = System.IO.File.ReadAllText(note.Path).Split(new string[] { "<br>" }, StringSplitOptions.None);
+                string imgpath;
+                for (int i = 0; i < lines.Length; i++)
+                    if (lines[i].StartsWith("<img", StringComparison.OrdinalIgnoreCase))
+                    {
+                        imgpath = System.IO.Path.Combine(note.Path, lines[i].Substring(19, lines[i + 1].Length - 23));
+                        if (System.IO.File.Exists(imgpath))
+                            System.IO.File.Delete(imgpath);
+                    }
+                System.IO.File.Delete(note.Path);
             }
         }
 
@@ -61,9 +77,7 @@ namespace Notes
 
         private void MyListView_ItemSelected(object sender, SelectedItemChangedEventArgs e)
         {
-            ToolbarItems.Clear();
-            ToolbarItems.Add(new ToolbarItem { Text = Properties.Resources.Delete });
-            ToolbarItems.Add(new ToolbarItem { Text = Properties.Resources.Open });
+            ToolbarItems[0].Text = Properties.Resources.Delete; ToolbarItems[1].Text = Properties.Resources.Open;
             ToolbarItems[0].Clicked += Delete_Clicked; ToolbarItems[1].Clicked += Open_Clicked;
         }
     }
