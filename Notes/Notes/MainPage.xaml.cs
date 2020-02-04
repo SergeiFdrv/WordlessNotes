@@ -21,7 +21,8 @@ namespace Notes
             InitializeComponent();
             ViewTypePicker.ItemsSource = DocumentItemOptions;
             ViewTypePicker.SelectedIndex = 0;
-            contentLayout.Children.Add(new CustomView(contentLayout.Children.Count));
+            AddElement();
+            //contentLayout.Children.Add(new CustomView(contentLayout.Children.Count));
         }
 
         #region Properties
@@ -54,10 +55,12 @@ namespace Notes
 
         #region AddingElement
 
-        public void AddElement(int index, CustomViewType type, string text = "")
+        public void AddElement(int index = -1, CustomViewType type = CustomViewType.Paragraph, string text = "")
         {
+            if (index < 0) index = contentLayout.Children.Count;
+            IncrementIndicesFrom(index);
             contentLayout.Children.Insert(index, new CustomView(index, type, text));
-            IncrementIndicesFrom(index + 1);
+            if (SelectedView == null) (contentLayout.Children[index] as CustomView).Focus();
         }
 
         private void IncrementIndicesFrom(int index)
@@ -66,7 +69,7 @@ namespace Notes
             UnsavedData = true;
         }
 
-        public void SelectAddedElement(object sender, EventArgs e)
+        public void SelectAddedElement(object sender, EventArgs e) // TODO: Выявить назначение или удалить
         {
              if (SelectedView == null) (contentLayout.Children.Last() as CustomView).Focus();
         }
