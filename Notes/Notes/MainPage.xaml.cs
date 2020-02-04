@@ -204,7 +204,7 @@ namespace Notes
                         content += $"<li>{(contentLayout.Children[j] as CustomView).Text}</li><br>";
                     }
                     content += "</ul><br>";
-                    i = j;
+                    i = j - 1;
                 }
                 else if (view.ViewType == CustomViewType.Paragraph) content += $"<p>{view.Text}</p><br>";
             }
