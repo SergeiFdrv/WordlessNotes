@@ -33,8 +33,6 @@ namespace Notes.Views
             ViewType = type;
             Text = text;
             ListMark.FontSize = App.FontSize;
-            (Content as Grid).ColumnDefinitions[0].Width =
-                DeviceDisplay.MainDisplayInfo.Width * 0.9 / DeviceDisplay.MainDisplayInfo.Density;
         }
 
         public MainPage ParentPage
