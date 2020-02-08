@@ -22,15 +22,15 @@
                 <!-- Dropdown control tutorial: https://www.c-sharpcorner.com/article/dropdown-control-in-xamarin-forms-part-one/ -->
             </FlexLayout>
         </ScrollView>
-        <ScrollView>
-            <StackLayout BackgroundColor="White">
+        <ScrollView VerticalOptions="FillAndExpand">
+            <StackLayout BackgroundColor="White" VerticalOptions="FillAndExpand">
                 <BoxView HeightRequest="1" BackgroundColor="Black"/>
-                <StackLayout x:Name="contentLayout">
+                <StackLayout x:Name="contentLayout" VerticalOptions="FillAndExpand">
                 </StackLayout>
-                <BoxView HeightRequest="1" BackgroundColor="Black"/>
+                <BoxView HeightRequest="1" BackgroundColor="Black" VerticalOptions="End"/>
             </StackLayout>
         </ScrollView>
-        <StackLayout Orientation="Horizontal" HorizontalOptions="Fill">
+        <StackLayout Orientation="Horizontal" HorizontalOptions="Fill" VerticalOptions="End">
             <Button Text="Paragraph" Clicked="AddParagraphClicked" HorizontalOptions="FillAndExpand"/>
             <Button Text="+" Clicked="AddElementClicked" HorizontalOptions="FillAndExpand"/>
         </StackLayout>
