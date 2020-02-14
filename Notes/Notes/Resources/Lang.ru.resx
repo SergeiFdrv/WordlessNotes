@@ -183,6 +183,9 @@
   <data name="Paragraph" xml:space="preserve">
     <value>Абзац</value>
   </data>
+  <data name="Reopen" xml:space="preserve">
+    <value>Перезагрузить</value>
+  </data>
   <data name="Save" xml:space="preserve">
     <value>Сохранить</value>
   </data>

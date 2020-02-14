@@ -35,11 +35,11 @@ namespace Notes
 
         async void Delete_Clicked(object sender, EventArgs e)
         {
-            if (await DisplayActionSheet(Lang.DeleteNotePrompt, Lang.No, Lang.Yes).ConfigureAwait(false) == Lang.Yes)
+            if (await DisplayActionSheet(Lang.DeleteNotePrompt, Lang.No, Lang.Yes).ConfigureAwait(true) == Lang.Yes)
             {
                 Models.Note note = MyListView.SelectedItem as Models.Note;
                 DeleteImagesAndNote(note);
-                await App.Database.DeleteNoteAsync(note).ConfigureAwait(false);
+                await App.Database.DeleteNoteAsync(note).ConfigureAwait(true);
                 Items.Remove(note);
                 if (Items.Count > 0) Content = MyListView;
                 else Content = new Label

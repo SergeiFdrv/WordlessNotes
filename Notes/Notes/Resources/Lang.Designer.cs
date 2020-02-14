@@ -259,6 +259,15 @@ namespace Notes.Resources {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Reopen.
+        /// </summary>
+        internal static string Reopen {
+            get {
+                return ResourceManager.GetString("Reopen", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Save.
         /// </summary>
         internal static string Save {

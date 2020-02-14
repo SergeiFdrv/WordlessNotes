@@ -14,6 +14,7 @@
         <ToolbarItem Text="{x:Static resources:Lang.Save}"      Order="Secondary" Clicked="OnSaveButtonClicked"/>
         <ToolbarItem Text="{x:Static resources:Lang.SaveAs}"    Order="Secondary" Clicked="OnSaveAsButtonClicked"/>
         <ToolbarItem Text="{x:Static resources:Lang.Delete}"    Order="Secondary" Clicked="OnDeleteButtonClicked"/>
+        <ToolbarItem Text="{x:Static resources:Lang.Reopen}"    Order="Secondary" Clicked="OnReopenClicked"/>
     </ContentPage.ToolbarItems>
 
     <StackLayout BackgroundColor="Gainsboro" Spacing="0">

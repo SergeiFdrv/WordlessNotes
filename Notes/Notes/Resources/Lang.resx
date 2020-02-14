@@ -183,6 +183,9 @@
   <data name="Paragraph" xml:space="preserve">
     <value>Paragraph</value>
   </data>
+  <data name="Reopen" xml:space="preserve">
+    <value>Reopen</value>
+  </data>
   <data name="Save" xml:space="preserve">
     <value>Save</value>
   </data>

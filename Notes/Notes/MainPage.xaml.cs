@@ -46,7 +46,7 @@ namespace Notes
                 if (value == null) return;
                 ViewTypePicker.SelectedIndex = (int)_SelectedView.ViewType;
                 foreach (CustomView view in contentLayout.Children) view.BackgroundColor = Color.White;
-                _SelectedView.BackgroundColor = Color.Gainsboro;
+                _SelectedView.BackgroundColor = Color.WhiteSmoke;
             }
         }
 
@@ -282,6 +282,12 @@ namespace Notes
         }
 
         void DeleteImagesAndNote(Note note) => NoteLoadPage.DeleteImagesAndNote(note);
+
+        async void OnReopenClicked(object sender, EventArgs e)
+        {
+            if (await DisplayActionSheet(Lang.Reopen + '?', Lang.No, Lang.Yes).ConfigureAwait(true) == Lang.Yes && Note != null)
+            { contentLayout.Children.Clear(); TryPopulate(Note); }
+        }
         #endregion
 
         #region AddElementInteraction
