@@ -42,9 +42,11 @@ namespace Notes
             get => _SelectedView;
             set
             {
-                if (value == null) return;
                 _SelectedView = value;
+                if (value == null) return;
                 ViewTypePicker.SelectedIndex = (int)_SelectedView.ViewType;
+                foreach (CustomView view in contentLayout.Children) view.BackgroundColor = Color.White;
+                _SelectedView.BackgroundColor = Color.Gainsboro;
             }
         }
 
@@ -293,6 +295,12 @@ namespace Notes
             (contentLayout.Children.Last() as CustomView).Focus();
         }
         #endregion
+
+        private void TapGestureRecognizer_Tapped(object sender, EventArgs e)
+        {
+            foreach (CustomView view in contentLayout.Children) view.BackgroundColor = Color.White;
+            SelectedView = null;
+        }
     }
 }
 
