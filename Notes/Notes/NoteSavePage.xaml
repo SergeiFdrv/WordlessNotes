@@ -3,14 +3,15 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:resources="clr-namespace:Notes.Resources"
              mc:Ignorable="d"
              x:Class="Notes.NoteSavePage">
     <ContentPage.Content>
         <StackLayout>
-            <Label Text="Name"/>
+            <Label Text="{x:Static resources:Lang.Name}" Margin="8"/>
             <Entry x:Name="NameEntry"/>
-            <Button x:Name="SaveButton" Text="Save" Clicked="OnSaveButtonClicked"/>
-            <Button x:Name="HTMLButton" Text="Export as HTML" Clicked="HTMLButton_Clicked"/>
+            <Button x:Name="SaveButton" Text="{x:Static resources:Lang.Save}" Clicked="OnSaveButtonClicked"/>
+            <Button x:Name="HTMLButton" Text="{x:Static resources:Lang.ExportAsHTML}" Clicked="HTMLButton_Clicked"/>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

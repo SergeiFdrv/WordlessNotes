@@ -11,6 +11,8 @@ using Xamarin.Forms.Xaml;
 using Plugin.Media;
 using Xamarin.Essentials;
 
+using Notes.Resources;
+
 namespace Notes.Views
 {
     public enum CustomViewType
@@ -71,33 +73,33 @@ namespace Notes.Views
                 if (Img.IsVisible = ImgBtn.IsVisible = value == CustomViewType.Image)
                 {
                     TextEditor.FontSize = App.FontSize - 2;
-                    TextEditor.Placeholder = "Image description";
+                    TextEditor.Placeholder = Lang.ImageDescription;
                 }
                 if (ListMark.IsVisible = value == CustomViewType.List)
                 {
                     TextEditor.WidthRequest -= ListMark.Width + 25;
                     TextEditor.FontSize = App.FontSize;
-                    TextEditor.Placeholder = "List item";
+                    TextEditor.Placeholder = Lang.ListItem;
                 }
                 else if (value == CustomViewType.Header1)
                 {
                     TextEditor.FontSize = App.FontSize + 6;
-                    TextEditor.Placeholder = "Header 1";
+                    TextEditor.Placeholder = $"{Lang.Header} 1";
                 }
                 else if (value == CustomViewType.Header2)
                 {
                     TextEditor.FontSize = App.FontSize + 4;
-                    TextEditor.Placeholder = "Header 2";
+                    TextEditor.Placeholder = $"{Lang.Header} 2";
                 }
                 else if (value == CustomViewType.Header3)
                 {
                     TextEditor.FontSize = App.FontSize + 2;
-                    TextEditor.Placeholder = "Header 3";
+                    TextEditor.Placeholder = $"{Lang.Header} 3";
                 }
                 else if (value == CustomViewType.Paragraph)
                 {
                     TextEditor.FontSize = App.FontSize;
-                    TextEditor.Placeholder = "Paragraph";
+                    TextEditor.Placeholder = Lang.Paragraph;
                 }
                 if (ParentPage != null) ParentPage.UnsavedData = true;
             }

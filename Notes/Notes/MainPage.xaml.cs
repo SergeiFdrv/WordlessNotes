@@ -8,6 +8,7 @@ using Xamarin.Forms;
 using Notes.Views;
 using Notes.Models;
 using Notes.Interfaces;
+using Notes.Resources;
 
 namespace Notes
 {
@@ -22,12 +23,11 @@ namespace Notes
             ViewTypePicker.ItemsSource = DocumentItemOptions;
             ViewTypePicker.SelectedIndex = 0;
             AddElement();
-            //contentLayout.Children.Add(new CustomView(contentLayout.Children.Count));
         }
 
         #region Properties
-        public List<string> DocumentItemOptions { get; } =
-            new List<string> { "Paragraph", "Header 1", "Header 2", "Header 3", "List", "Image" };
+        public List<string> DocumentItemOptions { get; } = new List<string> {
+            Lang.Paragraph, $"{Lang.Header} 1", $"{Lang.Header} 2", $"{Lang.Header} 3", Lang.List, Lang.Image };
 
         public bool UnsavedData
         {
@@ -68,11 +68,6 @@ namespace Notes
             for (int i = index; i < contentLayout.Children.Count; i++) (contentLayout.Children[i] as CustomView).Index++;
             UnsavedData = true;
         }
-
-        public void SelectAddedElement(object sender, EventArgs e) // TODO: Выявить назначение или удалить
-        {
-             if (SelectedView == null) (contentLayout.Children.Last() as CustomView).Focus();
-        }
         #endregion
         #region DeletingElement
         public void DeleteElement(int index)
@@ -98,7 +93,7 @@ namespace Notes
             }
             catch (System.IO.FileNotFoundException)
             {
-                await DisplayAlert(Properties.Resources.FileNotFound, null, "OK").ConfigureAwait(false);
+                await DisplayAlert(Lang.FileNotFound, null, "OK").ConfigureAwait(false);
             }
         }
 
@@ -215,13 +210,14 @@ namespace Notes
         #region ToolbarInteraction
         private void NoteNameTapped(object sender, EventArgs e)
         {
-            (App.Current.MainPage as NavigationPage).BarBackgroundColor = Color.FromRgb(App.Random.Next(192), App.Random.Next(192), App.Random.Next(192));
+            (App.Current.MainPage as NavigationPage).BarBackgroundColor =
+                Color.FromRgb(App.Random.Next(192), App.Random.Next(192), App.Random.Next(192));
         }
 
         void OnNewButtonClicked(object sender, EventArgs e)
         {
             Note = null;
-            ToolbarItems[0].Text = Properties.Resources.NewNote;
+            ToolbarItems[0].Text = Lang.NewNote;
             contentLayout.Children.Clear();
         }
 
@@ -241,13 +237,13 @@ namespace Notes
             }
             if (Note == null || App.Database.GetNoteAsync(Note.ID).Result == null) OpenSavePage(name);
             else if (App.Database.GetNoteAsync(Note.ID).Result != null && await DisplayActionSheet(
-                "Do you want to overwrite the existing note?", "No", "Yes").ConfigureAwait(true) == "Yes")
+                Lang.OverwriteNotePrompt, Lang.No, Lang.Yes).ConfigureAwait(true) == Lang.Yes)
             {
                 Note.DateTime = DateTime.UtcNow;
                 await App.Database.SaveNoteAsync(Note).ConfigureAwait(true);
                 System.IO.File.WriteAllText(Note.Path, NoteContent);
                 UnsavedData = false;
-                DependencyService.Get<IPlatformSpecific>().SayShort(Properties.Resources.NoteSaved);
+                DependencyService.Get<IPlatformSpecific>().SayShort(Lang.NoteSaved);
             }
         }
 
@@ -255,7 +251,7 @@ namespace Notes
         {
             NoteContent = ContentParse(out string name);
             if (string.IsNullOrEmpty(name))
-                DependencyService.Get<IPlatformSpecific>().SayShort(Properties.Resources.CantDo);
+                DependencyService.Get<IPlatformSpecific>().SayShort(Lang.CantDo);
             else OpenSavePage(name);
         }
 
@@ -272,12 +268,12 @@ namespace Notes
 
         async void OnDeleteButtonClicked(object sender, EventArgs e)
         {
-            if (Note == null) { DependencyService.Get<IPlatformSpecific>().SayShort(Properties.Resources.CantDo); return; }
-            if (await DisplayActionSheet("Delete note?", "No", "Yes").ConfigureAwait(true) == "Yes")
+            if (Note == null) { DependencyService.Get<IPlatformSpecific>().SayShort(Lang.CantDo); return; }
+            if (await DisplayActionSheet(Lang.DeleteNotePrompt, Lang.No, Lang.Yes).ConfigureAwait(true) == Lang.Yes)
             {
                 DeleteImagesAndNote(Note);
                 await App.Database.DeleteNoteAsync(Note).ConfigureAwait(true);
-                DependencyService.Get<IPlatformSpecific>().SayShort(Properties.Resources.NoteDeleted);
+                DependencyService.Get<IPlatformSpecific>().SayShort(Lang.NoteDeleted);
                 Note = null;
             }
             UnsavedData = true;

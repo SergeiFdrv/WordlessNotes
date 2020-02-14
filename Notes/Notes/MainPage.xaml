@@ -4,15 +4,16 @@
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:customview="clr-namespace:Notes.Views"
+             xmlns:resources="clr-namespace:Notes.Resources"
              mc:Ignorable="d"
              x:Class="Notes.MainPage">
     <ContentPage.ToolbarItems>
-        <ToolbarItem Text="New note" Clicked="NoteNameTapped"/>
-        <ToolbarItem Text="New"        Order="Secondary" Clicked="OnNewButtonClicked"/>
-        <ToolbarItem Text="Open"       Order="Secondary" Clicked="OnOpenButtonClicked"/>
-        <ToolbarItem Text="Save"       Order="Secondary" Clicked="OnSaveButtonClicked"/>
-        <ToolbarItem Text="Save as..." Order="Secondary" Clicked="OnSaveAsButtonClicked"/>
-        <ToolbarItem Text="Delete"     Order="Secondary" Clicked="OnDeleteButtonClicked"/>
+        <ToolbarItem Text="{x:Static resources:Lang.NewNote}"                     Clicked="NoteNameTapped"/>
+        <ToolbarItem Text="{x:Static resources:Lang.CreateNew}" Order="Secondary" Clicked="OnNewButtonClicked"/>
+        <ToolbarItem Text="{x:Static resources:Lang.Open}"      Order="Secondary" Clicked="OnOpenButtonClicked"/>
+        <ToolbarItem Text="{x:Static resources:Lang.Save}"      Order="Secondary" Clicked="OnSaveButtonClicked"/>
+        <ToolbarItem Text="{x:Static resources:Lang.SaveAs}"    Order="Secondary" Clicked="OnSaveAsButtonClicked"/>
+        <ToolbarItem Text="{x:Static resources:Lang.Delete}"    Order="Secondary" Clicked="OnDeleteButtonClicked"/>
     </ContentPage.ToolbarItems>
 
     <StackLayout BackgroundColor="Gainsboro" IsTabStop="False" Spacing="0">
@@ -25,7 +26,7 @@
             </StackLayout>
         </ScrollView>
         <StackLayout Orientation="Horizontal" HorizontalOptions="Fill" VerticalOptions="End">
-            <Picker x:Name="ViewTypePicker" HorizontalOptions="CenterAndExpand"
+            <Picker x:Name="ViewTypePicker" HorizontalOptions="FillAndExpand"
                     SelectedIndexChanged="Picker_SelectedIndexChanged"/>
             <Button Text="+" Clicked="AddElementClicked" HorizontalOptions="FillAndExpand"/>
         </StackLayout>

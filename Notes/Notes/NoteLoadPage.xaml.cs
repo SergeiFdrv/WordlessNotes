@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
+using Notes.Resources;
 
 namespace Notes
 {
@@ -26,7 +27,7 @@ namespace Notes
             Items = new ObservableCollection<Models.Note>(App.Database.GetNotesAsync().Result);
             if (Items.Count == 0) Content = new Label
             {
-                Text = Properties.Resources.NothingFound,
+                Text = Lang.NothingFound,
                 VerticalTextAlignment = TextAlignment.Center, HorizontalTextAlignment = TextAlignment.Center
             };
             else MyListView.ItemsSource = Items;
@@ -34,7 +35,7 @@ namespace Notes
 
         async void Delete_Clicked(object sender, EventArgs e)
         {
-            if (await DisplayActionSheet("Delete note?", "No", "Yes").ConfigureAwait(false) == "Yes")
+            if (await DisplayActionSheet(Lang.DeleteNotePrompt, Lang.No, Lang.Yes).ConfigureAwait(false) == Lang.Yes)
             {
                 Models.Note note = MyListView.SelectedItem as Models.Note;
                 DeleteImagesAndNote(note);
@@ -43,7 +44,7 @@ namespace Notes
                 if (Items.Count > 0) Content = MyListView;
                 else Content = new Label
                 {
-                    Text = Properties.Resources.NothingFound,
+                    Text = Lang.NothingFound,
                     VerticalTextAlignment = TextAlignment.Center, HorizontalTextAlignment = TextAlignment.Center
                 };
                 ToolbarItems[0].Clicked -= Delete_Clicked; ToolbarItems[1].Clicked -= Open_Clicked;
@@ -77,7 +78,7 @@ namespace Notes
 
         private void MyListView_ItemSelected(object sender, SelectedItemChangedEventArgs e)
         {
-            ToolbarItems[0].Text = Properties.Resources.Delete; ToolbarItems[1].Text = Properties.Resources.Open;
+            ToolbarItems[0].Text = Lang.Delete; ToolbarItems[1].Text = Lang.Open;
             ToolbarItems[0].Clicked += Delete_Clicked; ToolbarItems[1].Clicked += Open_Clicked;
         }
     }

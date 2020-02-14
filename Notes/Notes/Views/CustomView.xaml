@@ -5,13 +5,14 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:customrenderer="clr-namespace:Notes.Renderers"
              xmlns:customview="clr-namespace:Notes.Views"
+             xmlns:resources="clr-namespace:Notes.Resources"
              mc:Ignorable="d"
              x:Class="Notes.Views.CustomView">
     <ContentView.Content>
         <StackLayout Orientation="Horizontal" HorizontalOptions="CenterAndExpand" Focused="Item_Focused">
             <StackLayout x:Name="meat" Spacing="0" HorizontalOptions="FillAndExpand">
                 <Image x:Name="Img" Margin="0" Focused="Item_Focused" IsVisible="False"/>
-                <Button x:Name="ImgBtn" Text="Choose image" Clicked="Image_Tapped" IsVisible="False"/>
+                <Button x:Name="ImgBtn" Text="{x:Static resources:Lang.ChooseImage}" Clicked="Image_Tapped" IsVisible="False"/>
                 <!-- Изучить плагин для вставки изображений: https://github.com/jamesmontemagno/MediaPlugin -->
                 <StackLayout Orientation="Horizontal" Focused="Item_Focused" Spacing="0">
                     <Label x:Name="ListMark" Text="-" HorizontalTextAlignment="End" WidthRequest="25" Padding="0,6,0,0" IsVisible="False"/>

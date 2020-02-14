@@ -9,6 +9,7 @@ using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using Notes.Models;
 using Notes.Interfaces;
+using Notes.Resources;
 
 namespace Notes
 {
@@ -54,8 +55,8 @@ namespace Notes
                 if (notes[i].Name == Name)
                 {
                     string replace = await DisplayActionSheet(
-                        "Do you want to overwrite the existing note?", null, null, "Yes", "No").ConfigureAwait(true);
-                    if (replace != "Yes") return;
+                        Lang.OverwriteNotePrompt, Lang.No, Lang.Yes).ConfigureAwait(true);
+                    if (replace != Lang.Yes) return;
                     if (File.Exists(notes[i].Path))
                         File.Delete(notes[i].Path);
                     await App.Database.DeleteNoteAsync(notes[i]).ConfigureAwait(true);
@@ -64,7 +65,7 @@ namespace Notes
             }
             File.WriteAllText(note.Path, (Navigation.NavigationStack[0] as MainPage).NoteContent);
             await App.Database.SaveNoteAsync(note).ConfigureAwait(true);
-            DependencyService.Get<IPlatformSpecific>().SayShort(Properties.Resources.NoteSaved);
+            DependencyService.Get<IPlatformSpecific>().SayShort(Lang.NoteSaved);
             (Navigation.NavigationStack[0] as MainPage).Note = note;
             (Navigation.NavigationStack[0] as MainPage).UnsavedData = false;
             (Navigation.NavigationStack[0] as MainPage).ToolbarItems[0].Text = Name;
@@ -91,7 +92,7 @@ namespace Notes
                 $"<body>{content}</body></html>";
             string path = Path.Combine(DependencyService.Get<IPlatformSpecific>().GetDocsDirectory(), name + ".html");
             if (File.Exists(path) && await DisplayActionSheet(
-                "Do you want to overwrite the existing file?", "No", "Yes").ConfigureAwait(true) != "Yes")
+                Lang.OverwriteFilePrompt, Lang.No, Lang.Yes).ConfigureAwait(true) != Lang.Yes)
                 return;
             if (Images != null)
             {
@@ -105,7 +106,7 @@ namespace Notes
                 }
             }
             File.WriteAllText(path, html);
-            await DisplayAlert("Saved at:", path, "OK").ConfigureAwait(false);
+            await DisplayAlert(Lang.SavedAt, path, "OK").ConfigureAwait(false);
         }
         #endregion
     }
