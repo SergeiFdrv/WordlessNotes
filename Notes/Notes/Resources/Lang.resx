@@ -117,4 +117,82 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="CantDo" xml:space="preserve">
+    <value>Can't do that</value>
+  </data>
+  <data name="ChooseImage" xml:space="preserve">
+    <value>Choose image</value>
+  </data>
+  <data name="CreateNew" xml:space="preserve">
+    <value>New</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="DeleteNotePrompt" xml:space="preserve">
+    <value>Delete note?</value>
+  </data>
+  <data name="ExportAsHTML" xml:space="preserve">
+    <value>Export as HTML</value>
+  </data>
+  <data name="FileNotFound" xml:space="preserve">
+    <value>File not found</value>
+  </data>
+  <data name="Header" xml:space="preserve">
+    <value>Header</value>
+  </data>
+  <data name="Image" xml:space="preserve">
+    <value>Image</value>
+  </data>
+  <data name="ImageDescription" xml:space="preserve">
+    <value>Image description</value>
+  </data>
+  <data name="List" xml:space="preserve">
+    <value>List</value>
+  </data>
+  <data name="ListItem" xml:space="preserve">
+    <value>List item</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="NewNote" xml:space="preserve">
+    <value>New note</value>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="NoteDeleted" xml:space="preserve">
+    <value>Note deleted</value>
+  </data>
+  <data name="NoteSaved" xml:space="preserve">
+    <value>Note saved</value>
+  </data>
+  <data name="NothingFound" xml:space="preserve">
+    <value>Nothing found</value>
+  </data>
+  <data name="Open" xml:space="preserve">
+    <value>Open</value>
+  </data>
+  <data name="OverwriteFilePrompt" xml:space="preserve">
+    <value>Do you want to overwrite the existing file?</value>
+  </data>
+  <data name="OverwriteNotePrompt" xml:space="preserve">
+    <value>Do you want to overwrite the existing note?</value>
+  </data>
+  <data name="Paragraph" xml:space="preserve">
+    <value>Paragraph</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="SaveAs" xml:space="preserve">
+    <value>Save as...</value>
+  </data>
+  <data name="SavedAt" xml:space="preserve">
+    <value>Saved at:</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>Yes</value>
+  </data>
 </root>

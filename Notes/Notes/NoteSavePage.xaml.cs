@@ -9,6 +9,7 @@ using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using Notes.Models;
 using Notes.Interfaces;
+using Notes.Resources;
 
 namespace Notes
 {
@@ -18,6 +19,13 @@ namespace Notes
         public NoteSavePage()
         {
             InitializeComponent();
+        }
+
+        public NoteSavePage(string name, List<Models.Image> images)
+        {
+            InitializeComponent();
+            Name = name;
+            Images.AddRange(images);
         }
 
         public string Name
@@ -46,26 +54,27 @@ namespace Notes
             {
                 if (notes[i].Name == Name)
                 {
-                    string replace = await DisplayActionSheet("Do you want to overwrite the existing note?", null, null, "Yes", "No");
-                    if (replace != "Yes") return;
+                    string replace = await DisplayActionSheet(
+                        Lang.OverwriteNotePrompt, Lang.No, Lang.Yes).ConfigureAwait(true);
+                    if (replace != Lang.Yes) return;
                     if (File.Exists(notes[i].Path))
                         File.Delete(notes[i].Path);
-                    await App.Database.DeleteNoteAsync(notes[i]);
+                    await App.Database.DeleteNoteAsync(notes[i]).ConfigureAwait(true);
                     break;
                 }
             }
             File.WriteAllText(note.Path, (Navigation.NavigationStack[0] as MainPage).NoteContent);
-            await App.Database.SaveNoteAsync(note);
-            DependencyService.Get<IPlatformSpecific>().SayShort("Note saved");
+            await App.Database.SaveNoteAsync(note).ConfigureAwait(true);
+            DependencyService.Get<IPlatformSpecific>().SayShort(Lang.NoteSaved);
             (Navigation.NavigationStack[0] as MainPage).Note = note;
             (Navigation.NavigationStack[0] as MainPage).UnsavedData = false;
             (Navigation.NavigationStack[0] as MainPage).ToolbarItems[0].Text = Name;
-            await Navigation.PopAsync();
+            await Navigation.PopAsync().ConfigureAwait(false);
         }
         #endregion
 
         #region Export
-        public List<Models.Image> Imgs { get; set; }
+        public List<Models.Image> Images { get; } = new List<Models.Image>();
 
         private async void HTMLButton_Clicked(object sender, EventArgs e)
         {
@@ -82,21 +91,22 @@ namespace Notes
                 $".imgdesc {{ color: #888; margin-top: 0; }}</style></head>" +
                 $"<body>{content}</body></html>";
             string path = Path.Combine(DependencyService.Get<IPlatformSpecific>().GetDocsDirectory(), name + ".html");
-            if (File.Exists(path) && await DisplayActionSheet("Do you want to overwrite the existing file?", "No", "Yes") != "Yes")
+            if (File.Exists(path) && await DisplayActionSheet(
+                Lang.OverwriteFilePrompt, Lang.No, Lang.Yes).ConfigureAwait(true) != Lang.Yes)
                 return;
-            if (Imgs != null)
+            if (Images != null)
             {
                 string imgpath = Path.Combine(DependencyService.Get<IPlatformSpecific>().GetDocsDirectory(), "img"), imgname;
                 if (!Directory.Exists(imgpath)) Directory.CreateDirectory(imgpath);
-                for (i = 0; i < Imgs.Count; i++)
+                for (i = 0; i < Images.Count; i++)
                 {
-                    imgname = Path.Combine(imgpath, Imgs[i].Name);
+                    imgname = Path.Combine(imgpath, Images[i].Name);
                     if (File.Exists(imgname)) File.Delete(imgname);
-                    File.Copy(Imgs[i].Path, imgname);
+                    File.Copy(Images[i].Path, imgname);
                 }
             }
             File.WriteAllText(path, html);
-            await DisplayAlert("Saved at:", path, "OK");
+            await DisplayAlert(Lang.SavedAt, path, "OK").ConfigureAwait(false);
         }
         #endregion
     }

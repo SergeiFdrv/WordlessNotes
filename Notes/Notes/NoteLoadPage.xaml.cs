@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
+using Notes.Resources;
 
 namespace Notes
 {
@@ -18,28 +19,52 @@ namespace Notes
             InitializeComponent();
         }
 
-        public ObservableCollection<Models.Note> Items { get; set; }
+        public ObservableCollection<Models.Note> Items { get; private set; }
 
         protected override void OnAppearing()
         {
             base.OnAppearing();
             Items = new ObservableCollection<Models.Note>(App.Database.GetNotesAsync().Result);
-            if (Items.Count == 0) Content = new Label { Text = "Nothing found", VerticalTextAlignment = TextAlignment.Center, HorizontalTextAlignment = TextAlignment.Center };
+            if (Items.Count == 0) Content = new Label
+            {
+                Text = Lang.NothingFound,
+                VerticalTextAlignment = TextAlignment.Center, HorizontalTextAlignment = TextAlignment.Center
+            };
             else MyListView.ItemsSource = Items;
         }
 
-        public async void Delete_Clicked(object sender, EventArgs e)
+        async void Delete_Clicked(object sender, EventArgs e)
         {
-            if (await DisplayActionSheet("Delete?", null, null, "Yes", "No") == "Yes")
+            if (await DisplayActionSheet(Lang.DeleteNotePrompt, Lang.No, Lang.Yes).ConfigureAwait(false) == Lang.Yes)
             {
                 Models.Note note = MyListView.SelectedItem as Models.Note;
-                await App.Database.DeleteNoteAsync(note);
+                DeleteImagesAndNote(note);
+                await App.Database.DeleteNoteAsync(note).ConfigureAwait(false);
                 Items.Remove(note);
-                if (System.IO.File.Exists(note.Path))
-                    System.IO.File.Delete(note.Path);
                 if (Items.Count > 0) Content = MyListView;
-                else Content = new Label { Text = "Nothing found", VerticalTextAlignment = TextAlignment.Center, HorizontalTextAlignment = TextAlignment.Center };
-                ToolbarItems.Clear();
+                else Content = new Label
+                {
+                    Text = Lang.NothingFound,
+                    VerticalTextAlignment = TextAlignment.Center, HorizontalTextAlignment = TextAlignment.Center
+                };
+                ToolbarItems[0].Clicked -= Delete_Clicked; ToolbarItems[1].Clicked -= Open_Clicked;
+            }
+        }
+
+        public static void DeleteImagesAndNote(Models.Note note)
+        {
+            if (note != null && System.IO.File.Exists(note.Path))
+            {
+                string[] lines = System.IO.File.ReadAllText(note.Path).Split(new string[] { "<br>" }, StringSplitOptions.None);
+                string imgpath;
+                for (int i = 0; i < lines.Length; i++)
+                    if (lines[i].StartsWith("<img", StringComparison.OrdinalIgnoreCase))
+                    {
+                        imgpath = System.IO.Path.Combine(note.Path, lines[i].Substring(19, lines[i + 1].Length - 23));
+                        if (System.IO.File.Exists(imgpath))
+                            System.IO.File.Delete(imgpath);
+                    }
+                System.IO.File.Delete(note.Path);
             }
         }
 
@@ -48,14 +73,12 @@ namespace Notes
             Models.Note note = MyListView.SelectedItem as Models.Note;
             (Navigation.NavigationStack[0] as MainPage).Note = note;
             (Navigation.NavigationStack[0] as MainPage).TryPopulate(note);
-            await Navigation.PopAsync();
+            await Navigation.PopAsync().ConfigureAwait(false);
         }
 
         private void MyListView_ItemSelected(object sender, SelectedItemChangedEventArgs e)
         {
-            ToolbarItems.Clear();
-            ToolbarItems.Add(new ToolbarItem { Text = "Delete" });
-            ToolbarItems.Add(new ToolbarItem { Text = "Open" });
+            ToolbarItems[0].Text = Lang.Delete; ToolbarItems[1].Text = Lang.Open;
             ToolbarItems[0].Clicked += Delete_Clicked; ToolbarItems[1].Clicked += Open_Clicked;
         }
     }

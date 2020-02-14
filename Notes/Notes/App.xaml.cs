@@ -18,9 +18,9 @@ namespace Notes
             };
         }
 
-        public static int FontSize = 20;
+        public static int FontSize => 20;
 
-        public static Random Random = new Random();
+        public static Random Random { get; set; } = new Random();
 
         private static NoteDatabase DB { get; set; }
 

@@ -6,6 +6,8 @@
              mc:Ignorable="d"
              x:Class="Notes.NoteLoadPage">
     <ContentPage.ToolbarItems>
+        <ToolbarItem/>
+        <ToolbarItem/>
     </ContentPage.ToolbarItems>
     <ListView x:Name="MyListView"
             CachingStrategy="RecycleElement"

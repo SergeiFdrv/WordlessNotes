@@ -5,22 +5,23 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:customrenderer="clr-namespace:Notes.Renderers"
              xmlns:customview="clr-namespace:Notes.Views"
+             xmlns:resources="clr-namespace:Notes.Resources"
              mc:Ignorable="d"
              x:Class="Notes.Views.CustomView">
     <ContentView.Content>
-        <Grid HorizontalOptions="CenterAndExpand" Focused="Item_Focused">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition Width="25"/>
-            </Grid.ColumnDefinitions>
-            <StackLayout x:Name="meat" Spacing="0" Grid.Column="0">
+        <StackLayout Orientation="Horizontal" HorizontalOptions="CenterAndExpand" Focused="Item_Focused">
+            <StackLayout x:Name="meat" Spacing="0" HorizontalOptions="FillAndExpand">
                 <Image x:Name="Img" Margin="0" Focused="Item_Focused" IsVisible="False"/>
-                <Button x:Name="ImgBtn" Text="Choose image" Clicked="Image_Tapped" IsVisible="False"/>
+                <Button x:Name="ImgBtn" Text="{x:Static resources:Lang.ChooseImage}" Clicked="Image_Tapped" IsVisible="False"/>
                 <!-- Изучить плагин для вставки изображений: https://github.com/jamesmontemagno/MediaPlugin -->
-                <customrenderer:TextEditor x:Name="TextEditor" Placeholder="Paragraph" PlaceholderColor="Gray" Focused="Item_Focused" TextChanged="TextEditor_TextChanged"/>
-                <customview:CustomListView x:Name="List" IsVisible="False"/>
+                <StackLayout Orientation="Horizontal" Focused="Item_Focused" Spacing="0">
+                    <BoxView x:Name="ListMark" CornerRadius="100" VerticalOptions="Start" Color="Black" Margin="0,15,0,0" IsVisible="False"/>
+                    <customrenderer:TextEditor x:Name="TextEditor" Placeholder="Paragraph" PlaceholderColor="Gray" WidthRequest="100"
+                                               BackgroundColor="Transparent" Focused="Item_Focused" TextChanged="TextEditor_TextChanged"/>
+                </StackLayout>
             </StackLayout>
-            <Button x:Name="XBtn" Text="X" HeightRequest="35" Clicked="Button_Clicked" Grid.Column="1" VerticalOptions="Start"/>
-        </Grid>
+            <Button x:Name="XBtn" Text="X" HeightRequest="35" WidthRequest="25" VerticalOptions="Start" HorizontalOptions="End"
+                    Clicked="Button_Clicked"/>
+        </StackLayout>
     </ContentView.Content>
 </ContentView>

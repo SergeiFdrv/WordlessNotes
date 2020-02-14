@@ -35,6 +35,8 @@ namespace Notes.Data
         public Task<Image> GetImageByNameAsync(string name) => _database.Table<Image>().Where(i => i.Name == name).FirstOrDefaultAsync();
 
         public Task<int> SaveImageAsync(Image image) => (image.ID == 0) ? _database.InsertAsync(image) : _database.UpdateAsync(image);
+
+        public Task<int> DeleteImageAsync(Image image) => _database.DeleteAsync(image);
     }
 }
 

@@ -59,14 +59,5 @@ namespace Notes.Properties {
                 resourceCulture = value;
             }
         }
-        
-        /// <summary>
-        ///   Ищет локализованную строку, похожую на New note.
-        /// </summary>
-        internal static string NewNote {
-            get {
-                return ResourceManager.GetString("NewNote", resourceCulture);
-            }
-        }
     }
 }
