@@ -17,6 +17,7 @@ namespace Notes
         public NoteLoadPage()
         {
             InitializeComponent();
+            SearchEntry.FontSize = NotFoundLabel.FontSize = App.FontSize;
         }
 
         public ObservableCollection<Models.Note> Items { get; private set; }
@@ -25,12 +26,7 @@ namespace Notes
         {
             base.OnAppearing();
             Items = new ObservableCollection<Models.Note>(App.Database.GetNotesAsync().Result);
-            if (Items.Count == 0) Content = new Label
-            {
-                Text = Lang.NothingFound,
-                VerticalTextAlignment = TextAlignment.Center, HorizontalTextAlignment = TextAlignment.Center
-            };
-            else MyListView.ItemsSource = Items;
+            RefreshNoteList();
         }
 
         async void Delete_Clicked(object sender, EventArgs e)
@@ -41,14 +37,14 @@ namespace Notes
                 DeleteImagesAndNote(note);
                 await App.Database.DeleteNoteAsync(note).ConfigureAwait(true);
                 Items.Remove(note);
-                if (Items.Count > 0) Content = MyListView;
-                else Content = new Label
-                {
-                    Text = Lang.NothingFound,
-                    VerticalTextAlignment = TextAlignment.Center, HorizontalTextAlignment = TextAlignment.Center
-                };
+                RefreshNoteList();
                 ToolbarItems[0].Clicked -= Delete_Clicked; ToolbarItems[1].Clicked -= Open_Clicked;
             }
+        }
+
+        void RefreshNoteList()
+        {
+            if (MyListView.IsVisible = !(NotFoundLabel.IsVisible = Items.Count == 0)) MyListView.ItemsSource = Items;
         }
 
         public static void DeleteImagesAndNote(Models.Note note)
@@ -80,6 +76,13 @@ namespace Notes
         {
             ToolbarItems[0].Text = Lang.Delete; ToolbarItems[1].Text = Lang.Open;
             ToolbarItems[0].Clicked += Delete_Clicked; ToolbarItems[1].Clicked += Open_Clicked;
+        }
+
+        private void SearchEntry_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            var I = SearchEntry.Text.Length == 0 ? Items : Items.Where(note => note.Name.Contains(SearchEntry.Text));
+            MyListView.ItemsSource = I;
+            NotFoundLabel.IsVisible = !(MyListView.IsVisible = I.Any());
         }
     }
 }

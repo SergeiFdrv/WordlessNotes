@@ -3,25 +3,31 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:resources="clr-namespace:Notes.Resources"
              mc:Ignorable="d"
              x:Class="Notes.NoteLoadPage">
     <ContentPage.ToolbarItems>
         <ToolbarItem/>
         <ToolbarItem/>
     </ContentPage.ToolbarItems>
-    <ListView x:Name="MyListView"
-            CachingStrategy="RecycleElement"
-            HasUnevenRows="True"
-            ItemSelected="MyListView_ItemSelected">
-        <ListView.ItemTemplate>
-            <DataTemplate>
-                <ViewCell>
-                    <StackLayout Padding="8" Spacing="0">
-                        <Label Text="{Binding Name}"     TextColor="Black" FontSize="Large" LineBreakMode="WordWrap"/>
-                        <Label Text="{Binding DateTime}" TextColor="Gray" FontSize="Medium" LineBreakMode="MiddleTruncation"/>
-                    </StackLayout>
-                </ViewCell>
-            </DataTemplate>
-        </ListView.ItemTemplate>
-    </ListView>
+    <StackLayout x:Name="Content">
+        <Entry x:Name="SearchEntry" Placeholder="Search" PlaceholderColor="Gray" HorizontalOptions="FillAndExpand"
+               TextChanged="SearchEntry_TextChanged"/>
+        <ListView x:Name="MyListView" HasUnevenRows="True"
+                  CachingStrategy="RecycleElement"
+                  ItemSelected="MyListView_ItemSelected">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <StackLayout Padding="8" Spacing="0">
+                            <Label Text="{Binding Name}"     TextColor="Black" FontSize="Large" LineBreakMode="WordWrap"/>
+                            <Label Text="{Binding DateTime}" TextColor="Gray" FontSize="Medium" LineBreakMode="MiddleTruncation"/>
+                        </StackLayout>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+        <Label x:Name="NotFoundLabel" Text="{x:Static resources:Lang.NothingFound}"
+               VerticalTextAlignment="Center" HorizontalTextAlignment="Center" IsVisible="False"/>
+    </StackLayout>
 </ContentPage>
