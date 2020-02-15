@@ -259,6 +259,15 @@ namespace Notes.Resources {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Reload note?.
+        /// </summary>
+        internal static string ReloadPrompt {
+            get {
+                return ResourceManager.GetString("ReloadPrompt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Reopen.
         /// </summary>
         internal static string Reopen {

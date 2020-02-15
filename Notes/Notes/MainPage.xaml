@@ -14,7 +14,7 @@
         <ToolbarItem Text="{x:Static resources:Lang.Save}"      Order="Secondary" Clicked="OnSaveButtonClicked"/>
         <ToolbarItem Text="{x:Static resources:Lang.SaveAs}"    Order="Secondary" Clicked="OnSaveAsButtonClicked"/>
         <ToolbarItem Text="{x:Static resources:Lang.Delete}"    Order="Secondary" Clicked="OnDeleteButtonClicked"/>
-        <ToolbarItem Text="{x:Static resources:Lang.Reopen}"    Order="Secondary" Clicked="OnReopenClicked"/>
+        <ToolbarItem Text="{x:Static resources:Lang.Reopen}"    Order="Secondary" Clicked="OnReopenButtonClicked"/>
     </ContentPage.ToolbarItems>
 
     <StackLayout BackgroundColor="Gainsboro" Spacing="0">
@@ -23,7 +23,7 @@
                 <BoxView HeightRequest="1" BackgroundColor="Black"/>
                 <StackLayout x:Name="contentLayout" VerticalOptions="FillAndExpand">
                     <StackLayout.GestureRecognizers>
-                        <TapGestureRecognizer Tapped="TapGestureRecognizer_Tapped"/>
+                        <TapGestureRecognizer Tapped="ContentLayoutTapped"/>
                     </StackLayout.GestureRecognizers>
                 </StackLayout>
                 <BoxView HeightRequest="1" BackgroundColor="Black" VerticalOptions="End"/>

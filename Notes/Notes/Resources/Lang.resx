@@ -183,6 +183,9 @@
   <data name="Paragraph" xml:space="preserve">
     <value>Paragraph</value>
   </data>
+  <data name="ReloadPrompt" xml:space="preserve">
+    <value>Reload note?</value>
+  </data>
   <data name="Reopen" xml:space="preserve">
     <value>Reopen</value>
   </data>

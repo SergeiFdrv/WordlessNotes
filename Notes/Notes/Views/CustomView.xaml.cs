@@ -34,6 +34,8 @@ namespace Notes.Views
             Index = index;
             ViewType = type;
             Text = text;
+            Img.WidthRequest = DeviceDisplay.MainDisplayInfo.Width * 0.9 /
+                               DeviceDisplay.MainDisplayInfo.Density;
             ListMark.WidthRequest = ListMark.HeightRequest = App.FontSize / 2;
             ListMark.Margin = new Thickness(10, App.FontSize * 5 / 6, 0, 0);
         }

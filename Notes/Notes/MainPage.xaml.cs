@@ -280,17 +280,16 @@ namespace Notes
             }
             UnsavedData = true;
         }
-
         void DeleteImagesAndNote(Note note) => NoteLoadPage.DeleteImagesAndNote(note);
 
-        async void OnReopenClicked(object sender, EventArgs e)
+        async void OnReopenButtonClicked(object sender, EventArgs e)
         {
-            if (await DisplayActionSheet(Lang.Reopen + '?', Lang.No, Lang.Yes).ConfigureAwait(true) == Lang.Yes && Note != null)
+            if (await DisplayActionSheet(Lang.ReloadPrompt, Lang.No, Lang.Yes).ConfigureAwait(true) == Lang.Yes && Note != null)
             { contentLayout.Children.Clear(); TryPopulate(Note); }
         }
         #endregion
 
-        #region AddElementInteraction
+        #region ElementInteraction
         private void Picker_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (SelectedView != null) SelectedView.ViewType = (CustomViewType)((sender as Picker).SelectedIndex);
@@ -300,13 +299,12 @@ namespace Notes
             AddElement(contentLayout.Children.Count, (CustomViewType)ViewTypePicker.SelectedIndex);
             (contentLayout.Children.Last() as CustomView).Focus();
         }
-        #endregion
 
-        private void TapGestureRecognizer_Tapped(object sender, EventArgs e)
+        private void ContentLayoutTapped(object sender, EventArgs e)
         {
             foreach (CustomView view in contentLayout.Children) view.BackgroundColor = Color.White;
             SelectedView = null;
         }
+        #endregion
     }
 }
-
