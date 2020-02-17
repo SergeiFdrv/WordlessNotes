@@ -10,9 +10,9 @@
         <ToolbarItem/>
         <ToolbarItem/>
     </ContentPage.ToolbarItems>
-    <StackLayout x:Name="Content">
-        <Entry x:Name="SearchEntry" Placeholder="Search" PlaceholderColor="Gray" HorizontalOptions="FillAndExpand"
-               TextChanged="SearchEntry_TextChanged"/>
+    <StackLayout>
+        <Entry x:Name="SearchEntry" Placeholder="{x:Static resources:Lang.Search}" PlaceholderColor="Gray"
+               HorizontalOptions="FillAndExpand" TextChanged="SearchEntry_TextChanged"/>
         <ListView x:Name="MyListView" HasUnevenRows="True"
                   CachingStrategy="RecycleElement"
                   ItemSelected="MyListView_ItemSelected">

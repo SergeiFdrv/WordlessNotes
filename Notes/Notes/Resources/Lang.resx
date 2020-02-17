@@ -198,6 +198,9 @@
   <data name="SavedAt" xml:space="preserve">
     <value>Saved at:</value>
   </data>
+  <data name="Search" xml:space="preserve">
+    <value>Search</value>
+  </data>
   <data name="Yes" xml:space="preserve">
     <value>Yes</value>
   </data>

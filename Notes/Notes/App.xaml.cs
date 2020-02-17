@@ -18,7 +18,7 @@ namespace Notes
             };
         }
 
-        public static int FontSize => 20;
+        public static byte FontSize => 20;
 
         public static Random Random { get; set; } = new Random();
 

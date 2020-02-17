@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,6 +26,41 @@ namespace Notes
             AddElement();
         }
 
+        #region Override
+        protected override void OnDisappearing()
+        {
+            base.OnDisappearing();
+            // CLEAR UNUSED IMAGES
+            // Store image names from the page
+            List<string> images = new List<string>();
+            int i, j;
+            for (i = 0; i < contentLayout.Children.Count; i++)
+            {
+                CustomView view = contentLayout.Children[i] as CustomView;
+                if (view.Image != null) images.Add(view.Image.Name);
+            }
+            // Get image names from all notes
+            var notes = App.Database.GetNotesAsync().Result; // Get all notes from the DB
+            for (i = 0; i < notes.Count; i++)
+            {
+                if (!File.Exists(notes[i].Path)) continue;
+                List<string> lines = File.ReadAllText(notes[i].Path).Split(new [] { "<br>" }, StringSplitOptions.None)
+                    .Where(elname => elname.StartsWith("<img", StringComparison.OrdinalIgnoreCase)).ToList();
+                for (j = 0; j < lines.Count; j++)
+                {
+                    images.Add(lines[j].Substring(14, lines[j].Length - 17));
+                }
+            }
+            // Get all images from the DB the names of which are not in the list
+            var allImages = App.Database.GetImagesAsync().Result.SkipWhile(img => images.Contains(img.Name)).ToArray();
+            for (i = 0; i < allImages.Length; i++)
+            {
+                if (File.Exists(allImages[i].Path)) File.Delete(allImages[i].Path);
+                App.Database.DeleteImageAsync(allImages[i]);
+            }
+        }
+        #endregion
+
         #region Properties
         public List<string> DocumentItemOptions { get; } = new List<string> {
             Lang.Paragraph, $"{Lang.Header} 1", $"{Lang.Header} 2", $"{Lang.Header} 3", Lang.List, Lang.Image };
@@ -42,8 +78,7 @@ namespace Notes
             get => _SelectedView;
             set
             {
-                _SelectedView = value;
-                if (value == null) return;
+                if ((_SelectedView = value) == null) return;
                 ViewTypePicker.SelectedIndex = (int)_SelectedView.ViewType;
                 foreach (CustomView view in contentLayout.Children) view.BackgroundColor = Color.White;
                 _SelectedView.BackgroundColor = Color.WhiteSmoke;
@@ -89,11 +124,11 @@ namespace Notes
             try
             {
                 if (note == null) return;
-                NoteContent = System.IO.File.ReadAllText(note.Path);
+                NoteContent = File.ReadAllText(note.Path);
                 Populate();
                 ToolbarItems[0].Text = note.Name;
             }
-            catch (System.IO.FileNotFoundException)
+            catch (FileNotFoundException)
             {
                 await DisplayAlert(Lang.FileNotFound, null, "OK").ConfigureAwait(false);
             }
@@ -102,7 +137,7 @@ namespace Notes
         private void Populate()
         {
             contentLayout.Children.Clear();
-            string[] lines = NoteContent.Split(new string[] { "<br>" }, StringSplitOptions.None);
+            string[] lines = NoteContent.Split(new [] { "<br>" }, StringSplitOptions.None);
             for (int i = 0; i < lines.Length; i++)
             {
                 if (lines[i].StartsWith("<h1>", StringComparison.OrdinalIgnoreCase))
@@ -165,8 +200,8 @@ namespace Notes
         #region Saving
         private string ContentParse(out string name)
         {
-            string content = name = string.Empty;
-            if (Note != null) name = Note.Name;
+            string content = string.Empty;
+            name = Note?.Name ?? string.Empty;
             CustomView view;
             for (int i = 0; i < contentLayout.Children.Count; i++)
             {
@@ -221,6 +256,7 @@ namespace Notes
             Note = null;
             ToolbarItems[0].Text = Lang.NewNote;
             contentLayout.Children.Clear();
+            AddElement();
         }
 
         async void OnOpenButtonClicked(object sender, EventArgs e)
@@ -238,12 +274,12 @@ namespace Notes
                 UnsavedData = false; return;
             }
             if (Note == null || App.Database.GetNoteAsync(Note.ID).Result == null) OpenSavePage(name);
-            else if (App.Database.GetNoteAsync(Note.ID).Result != null && await DisplayActionSheet(
-                Lang.OverwriteNotePrompt, Lang.No, Lang.Yes).ConfigureAwait(true) == Lang.Yes)
+            else
+            if (await DisplayActionSheet(Lang.OverwriteNotePrompt, Lang.No, Lang.Yes).ConfigureAwait(true) == Lang.Yes)
             {
                 Note.DateTime = DateTime.UtcNow;
                 await App.Database.SaveNoteAsync(Note).ConfigureAwait(true);
-                System.IO.File.WriteAllText(Note.Path, NoteContent);
+                File.WriteAllText(Note.Path, NoteContent);
                 UnsavedData = false;
                 DependencyService.Get<IPlatformSpecific>().SayShort(Lang.NoteSaved);
             }
@@ -252,8 +288,7 @@ namespace Notes
         private void OnSaveAsButtonClicked(object sender, EventArgs e)
         {
             NoteContent = ContentParse(out string name);
-            if (string.IsNullOrEmpty(name))
-                DependencyService.Get<IPlatformSpecific>().SayShort(Lang.CantDo);
+            if (string.IsNullOrEmpty(name)) DependencyService.Get<IPlatformSpecific>().SayShort(Lang.CantDo);
             else OpenSavePage(name);
         }
 

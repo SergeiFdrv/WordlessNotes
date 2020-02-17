@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -29,6 +30,7 @@ namespace Notes
             RefreshNoteList();
         }
 
+        #region Deleting
         async void Delete_Clicked(object sender, EventArgs e)
         {
             if (await DisplayActionSheet(Lang.DeleteNotePrompt, Lang.No, Lang.Yes).ConfigureAwait(true) == Lang.Yes)
@@ -49,20 +51,21 @@ namespace Notes
 
         public static void DeleteImagesAndNote(Models.Note note)
         {
-            if (note != null && System.IO.File.Exists(note.Path))
+            if (note != null && File.Exists(note.Path))
             {
-                string[] lines = System.IO.File.ReadAllText(note.Path).Split(new string[] { "<br>" }, StringSplitOptions.None);
+                string[] lines = File.ReadAllText(note.Path).Split(new string[] { "<br>" }, StringSplitOptions.None);
                 string imgpath;
                 for (int i = 0; i < lines.Length; i++)
                     if (lines[i].StartsWith("<img", StringComparison.OrdinalIgnoreCase))
                     {
-                        imgpath = System.IO.Path.Combine(note.Path, lines[i].Substring(19, lines[i + 1].Length - 23));
-                        if (System.IO.File.Exists(imgpath))
-                            System.IO.File.Delete(imgpath);
+                        imgpath = Path.Combine(note.Path, lines[i].Substring(19, lines[i + 1].Length - 23));
+                        if (File.Exists(imgpath))
+                            File.Delete(imgpath);
                     }
-                System.IO.File.Delete(note.Path);
+                File.Delete(note.Path);
             }
         }
+        #endregion
 
         private async void Open_Clicked(object sender, EventArgs e)
         {

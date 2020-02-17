@@ -198,6 +198,9 @@
   <data name="SavedAt" xml:space="preserve">
     <value>Сохранено в:</value>
   </data>
+  <data name="Search" xml:space="preserve">
+    <value>Поиск</value>
+  </data>
   <data name="Yes" xml:space="preserve">
     <value>Да</value>
   </data>

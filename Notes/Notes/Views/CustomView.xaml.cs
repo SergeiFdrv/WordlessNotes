@@ -40,6 +40,7 @@ namespace Notes.Views
             ListMark.Margin = new Thickness(10, App.FontSize * 5 / 6, 0, 0);
         }
 
+        #region Properties
         public MainPage ParentPage
         {
             get
@@ -114,6 +115,7 @@ namespace Notes.Views
             get => TextEditor.Text;
             set => TextEditor.Text = value;
         }
+        #endregion
 
         private void Button_Clicked(object sender, EventArgs e)
         {
