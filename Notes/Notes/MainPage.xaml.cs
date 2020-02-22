@@ -206,40 +206,24 @@ namespace Notes
             for (int i = 0; i < contentLayout.Children.Count; i++)
             {
                 view = contentLayout.Children[i] as CustomView;
-                if (string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(view.Text))
-                {
-                    name = view.Text;
-                }
-                if (view.ViewType == CustomViewType.Header1)
-                {
-                    content += $"<h1>{view.Text}</h1><br>";
-                }
-                else if (view.ViewType == CustomViewType.Header2)
-                {
-                    content += $"<h2>{view.Text}</h2><br>";
-                }
-                else if (view.ViewType == CustomViewType.Header3)
-                {
-                    content += $"<h3>{view.Text}</h3><br>";
-                }
-                else if (view.ViewType == CustomViewType.Image && (contentLayout.Children[i] as CustomView).Image != null)
-                {
-                    content += $"<img src=\"img/{(contentLayout.Children[i] as CustomView).Image.Name}\"/><br><p class=\"imgdesc\">{view.Text}</p><br>";
-                }
-                else if (view.ViewType == CustomViewType.List)
-                {
-                    content += $"<ul><br><li>{view.Text}</li><br>";
-                    int j = i + 1;
-                    for (; j < contentLayout.Children.Count &&
-                        (contentLayout.Children[j] as CustomView).ViewType == CustomViewType.List; j++)
-                    {
-                        content += $"<li>{(contentLayout.Children[j] as CustomView).Text}</li><br>";
-                    }
-                    content += "</ul><br>";
-                    i = j - 1;
-                }
-                else if (view.ViewType == CustomViewType.Paragraph) content += $"<p>{view.Text}</p><br>";
+                if (string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(view.Text)) name = view.Text;
+                if (view.ViewType == CustomViewType.List) content += HTMLUnorderedList(view, ref i);
+                else content += view.ToHTMLString();
             }
+            return content;
+        }
+
+        string HTMLUnorderedList(CustomView view, ref int i)
+        {
+            string content = $"<ul><br><li>{view.Text}</li><br>";
+            int j = i + 1;
+            for (; j < contentLayout.Children.Count &&
+                (contentLayout.Children[j] as CustomView).ViewType == CustomViewType.List; j++)
+            {
+                content += $"<li>{(contentLayout.Children[j] as CustomView).Text}</li><br>";
+            }
+            content += "</ul><br>";
+            i = j - 1;
             return content;
         }
         #endregion
@@ -289,7 +273,12 @@ namespace Notes
         {
             NoteContent = ContentParse(out string name);
             if (string.IsNullOrEmpty(name)) DependencyService.Get<IPlatformSpecific>().SayShort(Lang.CantDo);
-            else OpenSavePage(name);
+            else
+            {
+                foreach (CustomView view in contentLayout.Children)
+                    if (!string.IsNullOrEmpty(view.Text)) { name = view.Text; break; }
+                OpenSavePage(name);
+            }
         }
 
         async void OpenSavePage(string notename)

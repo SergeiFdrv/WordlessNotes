@@ -40,6 +40,17 @@ namespace Notes.Views
             ListMark.Margin = new Thickness(10, App.FontSize * 5 / 6, 0, 0);
         }
 
+        public string ToHTMLString()
+        {
+            if (ViewType == CustomViewType.Header1) return $"<h1>{Text}</h1><br>";
+            else if (ViewType == CustomViewType.Header2) return $"<h2>{Text}</h2><br>";
+            else if (ViewType == CustomViewType.Header3) return $"<h3>{Text}</h3><br>";
+            else if (ViewType == CustomViewType.Image && Image != null)
+                return $"<img src=\"img/{Image.Name}\"/><br><p class=\"imgdesc\">{Text}</p><br>";
+            else if (ViewType == CustomViewType.Paragraph) return $"<p>{Text}</p><br>";
+            return string.Empty;
+        }
+
         #region Properties
         public MainPage ParentPage
         {
@@ -119,7 +130,7 @@ namespace Notes.Views
 
         private void Button_Clicked(object sender, EventArgs e)
         {
-            if (ParentPage != null) ParentPage.DeleteElement(Index);
+            ParentPage?.DeleteElement(Index);
         }
 
         private void Item_Focused(object sender, FocusEventArgs e)
@@ -129,15 +140,34 @@ namespace Notes.Views
 
         private async void Image_Tapped(object sender, EventArgs e)
         {
-            if (!CrossMedia.Current.IsPickPhotoSupported) return;
             if (ParentPage != null)
             {
                 ParentPage.SelectedView = this;
                 ParentPage.UnsavedData = true;
             }
-            var file = await CrossMedia.Current.PickPhotoAsync().ConfigureAwait(true);
-            if (file == null) return;
-            Image = new Models.Image { Path = file.Path, Name = file.Path.Substring(file.Path.LastIndexOf('/') + 1) };
+            List<string> options = new List<string>();
+            if (CrossMedia.Current.IsPickPhotoSupported) options.Add("Memory");
+            //if (CrossMedia.Current.IsTakePhotoSupported) options.Add("Camera");
+            if (options.Count == 0) return;
+            string choice = options.Count == 1 ? options[0] : await
+                ParentPage.DisplayActionSheet("Where from?", "Cancel", null, options.ToArray()).ConfigureAwait(true);
+            Plugin.Media.Abstractions.MediaFile file;
+            if (choice == "Memory")
+            {
+                file = await CrossMedia.Current.PickPhotoAsync().ConfigureAwait(true);
+                if (file == null) return;
+                Image = new Models.Image { Path = file.Path, Name = file.Path.Substring(file.Path.LastIndexOf('/') + 1) };
+            }
+            /*else if (choice == "Camera")
+            {
+                file = await CrossMedia.Current.TakePhotoAsync(new Plugin.Media.Abstractions.StoreCameraMediaOptions
+                {
+                    //SaveToAlbum = true
+                    Directory = "/img",
+                    Name = $"local{DateTime.UtcNow}.jpg"
+                }).ConfigureAwait(true);
+                Image = new Models.Image { Path = file.Path, Name = file.Path.Substring(file.Path.LastIndexOf('/') + 1) };
+            }*/
             await App.Database.SaveImageAsync(Image).ConfigureAwait(true);
             Img.Source = ImageSource.FromFile(Image.Path);
         }
