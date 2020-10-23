@@ -30,6 +30,8 @@ namespace Notes.Droid.Resources.renderers
             {
                 Control.SetBackgroundColor(global::Android.Graphics.Color.Transparent);
                 Control.SetTextColor(global::Android.Graphics.Color.Black);
+                Control.RequestFocus();
+                Control.SetSelection(0);
             }
         }
     }
