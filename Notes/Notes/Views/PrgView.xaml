@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<views:AbsCstmView xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:views="clr-namespace:Notes.Views"
+             xmlns:customrenderer="clr-namespace:Notes.Renderers"
+             xmlns:resources="clr-namespace:Notes.Resources"
+             x:Class="Notes.Views.PrgView">
+    <views:AbsCstmView.Content>
+        <StackLayout Orientation="Horizontal" HorizontalOptions="CenterAndExpand" Spacing="0" Focused="Item_Focused">
+            <StackLayout x:Name="meat" Spacing="0" HorizontalOptions="FillAndExpand">
+                <customrenderer:TextEditor x:Name="TextEditor" Placeholder="{x:Static resources:Lang.Paragraph}" PlaceholderColor="Gray" WidthRequest="100"
+                                           TextChanged="TextEditor_TextChanged" Focused="Item_Focused"/>
+            </StackLayout>
+            <Button x:Name="XBtn" Text="X" VerticalOptions="Start" HorizontalOptions="End" WidthRequest="40" BorderWidth="0" CornerRadius="0"
+            Clicked="Button_Clicked"/>
+        </StackLayout>
+    </views:AbsCstmView.Content>
+</views:AbsCstmView>

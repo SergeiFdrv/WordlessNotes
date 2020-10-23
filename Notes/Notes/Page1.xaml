@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:customview="clr-namespace:Notes.Views"
+             xmlns:renderers="clr-namespace:Notes.Renderers"
+             xmlns:resources="clr-namespace:Notes.Resources"
+             x:Class="Notes.Page1">
+    <ContentPage.Content>
+        <StackLayout>
+            <Label Text="Default" FontSize="Default"/>
+            <Label Text="Micro" FontSize="Micro"/>
+            <Label Text="Small" FontSize="Small"/>
+            <Label Text="Medium" FontSize="Medium"/>
+            <Label Text="Large" FontSize="Large"/>
+            <Label Text="Body" FontSize="Body"/>
+            <!--<Label Text="Header" FontSize="Header"/> Way too big -->
+            <Label Text="Title" FontSize="Title"/>
+            <Label Text="Subtitle" FontSize="Subtitle"/>
+            <Label Text="Caption" FontSize="Caption"/>
+            <Label Text="New PrgView"/>
+            <customview:PrgView/>
+            <Label Text="RelativeLayout"/>
+            <RelativeLayout VerticalOptions="Fill" BackgroundColor="BurlyWood">
+                <RelativeLayout HorizontalOptions="Fill">
+                    <renderers:TextEditor HorizontalOptions="Fill" VerticalOptions="FillAndExpand" BackgroundColor="Chocolate"
+                                          RelativeLayout.WidthConstraint="341"/>
+                </RelativeLayout>
+                <Label Text="X" HorizontalOptions="End" Padding="15, 10" FontSize="20" BackgroundColor="DimGray"
+                       RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1, Constant=-43}"/>
+            </RelativeLayout>
+            <Label Text="StackLayout"/>
+            <StackLayout VerticalOptions="Fill" Orientation="Horizontal" BackgroundColor="BurlyWood" Spacing="0">
+                <renderers:TextEditor HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Chocolate"/>
+                <Label Text="X" HorizontalOptions="Fill" Padding="15, 10" FontSize="20" BackgroundColor="DimGray"/>
+            </StackLayout>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

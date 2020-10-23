@@ -11,16 +11,13 @@ namespace Notes
         public App()
         {
             InitializeComponent();
-
-            MainPage = new NavigationPage(new MainPage())
-            {
-                BarBackgroundColor = Color.FromRgb(Random.Next(192), Random.Next(192), Random.Next(192))
-            };
         }
 
-        public static byte FontSize => 20;
+        private static bool LoadTestPage { get; }
 
-        public static Random Random { get; set; } = new Random();
+        public static double FontSize => Device.GetNamedSize(NamedSize.Medium, typeof(Editor));
+
+        public static Random Random { get; } = new Random();
 
         private static NoteDatabase DB { get; set; }
 
@@ -39,6 +36,34 @@ namespace Notes
 
         protected override void OnStart()
         {
+            try
+            {
+                if (LoadTestPage)
+                {
+                    MainPage = new Page1();
+                }
+                else
+                {
+                    MainPage = new NavigationPage(new MainPage())
+                    {
+                        BarBackgroundColor = Color.FromRgb(Random.Next(192), Random.Next(192), Random.Next(192)),
+                    };
+                }
+            }
+            catch (Exception e)
+            {
+                ContentPage mainPage = new ContentPage
+                {
+                    Content = new Label
+                    {
+                        Text = e.Message + "\n\n" + e.Source + "\n\n" + e.StackTrace + "\n\n" + e.Data
+                    }
+                };
+                MainPage = new NavigationPage(mainPage)
+                {
+                    BarBackgroundColor = Color.FromRgb(Random.Next(192), Random.Next(192), Random.Next(192)),
+                };
+            }
         }
 
         protected override void OnSleep()

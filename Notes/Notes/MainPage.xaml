@@ -18,10 +18,15 @@
     </ContentPage.ToolbarItems>
 
     <StackLayout BackgroundColor="Gainsboro" Spacing="0">
+        <StackLayout Orientation="Horizontal" HorizontalOptions="Fill" VerticalOptions="End">
+            <Picker x:Name="ViewTypePicker" HorizontalOptions="FillAndExpand"
+                    SelectedIndexChanged="Picker_SelectedIndexChanged"/>
+            <Button Text="+" Clicked="AddElementClicked" HorizontalOptions="FillAndExpand"/>
+        </StackLayout>
         <ScrollView VerticalOptions="FillAndExpand">
             <StackLayout BackgroundColor="White" VerticalOptions="FillAndExpand">
                 <BoxView HeightRequest="1" BackgroundColor="Black"/>
-                <StackLayout x:Name="contentLayout" VerticalOptions="FillAndExpand">
+                <StackLayout x:Name="ContentLayout" VerticalOptions="FillAndExpand" Spacing="0" ChildRemoved="ContentLayout_ChildRemoved_1">
                     <StackLayout.GestureRecognizers>
                         <TapGestureRecognizer Tapped="ContentLayoutTapped"/>
                     </StackLayout.GestureRecognizers>
@@ -29,11 +34,6 @@
                 <BoxView HeightRequest="1" BackgroundColor="Black" VerticalOptions="End"/>
             </StackLayout>
         </ScrollView>
-        <StackLayout Orientation="Horizontal" HorizontalOptions="Fill" VerticalOptions="End">
-            <Picker x:Name="ViewTypePicker" HorizontalOptions="FillAndExpand"
-                    SelectedIndexChanged="Picker_SelectedIndexChanged"/>
-            <Button Text="+" Clicked="AddElementClicked" HorizontalOptions="FillAndExpand"/>
-        </StackLayout>
     </StackLayout>
 
 </ContentPage>
