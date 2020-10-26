@@ -17,8 +17,11 @@ namespace Notes.Views
         {
             InitializeComponent();
             SetSize();
-            TextBox.WidthRequest -= ListMark.WidthRequest;
-            ListMark.Margin = new Thickness(0, XButton.HeightRequest / 2 - 5);
+            SetListSize();
+            ParentResized += delegate
+            {
+                SetListSize();
+            };
         }
 
         public override TextEditor TextBox => TextEditor;
@@ -34,10 +37,17 @@ namespace Notes.Views
             string content = "<ul><br>";
             foreach (LstView view in list)
             {
-                content += "<li>" + view.Text + "</li><br>";
+                content += view.ToHTMLString();
             }
             content += "</ul><br>";
             return content;
+        }
+
+        private void SetListSize()
+        {
+            double _margin = XButton.HeightRequest / 2 - 5;
+            ListMark.Margin = new Thickness(_margin, _margin, 0, _margin);
+            TextBox.WidthRequest -= (ListMark.WidthRequest + ListMark.Margin.Left + ListMark.Margin.Right);
         }
 
         private void Button_Clicked(object sender, EventArgs e)

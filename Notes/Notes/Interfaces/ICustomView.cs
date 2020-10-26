@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Xamarin.Forms;
 
 namespace Notes.Interfaces
 {
     public interface ICustomView
     {
-        int Index { get; set; }
         string Text { get; set; }
-        string ToHTMLString();
+
+        event EventHandler ParentResized;
+
+        T ParentOfType<T>() where T : VisualElement;
     }
 }

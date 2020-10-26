@@ -14,22 +14,29 @@ namespace Notes.Views
         public AbsCstmView() : base()
         {
             HorizontalOptions = LayoutOptions.CenterAndExpand;
+            ParentResized += delegate { SetSize(); };
         }
 
         public int Index { get; set; }
 
-        public MainPage ParentPage
+        public MainPage ParentPage => ParentOfType<MainPage>();
+
+        public T ParentOfType<T>() where T : VisualElement
         {
-            get
+            var parent = base.Parent;
+            while (parent != null)
             {
-                var parent = Parent;
-                while (parent != null)
-                {
-                    if (parent is MainPage) return parent as MainPage;
-                    parent = parent.Parent;
-                }
-                return null;
+                if (parent is T) return parent as T;
+                parent = parent.Parent;
             }
+            return null;
+        }
+
+        public event EventHandler ParentResized;
+
+        public void Resize()
+        {
+            ParentResized(this, new EventArgs());
         }
 
         protected void SetSize()
@@ -63,7 +70,7 @@ namespace Notes.Views
 
         protected static void TextChanged(AbsCstmView view)
         {
-            if ((bool)(view?.Text.Contains('\n')))
+            if ((bool)(view?.Text.Contains('\n')) && view.ParentPage is ContentPage)
             {
                 view.ParentPage.InsertElement(
                     new PrgView(view.Text.Substring(view.Text.LastIndexOf('\n') + 1)),

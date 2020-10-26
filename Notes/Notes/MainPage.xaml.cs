@@ -23,8 +23,8 @@ namespace Notes
         {
             InitializeComponent();
             ViewTypePicker.ItemsSource = KindsOfCustomViews.Select(i => i.Item1).ToList();
-            AddElement();
             ViewTypePicker.SelectedIndex = 0;
+            AddElement();
         }
 
         #region Override
@@ -121,7 +121,22 @@ namespace Notes
             if (index < 0) index = ContentLayout.Children.Count;
             IncrementIndicesFrom(index);
             ContentLayout.Children.Insert(index, new PrgView(index, text));
-            if (SelView == null) (ContentLayout.Children[index] as AbsCstmView).TextBox.Focus();
+        }
+
+        public void InsertElement(AbsCstmView view, int index = -1)
+        {
+            if (view is null) return;
+            if (index < 0) index = ContentLayout.Children.Count;
+            IncrementIndicesFrom(index);
+            view.Index = index;
+            ContentLayout.Children.Insert(index, view);
+        }
+
+        private void IncrementIndicesFrom(int index)
+        {
+            for (int i = index; i < ContentLayout.Children.Count; i++)
+                (ContentLayout.Children[i] as AbsCstmView).Index++;
+            UnsavedData = true;
         }
 
         private AbsCstmView CreateView(Type type)
@@ -136,23 +151,6 @@ namespace Notes
             if (type == typeof(LstView)) return new LstView();
             if (type == typeof(ImgView)) return new ImgView();
             return new PrgView();
-        }
-
-        public void InsertElement(AbsCstmView view, int index = -1)
-        {
-            if (view is null) return;
-            if (index < 0) index = ContentLayout.Children.Count;
-            IncrementIndicesFrom(index);
-            view.Index = index;
-            ContentLayout.Children.Insert(index, view);
-            //if (SelView == null) (ContentLayout.Children[index] as AbsCstmView).TextBox.Focus();
-        }
-
-        private void IncrementIndicesFrom(int index)
-        {
-            for (int i = index; i < ContentLayout.Children.Count; i++)
-                (ContentLayout.Children[i] as AbsCstmView).Index++;
-            UnsavedData = true;
         }
         #endregion
         #region DeletingElement
@@ -182,7 +180,7 @@ namespace Notes
         private void Populate()
         {
             ContentLayout.Children.Clear();
-            string[] lines = NoteContent.Split(new [] { "<br>" }, StringSplitOptions.None);
+            string[] lines = NoteContent.Split(new [] { "<br>", " \n" }, StringSplitOptions.None);
             for (int i = 0; i < lines.Length; i++)
             {
                 if (lines[i].StartsWith("<h1>", StringComparison.OrdinalIgnoreCase))
@@ -365,9 +363,6 @@ namespace Notes
         #endregion
 
         #region ElementInteraction
-        private void Picker_SelectedIndexChanged(object sender, EventArgs e)
-        {
-        }
         private void AddElementClicked(object sender, EventArgs e)
         {
             Type type = KindsOfCustomViews[ViewTypePicker.SelectedIndex].Item2;
@@ -380,7 +375,6 @@ namespace Notes
             foreach (AbsCstmView view in ContentLayout.Children) view.BackgroundColor = Color.Transparent;
             SelView = null;
         }
-        #endregion
 
         private void ContentLayout_ChildRemoved(object sender, ElementEventArgs e)
         {
@@ -399,21 +393,13 @@ namespace Notes
             }
         }
 
-        private void ContentLayout_ChildRemoved_1(object sender, ElementEventArgs e)
+        private void ContentLayout_SizeChanged(object sender, EventArgs e)
         {
-            int index = (e.Element as AbsCstmView).Index;
-            for (int i = index; i < ContentLayout.Children.Count; i++)
+            foreach (AbsCstmView view in ContentLayout.Children)
             {
-                (ContentLayout.Children[i] as AbsCstmView).Index--;
-            }
-            if (index == 0 || ContentLayout.Children.Count == 0)
-            {
-                SelView = null;
-            }
-            else
-            {
-                SelView = ContentLayout.Children[index - 1] as AbsCstmView;
+                view.Resize();
             }
         }
+        #endregion
     }
 }
