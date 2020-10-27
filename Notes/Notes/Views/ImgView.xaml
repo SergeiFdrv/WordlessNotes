@@ -6,13 +6,13 @@
              xmlns:resources="clr-namespace:Notes.Resources"
              x:Class="Notes.Views.ImgView">
     <views:AbsCstmView.Content>
-        <StackLayout Orientation="Horizontal" HorizontalOptions="CenterAndExpand" Spacing="0" Focused="Item_Focused" Unfocused="Item_Unfocused" Margin="0, 5">
+        <StackLayout Orientation="Horizontal" HorizontalOptions="CenterAndExpand" Spacing="0" Margin="0, 5">
             <StackLayout x:Name="meat" Spacing="0" HorizontalOptions="FillAndExpand">
-                <Image x:Name="Img" Margin="0" Focused="Item_Focused"/>
-                <Button x:Name="ImgBtn" Text="{x:Static resources:Lang.ChooseImage}" Clicked="Image_Tapped"/>
+                <ImageButton x:Name="Img" Margin="0" SizeChanged="Image_SizeChanged" Clicked="ImgBtn_Clicked"/>
+                <Button x:Name="ImgBtn" Text="{x:Static resources:Lang.ChooseImage}" Clicked="ImgBtn_Clicked"/>
                 <!-- Изучить плагин для вставки изображений: https://github.com/jamesmontemagno/MediaPlugin -->
                 <customrenderer:TextEditor x:Name="TextEditor" Placeholder="{x:Static resources:Lang.ImageDescription}" PlaceholderColor="Gray" TextColor="#101010" WidthRequest="100"
-                                           Focused="Item_Focused" Unfocused="Item_Unfocused" TextChanged="TextEditor_TextChanged"/>
+                                           Focused="Item_Focused" TextChanged="TextEditor_TextChanged"/>
             </StackLayout>
             <Button x:Name="XBtn" Text="X" VerticalOptions="Start" HorizontalOptions="End" WidthRequest="40" BorderWidth="0" CornerRadius="0"
                     Clicked="Button_Clicked"/>
