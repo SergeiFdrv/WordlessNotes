@@ -6,7 +6,7 @@
              xmlns:resources="clr-namespace:Notes.Resources"
              x:Class="Notes.Views.LstView">
     <views:AbsCstmView.Content>
-        <StackLayout Orientation="Horizontal" HorizontalOptions="CenterAndExpand" VerticalOptions="Start" Spacing="0" Focused="Item_Focused">
+        <StackLayout Orientation="Horizontal" HorizontalOptions="CenterAndExpand" VerticalOptions="Start" Spacing="0">
             <StackLayout x:Name="meat" Spacing="0" HorizontalOptions="FillAndExpand" Orientation="Horizontal">
                 <BoxView x:Name="ListMark" CornerRadius="100" HeightRequest="10" WidthRequest="10" VerticalOptions="Start" Color="Black"/>
                 <customrenderer:TextEditor x:Name="TextEditor" Placeholder="{x:Static resources:Lang.ListItem}" PlaceholderColor="Gray" WidthRequest="100"

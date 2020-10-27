@@ -7,6 +7,10 @@
              x:Class="Notes.Page1">
     <ContentPage.Content>
         <StackLayout>
+            <Label Text="TextEditor"/>
+            <renderers:TextEditor Placeholder="Placeholder" Text="Text" BackgroundColor="Thistle"/>
+            <Label Text="PrgView"/>
+            <customview:PrgView/>
             <Label Text="Default" FontSize="Default"/>
             <Label Text="Micro" FontSize="Micro"/>
             <Label Text="Small" FontSize="Small"/>
@@ -16,10 +20,8 @@
             <!--<Label Text="Header" FontSize="Header"/> Way too big -->
             <Label Text="Title" FontSize="Title"/>
             <Label Text="Subtitle" FontSize="Subtitle"/>
-            <Label Text="Caption" FontSize="Caption"/>
-            <Label Text="New PrgView"/>
-            <customview:PrgView/>
-            <Label Text="RelativeLayout"/>
+                <Label Text="Caption" FontSize="Caption"/>
+                <Label Text="RelativeLayout"/>
             <RelativeLayout VerticalOptions="Fill" BackgroundColor="BurlyWood">
                 <RelativeLayout HorizontalOptions="Fill">
                     <renderers:TextEditor HorizontalOptions="Fill" VerticalOptions="FillAndExpand" BackgroundColor="Chocolate"

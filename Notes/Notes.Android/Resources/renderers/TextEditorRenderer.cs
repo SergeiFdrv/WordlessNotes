@@ -28,8 +28,8 @@ namespace Notes.Droid.Resources.renderers
 
             if (Control != null)
             {
-                Control.SetBackgroundColor(global::Android.Graphics.Color.Transparent);
-                Control.SetTextColor(global::Android.Graphics.Color.Black);
+                Control.SetBackgroundColor(Android.Graphics.Color.Transparent);
+                Control.SetTextColor(Android.Graphics.Color.Black);
                 Control.RequestFocus();
                 Control.SetSelection(0);
             }

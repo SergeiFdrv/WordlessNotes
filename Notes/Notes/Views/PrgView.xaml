@@ -6,9 +6,9 @@
              xmlns:resources="clr-namespace:Notes.Resources"
              x:Class="Notes.Views.PrgView">
     <views:AbsCstmView.Content>
-        <StackLayout Orientation="Horizontal" HorizontalOptions="CenterAndExpand" Spacing="0" Focused="Item_Focused">
+        <StackLayout Orientation="Horizontal" HorizontalOptions="CenterAndExpand" Spacing="0">
             <StackLayout x:Name="meat" Spacing="0" HorizontalOptions="FillAndExpand">
-                <customrenderer:TextEditor x:Name="TextEditor" Placeholder="{x:Static resources:Lang.Paragraph}" PlaceholderColor="Gray" WidthRequest="100"
+                <customrenderer:TextEditor x:Name="TextEditor" Placeholder="{x:Static resources:Lang.Paragraph}" WidthRequest="100"
                                            TextChanged="TextEditor_TextChanged" Focused="Item_Focused"/>
             </StackLayout>
             <Button x:Name="XBtn" Text="X" VerticalOptions="Start" HorizontalOptions="End" WidthRequest="40" BorderWidth="0" CornerRadius="0"

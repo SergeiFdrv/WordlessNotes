@@ -13,7 +13,7 @@ namespace Notes
             InitializeComponent();
         }
 
-        private static bool LoadTestPage { get; }
+        public static bool LoadTestPage { get; }
 
         public static double FontSize => Device.GetNamedSize(NamedSize.Medium, typeof(Editor));
 

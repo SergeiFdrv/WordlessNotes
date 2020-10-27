@@ -63,7 +63,6 @@ namespace Notes
         #endregion
 
         #region Properties
-
         public List<(string, Type)> KindsOfCustomViews { get; } = new List<(string, Type)>
         {
             (Lang.Paragraph, typeof(PrgView)),
@@ -115,7 +114,6 @@ namespace Notes
         #endregion
 
         #region AddingElement
-
         public void AddElement(int index = -1, string text = "")
         {
             if (index < 0) index = ContentLayout.Children.Count;
