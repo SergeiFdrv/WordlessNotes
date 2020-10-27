@@ -38,9 +38,12 @@ namespace Notes
                 Models.Note note = MyListView.SelectedItem as Models.Note;
                 DeleteImagesAndNote(note);
                 await App.Database.DeleteNoteAsync(note).ConfigureAwait(true);
+                (Navigation.NavigationStack[0] as MainPage).Note = null;
                 Items.Remove(note);
                 RefreshNoteList();
                 ToolbarItems[0].Clicked -= Delete_Clicked; ToolbarItems[1].Clicked -= Open_Clicked;
+                ToolbarItems[0].Text = ToolbarItems[1].Text = string.Empty;
+                MyListView.ItemSelected += MyListView_ItemSelected;
             }
         }
 
@@ -79,6 +82,7 @@ namespace Notes
         {
             ToolbarItems[0].Text = Lang.Delete; ToolbarItems[1].Text = Lang.Open;
             ToolbarItems[0].Clicked += Delete_Clicked; ToolbarItems[1].Clicked += Open_Clicked;
+            MyListView.ItemSelected -= MyListView_ItemSelected;
         }
 
         private void SearchEntry_TextChanged(object sender, TextChangedEventArgs e)
