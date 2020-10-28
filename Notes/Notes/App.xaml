@@ -7,6 +7,10 @@
              mc:Ignorable="d"
              x:Class="Notes.App">
     <Application.Resources>
+        <Color x:Key="Color0">Black</Color>
+        <Style TargetType="NavigationPage">
+            <Setter Property="BarBackgroundColor" Value="{DynamicResource Color0}"/>
+        </Style>
         <Style TargetType="Button">
             <Setter Property="BackgroundColor" Value="Transparent" />
         </Style>

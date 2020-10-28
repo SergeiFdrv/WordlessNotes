@@ -43,6 +43,10 @@ namespace Notes.Views
         {
             TextBox.WidthRequest = DeviceDisplay.MainDisplayInfo.Width /
                                       DeviceDisplay.MainDisplayInfo.Density - 40;
+            if (DeviceDisplay.MainDisplayInfo.Orientation == DisplayOrientation.Landscape)
+            {
+                TextBox.WidthRequest -= 100;
+            }
             XButton.HeightRequest = XButton.FontSize * 2.5;
         }
 

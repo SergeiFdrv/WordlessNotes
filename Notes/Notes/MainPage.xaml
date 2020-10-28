@@ -24,14 +24,18 @@
         </StackLayout>
         <ScrollView VerticalOptions="FillAndExpand">
             <StackLayout BackgroundColor="White" VerticalOptions="FillAndExpand">
-                <BoxView HeightRequest="1" BackgroundColor="Black"/>
-                <StackLayout x:Name="ContentLayout" VerticalOptions="FillAndExpand" Spacing="0"
+                <BoxView HeightRequest="1" BackgroundColor="Silver"/>
+                <StackLayout x:Name="ContentLayout" Spacing="0"
                              ChildRemoved="ContentLayout_ChildRemoved" SizeChanged="ContentLayout_SizeChanged">
                     <StackLayout.GestureRecognizers>
                         <TapGestureRecognizer Tapped="ContentLayoutTapped"/>
                     </StackLayout.GestureRecognizers>
                 </StackLayout>
-                <BoxView HeightRequest="1" BackgroundColor="Black" VerticalOptions="End"/>
+                <BoxView BackgroundColor="Silver" VerticalOptions="FillAndExpand">
+                    <BoxView.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="ContentLayoutTapped"/>
+                    </BoxView.GestureRecognizers>
+                </BoxView>
             </StackLayout>
         </ScrollView>
     </StackLayout>

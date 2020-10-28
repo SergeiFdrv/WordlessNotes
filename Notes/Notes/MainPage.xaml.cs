@@ -271,8 +271,7 @@ namespace Notes
         #region ToolbarInteraction
         private void NoteNameTapped(object sender, EventArgs e)
         {
-            (App.Current.MainPage as NavigationPage).BarBackgroundColor =
-                Color.FromRgb(App.Random.Next(192), App.Random.Next(192), App.Random.Next(192));
+            (Application.Current as App).SetBarBackground();
         }
 
         void OnNewButtonClicked(object sender, EventArgs e)

@@ -34,8 +34,19 @@ namespace Notes
             }
         }
 
+        public void SetBarBackground()
+        {
+            int r, g, b;
+            do
+            {
+                r = Random.Next(256); g = Random.Next(256); b = Random.Next(256);
+            } while ((r + g + b) / 3 > 127);
+            Resources["Color0"] = Color.FromRgb(r, g, b);
+        }
+
         protected override void OnStart()
         {
+            SetBarBackground();
             try
             {
                 if (LoadTestPage)
@@ -44,10 +55,7 @@ namespace Notes
                 }
                 else
                 {
-                    MainPage = new NavigationPage(new MainPage())
-                    {
-                        BarBackgroundColor = Color.FromRgb(Random.Next(192), Random.Next(192), Random.Next(192)),
-                    };
+                    MainPage = new NavigationPage(new MainPage());
                 }
             }
             catch (Exception e)
@@ -59,10 +67,7 @@ namespace Notes
                         Text = e.Message + "\n\n" + e.Source + "\n\n" + e.StackTrace + "\n\n" + e.Data
                     }
                 };
-                MainPage = new NavigationPage(mainPage)
-                {
-                    BarBackgroundColor = Color.FromRgb(Random.Next(192), Random.Next(192), Random.Next(192)),
-                };
+                MainPage = new NavigationPage(mainPage);
             }
         }
 
