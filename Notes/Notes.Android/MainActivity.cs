@@ -19,7 +19,7 @@ namespace Notes.Droid
             ToolbarResource = Resource.Layout.Toolbar;
 
             base.OnCreate(savedInstanceState);
-            //global::Xamarin.Forms.Forms.SetFlags("CollectionView_Experimental"); // Для custom controls
+            global::Xamarin.Forms.Forms.SetFlags("CollectionView_Experimental", "Brush_Experimental");
             CrossCurrentActivity.Current.Init(this, savedInstanceState); // Для фото
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
