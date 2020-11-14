@@ -12,9 +12,9 @@ using Plugin.Media;
 namespace Notes.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class ImgView : AbsCstmView
+    public partial class ImageView : CustomView
     {
-        public ImgView()
+        public ImageView()
         {
             InitializeComponent();
             SetSize();

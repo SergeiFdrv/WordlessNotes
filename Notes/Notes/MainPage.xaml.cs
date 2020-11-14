@@ -27,6 +27,19 @@ namespace Notes
             AddElement();
         }
 
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+            string imgsString = string.Empty;
+            var imgs = App.Database.GetImagesAsync().Result;
+            DisplayAlert("Images", $"{imgs.Count}", "OK");
+            foreach (var img in imgs)
+            {
+                imgsString += img.Name + '\n';
+            }
+            DisplayAlert("Images", imgsString, "OK");
+        }
+
         #region Override
         protected override void OnDisappearing()
         {
@@ -34,20 +47,19 @@ namespace Notes
             // CLEAR UNUSED IMAGES
             // Store image names from the page
             List<string> images = new List<string>();
-            int i, j;
-            for (i = 0; i < ContentLayout.Children.Count; i++)
+            foreach (CustomView view in ContentLayout.Children)
             {
-                AbsCstmView view = ContentLayout.Children[i] as AbsCstmView;
-                if (view is ImgView) images.Add((view as ImgView).Image?.Name);
+                if (view is ImageView) images.Add((view as ImageView).Image?.Name);
             }
             // Get image names from all notes
             var notes = App.Database.GetNotesAsync().Result; // Get all notes from the DB
-            for (i = 0; i < notes.Count; i++)
+            int i = 0, j = 0;
+            for (; i < notes.Count; i++)
             {
                 if (!File.Exists(notes[i].Path)) continue;
                 List<string> lines = File.ReadAllText(notes[i].Path).Split(new [] { "<br>" }, StringSplitOptions.None)
                     .Where(elname => elname.StartsWith("<img", StringComparison.OrdinalIgnoreCase)).ToList();
-                for (j = 0; j < lines.Count; j++)
+                for (; j < lines.Count; j++)
                 {
                     images.Add(lines[j].Substring(14, lines[j].Length - 17));
                 }
@@ -65,12 +77,12 @@ namespace Notes
         #region Properties
         public List<(string, Type)> KindsOfCustomViews { get; } = new List<(string, Type)>
         {
-            (Lang.Paragraph, typeof(PrgView)),
+            (Lang.Paragraph, typeof(ParagraphView)),
             ($"{Lang.Header} 1", typeof(HeaderView)),
             ($"{Lang.Header} 2", typeof(HeaderView)),
             ($"{Lang.Header} 3", typeof(HeaderView)),
-            (Lang.List, typeof(LstView)),
-            (Lang.Image, typeof(ImgView))
+            (Lang.List, typeof(ListItemView)),
+            (Lang.Image, typeof(ImageView))
         };
 
         public bool UnsavedData
@@ -79,9 +91,9 @@ namespace Notes
             set => ToolbarItems[3].IsEnabled = value;
         }
 
-        private AbsCstmView _SelView;
+        private CustomView _SelView;
 
-        public AbsCstmView SelView
+        public CustomView SelView
         {
             get => _SelView;
             set
@@ -93,17 +105,17 @@ namespace Notes
                     zzz = KindsOfCustomViews.FindIndex(i =>
                         i.Item1 == Lang.Header + ' ' + (value as HeaderView).Level);
                 }
-                else if (value is LstView)
+                else if (value is ListItemView)
                 {
                     zzz = KindsOfCustomViews.FindIndex(i => i.Item1 == Lang.List);
                 }
-                else if (value is ImgView)
+                else if (value is ImageView)
                 {
                     zzz = KindsOfCustomViews.FindIndex(i => i.Item1 == Lang.Image);
                 }
-                else zzz = KindsOfCustomViews.FindIndex(i => i.Item2 == typeof(PrgView));
+                else zzz = KindsOfCustomViews.FindIndex(i => i.Item2 == typeof(ParagraphView));
                 ViewTypePicker.SelectedIndex = zzz;
-                foreach (AbsCstmView view in ContentLayout.Children) view.BackgroundColor = Color.Transparent;
+                foreach (CustomView view in ContentLayout.Children) view.BackgroundColor = Color.Transparent;
                 _SelView.BackgroundColor = Color.WhiteSmoke;
             }
         }
@@ -118,10 +130,10 @@ namespace Notes
         {
             if (index < 0) index = ContentLayout.Children.Count;
             IncrementIndicesFrom(index);
-            ContentLayout.Children.Insert(index, new PrgView(index, text));
+            ContentLayout.Children.Insert(index, new ParagraphView(index, text));
         }
 
-        public void InsertElement(AbsCstmView view, int index = -1)
+        public void InsertElement(CustomView view, int index = -1)
         {
             if (view is null) return;
             if (index < 0) index = ContentLayout.Children.Count;
@@ -133,11 +145,11 @@ namespace Notes
         private void IncrementIndicesFrom(int index)
         {
             for (int i = index; i < ContentLayout.Children.Count; i++)
-                (ContentLayout.Children[i] as AbsCstmView).Index++;
+                (ContentLayout.Children[i] as CustomView).Index++;
             UnsavedData = true;
         }
 
-        private AbsCstmView CreateView(Type type)
+        private CustomView CreateView(Type type)
         {
             if (type == typeof(HeaderView))
             {
@@ -146,9 +158,9 @@ namespace Notes
                     byte.Parse(KindsOfCustomViews[ViewTypePicker.SelectedIndex].Item1
                         .Substring(l + 1), CultureInfo.InvariantCulture));
             }
-            if (type == typeof(LstView)) return new LstView();
-            if (type == typeof(ImgView)) return new ImgView();
-            return new PrgView();
+            if (type == typeof(ListItemView)) return new ListItemView();
+            if (type == typeof(ImageView)) return new ImageView();
+            return new ParagraphView();
         }
         #endregion
         #region DeletingElement
@@ -178,7 +190,7 @@ namespace Notes
         private void Populate()
         {
             ContentLayout.Children.Clear();
-            string[] lines = NoteContent.Split(new [] { "<br>", " \n" }, StringSplitOptions.None);
+            string[] lines = NoteContent.Split(new [] { "<br>" }, StringSplitOptions.None);
             for (int i = 0; i < lines.Length; i++)
             {
                 if (lines[i].StartsWith("<h1>", StringComparison.OrdinalIgnoreCase))
@@ -208,7 +220,7 @@ namespace Notes
                 else if (lines[i].StartsWith("<p>", StringComparison.OrdinalIgnoreCase))
                 {
                     ContentLayout.Children.Add(
-                        new PrgView(
+                        new ParagraphView(
                             ContentLayout.Children.Count,
                             lines[i].Substring(3, lines[i].Length - 7)));
                 }
@@ -217,7 +229,7 @@ namespace Notes
                     int j = i + 1;
                     for (; j < lines.Length && lines[j] != "</ul>"; j++)
                     {
-                        ContentLayout.Children.Add(new LstView
+                        ContentLayout.Children.Add(new ListItemView
                         {
                             Index = ContentLayout.Children.Count,
                             Text = lines[j].Substring(4, lines[j].Length - 9)
@@ -227,14 +239,14 @@ namespace Notes
                 }
                 else if (lines[i].StartsWith("<img", StringComparison.OrdinalIgnoreCase))
                 {
-                    ImgView imgView = new ImgView
+                    ImageView ImageView = new ImageView
                     {
                         Index = ContentLayout.Children.Count,
                         Text = lines[i + 1].Substring(19, lines[i + 1].Length - 23),
                         Image = App.Database.GetImageByNameAsync(lines[i].Substring(14, lines[i].Length - 17)).Result
                     };
-                    imgView.ImageBox.Source = ImageSource.FromFile(imgView.Image.Path);
-                    ContentLayout.Children.Add(imgView);
+                    ImageView.ImageBox.Source = ImageSource.FromFile(ImageView.Image.Path);
+                    ContentLayout.Children.Add(ImageView);
                 }
             }
         }
@@ -244,23 +256,23 @@ namespace Notes
         {
             string content = string.Empty;
             name = Note?.Name ?? string.Empty;
-            AbsCstmView view;
+            CustomView view;
             for (int i = 0; i < ContentLayout.Children.Count; i++)
             {
-                view = ContentLayout.Children[i] as AbsCstmView;
+                view = ContentLayout.Children[i] as CustomView;
                 if (string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(view.Text)) name = view.Text;
-                if (view is LstView)
+                if (view is ListItemView)
                 {
-                    List<LstView> list = new List<LstView>
+                    List<ListItemView> list = new List<ListItemView>
                     {
-                        view as LstView
+                        view as ListItemView
                     };
                     for (int j = i + 1; j < ContentLayout.Children.Count &&
-                        ContentLayout.Children[j] is LstView; j++)
+                        ContentLayout.Children[j] is ListItemView; j++)
                     {
-                        list.Add(ContentLayout.Children[j] as LstView);
+                        list.Add(ContentLayout.Children[j] as ListItemView);
                     }
-                    content += LstView.HTMLUnorderedList(list, ref i);
+                    content += ListItemView.HTMLUnorderedList(list, ref i);
                 }
                 else content += view.ToHTMLString();
             }
@@ -315,7 +327,7 @@ namespace Notes
             if (string.IsNullOrEmpty(name)) DependencyService.Get<IPlatformSpecific>().SayShort(Lang.CantDo);
             else
             {
-                foreach (AbsCstmView view in ContentLayout.Children)
+                foreach (CustomView view in ContentLayout.Children)
                 {
                     if (!string.IsNullOrEmpty(view.Text)) { name = view.Text; break; }
                 }
@@ -328,9 +340,9 @@ namespace Notes
             List<Models.Image> imgs = new List<Models.Image>();
             for (int i = 0; i < ContentLayout.Children.Count; i++)
             {
-                if (ContentLayout.Children[i] is ImgView)
+                if (ContentLayout.Children[i] is ImageView)
                 {
-                    imgs.Add((ContentLayout.Children[i] as ImgView).Image);
+                    imgs.Add((ContentLayout.Children[i] as ImageView).Image);
                 }
             }
             NoteSavePage page = new NoteSavePage(notename, imgs);
@@ -363,22 +375,22 @@ namespace Notes
         private void AddElementClicked(object sender, EventArgs e)
         {
             Type type = KindsOfCustomViews[ViewTypePicker.SelectedIndex].Item2;
-            AbsCstmView view = CreateView(type);
+            CustomView view = CreateView(type);
             InsertElement(view, (SelView is null ? -1 : SelView.Index) + 1);
         }
 
         private void ContentLayoutTapped(object sender, EventArgs e)
         {
-            foreach (AbsCstmView view in ContentLayout.Children) view.BackgroundColor = Color.Transparent;
+            foreach (CustomView view in ContentLayout.Children) view.BackgroundColor = Color.Transparent;
             SelView = null;
         }
 
         private void ContentLayout_ChildRemoved(object sender, ElementEventArgs e)
         {
-            int index = (e.Element as AbsCstmView).Index;
+            int index = (e.Element as CustomView).Index;
             for (int i = index; i < ContentLayout.Children.Count; i++)
             {
-                (ContentLayout.Children[i] as AbsCstmView).Index--;
+                (ContentLayout.Children[i] as CustomView).Index--;
             }
             if (index == 0 || ContentLayout.Children.Count == 0)
             {
@@ -386,13 +398,13 @@ namespace Notes
             }
             else
             {
-                SelView = ContentLayout.Children[index - 1] as AbsCstmView;
+                SelView = ContentLayout.Children[index - 1] as CustomView;
             }
         }
 
         private void ContentLayout_SizeChanged(object sender, EventArgs e)
         {
-            foreach (AbsCstmView view in ContentLayout.Children)
+            foreach (CustomView view in ContentLayout.Children)
             {
                 view.Resize();
             }

@@ -11,9 +11,9 @@ using Xamarin.Forms.Xaml;
 namespace Notes.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class LstView : AbsCstmView
+    public partial class ListItemView : CustomView
     {
-        public LstView()
+        public ListItemView()
         {
             InitializeComponent();
             SetSize();
@@ -30,12 +30,12 @@ namespace Notes.Views
 
         public override string ToHTMLString() => "<li>" + Text + "</li><br>";
 
-        public static string HTMLUnorderedList(IEnumerable<LstView> list, ref int i)
+        public static string HTMLUnorderedList(IEnumerable<ListItemView> list, ref int i)
         {
             if (list is null) return string.Empty;
             i = list.Last().Index;
             string content = "<ul><br>";
-            foreach (LstView view in list)
+            foreach (ListItemView view in list)
             {
                 content += view.ToHTMLString();
             }

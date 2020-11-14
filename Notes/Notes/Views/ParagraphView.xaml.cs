@@ -10,20 +10,20 @@ using Xamarin.Forms.Xaml;
 namespace Notes.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class PrgView : AbsCstmView
+    public partial class ParagraphView : CustomView
     {
-        public PrgView()
+        public ParagraphView()
         {
             InitializeComponent();
             SetSize();
         }
 
-        public PrgView(string text) : this()
+        public ParagraphView(string text) : this()
         {
             Text = text;
         }
 
-        public PrgView(int index, string text = "") : this(text)
+        public ParagraphView(int index, string text = "") : this(text)
         {
             Index = index;
         }

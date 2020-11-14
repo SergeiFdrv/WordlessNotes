@@ -9,8 +9,8 @@
         <StackLayout>
             <Label Text="TextEditor"/>
             <renderers:TextEditor Placeholder="Placeholder" Text="Text" BackgroundColor="Thistle"/>
-            <Label Text="PrgView"/>
-            <customview:PrgView/>
+            <Label Text="ParagraphView"/>
+            <customview:ParagraphView/>
             <Label Text="Default" FontSize="Default"/>
             <Label Text="Micro" FontSize="Micro"/>
             <Label Text="Small" FontSize="Small"/>

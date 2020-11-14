@@ -6,7 +6,7 @@ using Xamarin.Forms;
 
 namespace Notes.Views
 {
-    public class HeaderView : PrgView
+    public class HeaderView : ParagraphView
     {
         public HeaderView(byte level = 1, string text = "") : base(text)
         {

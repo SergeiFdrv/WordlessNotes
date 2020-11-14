@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<views:AbsCstmView xmlns="http://xamarin.com/schemas/2014/forms" 
+<views:CustomView xmlns="http://xamarin.com/schemas/2014/forms" 
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:views="clr-namespace:Notes.Views"
              xmlns:customrenderer="clr-namespace:Notes.Renderers"
              xmlns:resources="clr-namespace:Notes.Resources"
-             x:Class="Notes.Views.ImgView">
-    <views:AbsCstmView.Content>
+             x:Class="Notes.Views.ImageView">
+    <views:CustomView.Content>
         <StackLayout Orientation="Horizontal" HorizontalOptions="CenterAndExpand" Spacing="0" Margin="0, 5">
             <StackLayout x:Name="meat" Spacing="0" HorizontalOptions="FillAndExpand">
                 <ImageButton x:Name="Img" Margin="0" SizeChanged="Image_SizeChanged" Clicked="ImgBtn_Clicked"/>
@@ -17,5 +17,5 @@
             <Button x:Name="XBtn" Text="X" VerticalOptions="Start" HorizontalOptions="End" WidthRequest="40" BorderWidth="0" CornerRadius="0"
                     Clicked="Button_Clicked"/>
         </StackLayout>
-    </views:AbsCstmView.Content>
-</views:AbsCstmView>
+    </views:CustomView.Content>
+</views:CustomView>

@@ -9,9 +9,9 @@ using Notes.Renderers;
 
 namespace Notes.Views
 {
-    public abstract class AbsCstmView : ContentView, ICustomView
+    public abstract class CustomView : ContentView, ICustomView
     {
-        public AbsCstmView() : base()
+        public CustomView() : base()
         {
             HorizontalOptions = LayoutOptions.CenterAndExpand;
             ParentResized += delegate { SetSize(); };
@@ -62,22 +62,22 @@ namespace Notes.Views
 
         public abstract string ToHTMLString();
 
-        protected static void Delete(AbsCstmView view)
+        protected static void Delete(CustomView view)
         {
             view?.ParentPage?.DeleteElement(view.Index);
         }
 
-        protected static void Highlight(AbsCstmView view)
+        protected static void Highlight(CustomView view)
         {
             if (view?.ParentPage != null) view.ParentPage.SelView = view;
         }
 
-        protected static void TextChanged(AbsCstmView view)
+        protected static void TextChanged(CustomView view)
         {
             if ((bool)(view?.Text.Contains('\n')) && view.ParentPage is ContentPage)
             {
                 view.ParentPage.InsertElement(
-                    new PrgView(view.Text.Substring(view.Text.LastIndexOf('\n') + 1)),
+                    new ParagraphView(view.Text.Substring(view.Text.LastIndexOf('\n') + 1)),
                     view.Index + 1);
                 view.Text = view.Text.Substring(0, view.Text.LastIndexOf('\n'));
             }
