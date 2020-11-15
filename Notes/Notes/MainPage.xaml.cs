@@ -22,9 +22,9 @@ namespace Notes
         public MainPage()
         {
             InitializeComponent();
-            ViewTypePicker.ItemsSource = KindsOfCustomViews.Select(i => i.Item1).ToList();
+            ViewTypePicker.ItemsSource = CustomViewTypes.Select(i => i.TypeName).ToList();
             ViewTypePicker.SelectedIndex = 0;
-            AddElement();
+            AddParagraph();
         }
 
 #if DEBUG
@@ -33,6 +33,7 @@ namespace Notes
             base.OnAppearing();
             string imgsString = string.Empty;
             var imgs = App.Database.GetImagesAsync().Result;
+            DisplayAlert("Type", $"{typeof(CustomView)}", "OK");
             DisplayAlert("Images", $"{imgs.Count}", "OK");
             foreach (var img in imgs)
             {
@@ -77,7 +78,8 @@ namespace Notes
         #endregion
 
         #region Properties
-        public List<(string, Type)> KindsOfCustomViews { get; } = new List<(string, Type)>
+        public List<(string TypeName, Type Type)> CustomViewTypes { get; }
+            = new List<(string, Type)>
         {
             (Lang.Paragraph, typeof(ParagraphView)),
             ($"{Lang.Header} 1", typeof(HeaderView)),
@@ -104,20 +106,24 @@ namespace Notes
                 int zzz = 0;
                 if (value is HeaderView)
                 {
-                    zzz = KindsOfCustomViews.FindIndex(i =>
-                        i.Item1 == Lang.Header + ' ' + (value as HeaderView).Level);
+                    zzz = CustomViewTypes.FindIndex(i =>
+                        i.TypeName == Lang.Header + ' ' + (value as HeaderView).Level);
                 }
                 else if (value is ListItemView)
                 {
-                    zzz = KindsOfCustomViews.FindIndex(i => i.Item1 == Lang.List);
+                    zzz = CustomViewTypes.FindIndex(i => i.TypeName == Lang.List);
                 }
                 else if (value is ImageView)
                 {
-                    zzz = KindsOfCustomViews.FindIndex(i => i.Item1 == Lang.Image);
+                    zzz = CustomViewTypes.FindIndex(i => i.TypeName == Lang.Image);
                 }
-                else zzz = KindsOfCustomViews.FindIndex(i => i.Item2 == typeof(ParagraphView));
+                else
+                    zzz = CustomViewTypes.FindIndex(i => i.Type == typeof(ParagraphView));
                 ViewTypePicker.SelectedIndex = zzz;
-                foreach (CustomView view in ContentLayout.Children) view.BackgroundColor = Color.Transparent;
+                foreach (CustomView view in ContentLayout.Children)
+                {
+                    view.BackgroundColor = Color.Transparent;
+                }
                 _SelectedView.BackgroundColor = Color.WhiteSmoke;
             }
         }
@@ -128,11 +134,9 @@ namespace Notes
         #endregion
 
         #region AddingElement
-        public void AddElement(int index = -1, string text = "")
+        public void AddParagraph(int index = -1, string text = "")
         {
-            if (index < 0) index = ContentLayout.Children.Count;
-            IncrementIndicesFrom(index);
-            ContentLayout.Children.Insert(index, new ParagraphView(index, text));
+            InsertElement(new ParagraphView(index, text), index);
         }
 
         public void InsertElement(CustomView view, int index = -1)
@@ -155,14 +159,14 @@ namespace Notes
         {
             if (type == typeof(HeaderView))
             {
-                int l = KindsOfCustomViews[ViewTypePicker.SelectedIndex].Item1.LastIndexOf(' ');
+                int l = CustomViewTypes[ViewTypePicker.SelectedIndex]
+                    .TypeName.LastIndexOf(' ');
                 return new HeaderView(
-                    byte.Parse(KindsOfCustomViews[ViewTypePicker.SelectedIndex].Item1
+                    byte.Parse(CustomViewTypes[ViewTypePicker.SelectedIndex].TypeName
                         .Substring(l + 1), CultureInfo.InvariantCulture));
             }
-            if (type == typeof(ListItemView)) return new ListItemView();
-            if (type == typeof(ImageView)) return new ImageView();
-            return new ParagraphView();
+            return type.GetConstructor(Array.Empty<Type>())
+                .Invoke(Array.Empty<object>()) as CustomView;
         }
         #endregion
         #region DeletingElement
@@ -294,7 +298,7 @@ namespace Notes
             Note = null;
             ToolbarItems[0].Text = Lang.NewNote;
             ContentLayout.Children.Clear();
-            AddElement();
+            AddParagraph();
         }
 
         async void OnOpenButtonClicked(object sender, EventArgs e)
@@ -376,14 +380,17 @@ namespace Notes
         #region ElementInteraction
         private void AddElementClicked(object sender, EventArgs e)
         {
-            Type type = KindsOfCustomViews[ViewTypePicker.SelectedIndex].Item2;
+            Type type = CustomViewTypes[ViewTypePicker.SelectedIndex].Type;
             CustomView view = CreateView(type);
             InsertElement(view, (SelectedView is null ? -1 : SelectedView.Index) + 1);
         }
 
         private void ContentLayoutTapped(object sender, EventArgs e)
         {
-            foreach (CustomView view in ContentLayout.Children) view.BackgroundColor = Color.Transparent;
+            foreach (CustomView view in ContentLayout.Children)
+            {
+                view.BackgroundColor = Color.Transparent;
+            }
             SelectedView = null;
         }
 
