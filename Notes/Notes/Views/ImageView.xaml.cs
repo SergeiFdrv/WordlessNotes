@@ -35,17 +35,17 @@ namespace Notes.Views
 
         private void Button_Clicked(object sender, EventArgs e)
         {
-            Delete(this);
+            Delete();
         }
 
         private void Item_Focused(object sender, FocusEventArgs e)
         {
-            Highlight(this);
+            Highlight();
         }
 
         private void TextEditor_TextChanged(object sender, TextChangedEventArgs e)
         {
-            TextChanged(this);
+            TextChanged();
         }
 
         private void Image_SizeChanged(object sender, EventArgs e)
@@ -58,7 +58,7 @@ namespace Notes.Views
             TextBox.Focus();
             if (ParentPage != null)
             {
-                ParentPage.SelView = this;
+                ParentPage.SelectedView = this;
                 ParentPage.UnsavedData = true;
             }
             List<string> options = new List<string>();

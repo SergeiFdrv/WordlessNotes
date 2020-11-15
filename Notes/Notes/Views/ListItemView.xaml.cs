@@ -52,17 +52,17 @@ namespace Notes.Views
 
         private void Button_Clicked(object sender, EventArgs e)
         {
-            Delete(this);
+            Delete();
         }
 
         private void Item_Focused(object sender, FocusEventArgs e)
         {
-            Highlight(this);
+            Highlight();
         }
 
         private void TextEditor_TextChanged(object sender, TextChangedEventArgs e)
         {
-            TextChanged(this);
+            TextChanged();
         }
     }
 }

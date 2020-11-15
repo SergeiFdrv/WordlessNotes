@@ -27,6 +27,7 @@ namespace Notes
             AddElement();
         }
 
+#if DEBUG
         protected override void OnAppearing()
         {
             base.OnAppearing();
@@ -39,6 +40,7 @@ namespace Notes
             }
             DisplayAlert("Images", imgsString, "OK");
         }
+#endif
 
         #region Override
         protected override void OnDisappearing()
@@ -91,14 +93,14 @@ namespace Notes
             set => ToolbarItems[3].IsEnabled = value;
         }
 
-        private CustomView _SelView;
+        private CustomView _SelectedView;
 
-        public CustomView SelView
+        public CustomView SelectedView
         {
-            get => _SelView;
+            get => _SelectedView;
             set
             {
-                if ((_SelView = value) == null) return;
+                if ((_SelectedView = value) == null) return;
                 int zzz = 0;
                 if (value is HeaderView)
                 {
@@ -116,7 +118,7 @@ namespace Notes
                 else zzz = KindsOfCustomViews.FindIndex(i => i.Item2 == typeof(ParagraphView));
                 ViewTypePicker.SelectedIndex = zzz;
                 foreach (CustomView view in ContentLayout.Children) view.BackgroundColor = Color.Transparent;
-                _SelView.BackgroundColor = Color.WhiteSmoke;
+                _SelectedView.BackgroundColor = Color.WhiteSmoke;
             }
         }
 
@@ -376,13 +378,13 @@ namespace Notes
         {
             Type type = KindsOfCustomViews[ViewTypePicker.SelectedIndex].Item2;
             CustomView view = CreateView(type);
-            InsertElement(view, (SelView is null ? -1 : SelView.Index) + 1);
+            InsertElement(view, (SelectedView is null ? -1 : SelectedView.Index) + 1);
         }
 
         private void ContentLayoutTapped(object sender, EventArgs e)
         {
             foreach (CustomView view in ContentLayout.Children) view.BackgroundColor = Color.Transparent;
-            SelView = null;
+            SelectedView = null;
         }
 
         private void ContentLayout_ChildRemoved(object sender, ElementEventArgs e)
@@ -394,11 +396,11 @@ namespace Notes
             }
             if (index == 0 || ContentLayout.Children.Count == 0)
             {
-                SelView = null;
+                SelectedView = null;
             }
             else
             {
-                SelView = ContentLayout.Children[index - 1] as CustomView;
+                SelectedView = ContentLayout.Children[index - 1] as CustomView;
             }
         }
 

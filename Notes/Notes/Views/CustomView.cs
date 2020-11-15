@@ -62,24 +62,24 @@ namespace Notes.Views
 
         public abstract string ToHTMLString();
 
-        protected static void Delete(CustomView view)
+        protected void Delete()
         {
-            view?.ParentPage?.DeleteElement(view.Index);
+            ParentPage?.DeleteElement(Index);
         }
 
-        protected static void Highlight(CustomView view)
+        protected void Highlight()
         {
-            if (view?.ParentPage != null) view.ParentPage.SelView = view;
+            if (ParentPage != null) ParentPage.SelectedView = this;
         }
 
-        protected static void TextChanged(CustomView view)
+        protected void TextChanged()
         {
-            if ((bool)(view?.Text.Contains('\n')) && view.ParentPage is ContentPage)
+            if (Text.Contains('\n') && ParentPage != null)
             {
-                view.ParentPage.InsertElement(
-                    new ParagraphView(view.Text.Substring(view.Text.LastIndexOf('\n') + 1)),
-                    view.Index + 1);
-                view.Text = view.Text.Substring(0, view.Text.LastIndexOf('\n'));
+                ParentPage.InsertElement(
+                    new ParagraphView(Text.Substring(Text.LastIndexOf('\n') + 1)),
+                    Index + 1);
+                Text = Text.Substring(0, Text.LastIndexOf('\n'));
             }
         }
     }
