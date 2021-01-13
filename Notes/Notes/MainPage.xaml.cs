@@ -27,6 +27,7 @@ namespace Notes
             AddParagraph();
         }
 
+        #region Override
 #if DEBUG
         protected override void OnAppearing()
         {
@@ -43,36 +44,41 @@ namespace Notes
         }
 #endif
 
-        #region Override
         protected override void OnDisappearing()
         {
             base.OnDisappearing();
             // CLEAR UNUSED IMAGES
+            int i = 0, j = 0;
             // Store image names from the page
-            List<string> images = new List<string>();
-            foreach (CustomView view in ContentLayout.Children)
+            var pageImages = ContentLayout.Children.OfType<ImageView>()
+                .Where(img => img.Image != null);
+            string[] imageNames = new string[pageImages.Count()];
+            for (; i < imageNames.Length; i++)
             {
-                if (view is ImageView) images.Add((view as ImageView).Image?.Name);
+                imageNames[i] = pageImages.ElementAt(i).Image.Name;
             }
             // Get image names from all notes
             var notes = App.Database.GetNotesAsync().Result; // Get all notes from the DB
-            int i = 0, j = 0;
-            for (; i < notes.Count; i++)
+            for (i = 0; i < notes.Count; i++)
             {
                 if (!File.Exists(notes[i].Path)) continue;
-                List<string> lines = File.ReadAllText(notes[i].Path).Split(new [] { "<br>" }, StringSplitOptions.None)
-                    .Where(elname => elname.StartsWith("<img", StringComparison.OrdinalIgnoreCase)).ToList();
+                List<string> lines = File.ReadAllText(notes[i].Path)
+                    .Split(new [] { "<br>" }, StringSplitOptions.None)
+                    .Where(elname => elname.StartsWith(
+                        "<img", StringComparison.OrdinalIgnoreCase)).ToList();
                 for (; j < lines.Count; j++)
                 {
-                    images.Add(lines[j].Substring(14, lines[j].Length - 17));
+                    imageNames[j++] = lines[j].Substring(14, lines[j].Length - 17);
                 }
             }
             // Get all images from the DB the names of which are not in the list
-            var allImages = App.Database.GetImagesAsync().Result.SkipWhile(img => images.Contains(img.Name)).ToArray();
-            for (i = 0; i < allImages.Length; i++)
+            var allDBImages = App.Database.GetImagesAsync().Result
+                .SkipWhile(img => imageNames.Contains(img.Name)).ToArray();
+            for (i = 0; i < allDBImages.Length; i++)
             {
-                if (File.Exists(allImages[i].Path)) File.Delete(allImages[i].Path);
-                App.Database.DeleteImageAsync(allImages[i]);
+                ref Models.Image image = ref allDBImages[i];
+                if (File.Exists(image.Path)) File.Delete(image.Path);
+                App.Database.DeleteImageAsync(image);
             }
         }
         #endregion
@@ -103,11 +109,11 @@ namespace Notes
             set
             {
                 if ((_SelectedView = value) == null) return;
-                int zzz = 0;
+                int zzz;
                 if (value is HeaderView)
                 {
-                    zzz = CustomViewTypes.FindIndex(i =>
-                        i.TypeName == Lang.Header + ' ' + (value as HeaderView).Level);
+                    string headerName = Lang.Header + ' ' + (value as HeaderView).Level;
+                    zzz = CustomViewTypes.FindIndex(i => i.TypeName == headerName);
                 }
                 else if (value is ListItemView)
                 {
@@ -151,7 +157,9 @@ namespace Notes
         private void IncrementIndicesFrom(int index)
         {
             for (int i = index; i < ContentLayout.Children.Count; i++)
+            {
                 (ContentLayout.Children[i] as CustomView).Index++;
+            }
             UnsavedData = true;
         }
 
@@ -235,10 +243,11 @@ namespace Notes
                     int j = i + 1;
                     for (; j < lines.Length && lines[j] != "</ul>"; j++)
                     {
+                        ref string line = ref lines[j];
                         ContentLayout.Children.Add(new ListItemView
                         {
                             Index = ContentLayout.Children.Count,
-                            Text = lines[j].Substring(4, lines[j].Length - 9)
+                            Text = line.Substring(4, line.Length - 9)
                         });
                     }
                     i = j;
@@ -249,7 +258,8 @@ namespace Notes
                     {
                         Index = ContentLayout.Children.Count,
                         Text = lines[i + 1].Substring(19, lines[i + 1].Length - 23),
-                        Image = App.Database.GetImageByNameAsync(lines[i].Substring(14, lines[i].Length - 17)).Result
+                        Image = App.Database.GetImageByNameAsync(
+                            lines[i].Substring(14, lines[i].Length - 17)).Result
                     };
                     ImageView.ImageBox.Source = ImageSource.FromFile(ImageView.Image.Path);
                     ContentLayout.Children.Add(ImageView);
@@ -315,9 +325,10 @@ namespace Notes
             {
                 UnsavedData = false; return;
             }
-            if (Note == null || App.Database.GetNoteAsync(Note.ID).Result == null) OpenSavePage(name);
-            else
-            if (await DisplayActionSheet(Lang.OverwriteNotePrompt, Lang.No, Lang.Yes).ConfigureAwait(true) == Lang.Yes)
+            if (Note == null || App.Database.GetNoteAsync(Note.ID).Result == null)
+                OpenSavePage(name);
+            else if (await DisplayActionSheet(Lang.OverwriteNotePrompt, Lang.No, Lang.Yes)
+                .ConfigureAwait(true) == Lang.Yes)
             {
                 Note.DateTime = DateTime.UtcNow;
                 await App.Database.SaveNoteAsync(Note).ConfigureAwait(true);
@@ -330,7 +341,8 @@ namespace Notes
         private void OnSaveAsButtonClicked(object sender, EventArgs e)
         {
             NoteContent = ContentParse(out string name);
-            if (string.IsNullOrEmpty(name)) DependencyService.Get<IPlatformSpecific>().SayShort(Lang.CantDo);
+            if (string.IsNullOrEmpty(name))
+                DependencyService.Get<IPlatformSpecific>().SayShort(Lang.CantDo);
             else
             {
                 foreach (CustomView view in ContentLayout.Children)
@@ -358,8 +370,13 @@ namespace Notes
 
         async void OnDeleteButtonClicked(object sender, EventArgs e)
         {
-            if (Note == null) { DependencyService.Get<IPlatformSpecific>().SayShort(Lang.CantDo); return; }
-            if (await DisplayActionSheet(Lang.DeleteNotePrompt, Lang.No, Lang.Yes).ConfigureAwait(true) == Lang.Yes)
+            if (Note == null)
+            {
+                DependencyService.Get<IPlatformSpecific>().SayShort(Lang.CantDo);
+                return;
+            }
+            if (await DisplayActionSheet(Lang.DeleteNotePrompt, Lang.No, Lang.Yes)
+                .ConfigureAwait(true) == Lang.Yes)
             {
                 DeleteImagesAndNote(Note);
                 await App.Database.DeleteNoteAsync(Note).ConfigureAwait(true);
@@ -372,8 +389,11 @@ namespace Notes
 
         async void OnReopenButtonClicked(object sender, EventArgs e)
         {
-            if (await DisplayActionSheet(Lang.ReloadPrompt, Lang.No, Lang.Yes).ConfigureAwait(true) == Lang.Yes && Note != null)
-            { ContentLayout.Children.Clear(); TryPopulate(Note); }
+            if (await DisplayActionSheet(Lang.ReloadPrompt, Lang.No, Lang.Yes)
+                .ConfigureAwait(true) == Lang.Yes && Note != null)
+            {
+                ContentLayout.Children.Clear(); TryPopulate(Note);
+            }
         }
         #endregion
 
