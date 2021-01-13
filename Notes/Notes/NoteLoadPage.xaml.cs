@@ -26,14 +26,16 @@ namespace Notes
         protected override void OnAppearing()
         {
             base.OnAppearing();
-            Items = new ObservableCollection<Models.Note>(App.Database.GetNotesAsync().Result);
+            Items =
+                new ObservableCollection<Models.Note>(App.Database.GetNotesAsync().Result);
             RefreshNoteList();
         }
 
         #region Deleting
         async void Delete_Clicked(object sender, EventArgs e)
         {
-            if (await DisplayActionSheet(Lang.DeleteNotePrompt, Lang.No, Lang.Yes).ConfigureAwait(true) == Lang.Yes)
+            if (await DisplayActionSheet(Lang.DeleteNotePrompt, Lang.No, Lang.Yes)
+                .ConfigureAwait(true) == Lang.Yes)
             {
                 Models.Note note = MyListView.SelectedItem as Models.Note;
                 DeleteImagesAndNote(note);
@@ -41,7 +43,8 @@ namespace Notes
                 (Navigation.NavigationStack[0] as MainPage).Note = null;
                 Items.Remove(note);
                 RefreshNoteList();
-                ToolbarItems[0].Clicked -= Delete_Clicked; ToolbarItems[1].Clicked -= Open_Clicked;
+                ToolbarItems[0].Clicked -= Delete_Clicked;
+                ToolbarItems[1].Clicked -= Open_Clicked;
                 ToolbarItems[0].Text = ToolbarItems[1].Text = string.Empty;
                 MyListView.ItemSelected += MyListView_ItemSelected;
             }
@@ -49,22 +52,28 @@ namespace Notes
 
         void RefreshNoteList()
         {
-            if (MyListView.IsVisible = !(NotFoundLabel.IsVisible = Items.Count == 0)) MyListView.ItemsSource = Items;
+            if (MyListView.IsVisible = !(NotFoundLabel.IsVisible = Items.Count == 0))
+                MyListView.ItemsSource = Items;
         }
 
         public static void DeleteImagesAndNote(Models.Note note)
         {
             if (note != null && File.Exists(note.Path))
             {
-                string[] lines = File.ReadAllText(note.Path).Split(new string[] { "<br>" }, StringSplitOptions.None);
+                string[] lines = File.ReadAllText(note.Path)
+                    .Split(new string[] { "<br>" }, StringSplitOptions.None);
                 string imgpath;
                 for (int i = 0; i < lines.Length; i++)
-                    if (lines[i].StartsWith("<img", StringComparison.OrdinalIgnoreCase))
+                {
+                    ref string line = ref lines[i];
+                    if (line.StartsWith("<img", StringComparison.OrdinalIgnoreCase))
                     {
-                        imgpath = Path.Combine(note.Path, lines[i].Substring(19, lines[i + 1].Length - 23));
+                        imgpath = Path.Combine(note.Path,
+                            line.Substring(19, lines[i + 1].Length - 23));
                         if (File.Exists(imgpath))
                             File.Delete(imgpath);
                     }
+                }
                 File.Delete(note.Path);
             }
         }
@@ -81,13 +90,15 @@ namespace Notes
         private void MyListView_ItemSelected(object sender, SelectedItemChangedEventArgs e)
         {
             ToolbarItems[0].Text = Lang.Delete; ToolbarItems[1].Text = Lang.Open;
-            ToolbarItems[0].Clicked += Delete_Clicked; ToolbarItems[1].Clicked += Open_Clicked;
+            ToolbarItems[0].Clicked += Delete_Clicked;
+            ToolbarItems[1].Clicked += Open_Clicked;
             MyListView.ItemSelected -= MyListView_ItemSelected;
         }
 
         private void SearchEntry_TextChanged(object sender, TextChangedEventArgs e)
         {
-            var I = SearchEntry.Text.Length == 0 ? Items : Items.Where(note => note.Name.Contains(SearchEntry.Text));
+            var I = SearchEntry.Text.Length == 0 ?
+                Items : Items.Where(note => note.Name.Contains(SearchEntry.Text));
             MyListView.ItemsSource = I;
             NotFoundLabel.IsVisible = !(MyListView.IsVisible = I.Any());
         }
