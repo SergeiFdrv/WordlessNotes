@@ -52,10 +52,10 @@ namespace Notes
             // Store image names from the page
             var pageImages = ContentLayout.Children.OfType<ImageView>()
                 .Where(img => img.Image != null);
-            string[] imageNames = new string[pageImages.Count()];
-            for (; i < imageNames.Length; i++)
+            var imageNames = new List<string>();
+            for (; i < pageImages.Count(); i++)
             {
-                imageNames[i] = pageImages.ElementAt(i).Image.Name;
+                imageNames.Add(pageImages.ElementAt(i).Image.Name);
             }
             // Get image names from all notes
             var notes = App.Database.GetNotesAsync().Result; // Get all notes from the DB
@@ -68,7 +68,7 @@ namespace Notes
                         "<img", StringComparison.OrdinalIgnoreCase)).ToList();
                 for (; j < lines.Count; j++)
                 {
-                    imageNames[j++] = lines[j].Substring(14, lines[j].Length - 17);
+                    imageNames.Add(lines[j].Substring(14, lines[j].Length - 17));
                 }
             }
             // Get all images from the DB the names of which are not in the list
