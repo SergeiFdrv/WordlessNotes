@@ -15,7 +15,8 @@ namespace Notes
 
         public static bool LoadTestPage { get; }
 
-        public static double FontSize => Device.GetNamedSize(NamedSize.Medium, typeof(Editor));
+        public static double FontSize =>
+            Device.GetNamedSize(NamedSize.Medium, typeof(Editor));
 
         public static Random Random { get; } = new Random();
 
@@ -28,7 +29,8 @@ namespace Notes
                 if (DB == null)
                 {
                     DB = new NoteDatabase(Path.Combine(
-                        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Notes.db3"));
+                        Environment.GetFolderPath(
+                            Environment.SpecialFolder.LocalApplicationData), "Notes.db3"));
                 }
                 return DB;
             }
@@ -64,7 +66,8 @@ namespace Notes
                 {
                     Content = new Label
                     {
-                        Text = e.Message + "\n\n" + e.Source + "\n\n" + e.StackTrace + "\n\n" + e.Data
+                        Text = e.Message + "\n\n" +
+                        e.Source + "\n\n" + e.StackTrace + "\n\n" + e.Data
                     }
                 };
                 MainPage = new NavigationPage(mainPage);
