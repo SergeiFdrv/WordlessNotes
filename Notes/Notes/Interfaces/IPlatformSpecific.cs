@@ -8,6 +8,8 @@ namespace Notes.Interfaces
     {
         string GetDocsDirectory();
 
+        string GetAppFilesDirectory();
+
         void SayLong(string message);
 
         void SayShort(string message);

@@ -26,14 +26,28 @@ namespace Notes.Droid
             return path;
         }
 
+        public string GetAppFilesDirectory()
+        {
+            Context context = Android.App.Application.Context;
+            string path = context.GetExternalFilesDir(null).AbsolutePath;
+            if (!System.IO.Directory.Exists(path)) System.IO.Directory.CreateDirectory(path);
+            return path;
+        }
+
         public void SayLong(string message)
         {
-            Toast.MakeText(Android.App.Application.Context, message, ToastLength.Long).Show();
+            Device.BeginInvokeOnMainThread(() =>
+            {
+                Toast.MakeText(Android.App.Application.Context, message, ToastLength.Long).Show();
+            });
         }
 
         public void SayShort(string message)
         {
-            Toast.MakeText(Android.App.Application.Context, message, ToastLength.Short).Show();
+            Device.BeginInvokeOnMainThread(() =>
+            {
+                Toast.MakeText(Android.App.Application.Context, message, ToastLength.Short).Show();
+            });
         }
     }
 }
