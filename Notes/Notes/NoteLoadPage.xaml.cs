@@ -29,9 +29,40 @@ namespace Notes
             Items =
                 new ObservableCollection<Models.Note>(App.Database.GetNotesAsync().Result);
             RefreshNoteList();
+            UpdateNoteFilePaths();
         }
 
         #region Deleting
+        /// <summary>
+        /// Move all the locally saved notes to the current <c>files</c> directory
+        /// </summary>
+        /// <remarks>
+        /// This is purposed for version compatibility.
+        /// The directory for local note storage used to be different
+        /// </remarks>
+        private void UpdateNoteFilePaths()
+        {
+            int fileNameStartPos;
+            string folderPath, wantedFilePath;
+            for (int i = 0; i < Items.Count; i++)
+            {
+                fileNameStartPos = Items[i].Path.LastIndexOf('/') + 1;
+                folderPath = DependencyService
+                    .Get<Interfaces.IPlatformSpecific>().GetAppFilesDirectory();
+                wantedFilePath =
+                    Path.Combine(folderPath, Items[i].Path.Substring(fileNameStartPos));
+                if (Items[i].Path != wantedFilePath)
+                {
+                    if (!Directory.Exists(folderPath))
+                        Directory.CreateDirectory(folderPath);
+                    if (File.Exists(Items[i].Path))
+                        File.Move(Items[i].Path, wantedFilePath);
+                    Items[i].Path = wantedFilePath;
+                    App.Database.SaveNoteAsync(Items[i]);
+                }
+            }
+        }
+
         async void Delete_Clicked(object sender, EventArgs e)
         {
             if (await DisplayActionSheet(Lang.DeleteNotePrompt, Lang.No, Lang.Yes)
