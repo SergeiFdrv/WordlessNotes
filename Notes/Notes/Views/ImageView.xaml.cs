@@ -53,7 +53,7 @@ namespace Notes.Views
             ImgBtn.IsVisible = ImageBox.Source is null;
         }
 
-        private async void ImgBtn_Clicked(object sender, EventArgs e)
+        private void ImgBtn_Clicked(object sender, EventArgs e)
         {
             TextBox.Focus();
             if (ParentPage != null)
@@ -61,10 +61,14 @@ namespace Notes.Views
                 ParentPage.SelectedView = this;
                 ParentPage.UnsavedData = true;
             }
-            List<string> options = new List<string>();
+            List<string> options = new List<string>(2);
             if (CrossMedia.Current.IsPickPhotoSupported) options.Add("Memory");
             if (CrossMedia.Current.IsCameraAvailable && CrossMedia.Current.IsTakePhotoSupported) options.Add("Camera");
             if (options.Count == 0) return;
+            SelectImage(options);
+        }
+        private async void SelectImage(List<string> options)
+        {
             string choice = options.Count == 1 ? options[0] : await
                 ParentPage.DisplayActionSheet("Where from?", "Cancel", null, options.ToArray()).ConfigureAwait(true);
             Plugin.Media.Abstractions.MediaFile file =
