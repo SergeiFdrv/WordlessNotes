@@ -23,7 +23,7 @@ namespace Notes
         {
             InitializeComponent();
             ViewTypePicker.ItemsSource = CustomViewTypes.Select(i => i.TypeName).ToList();
-            ViewTypePicker.SelectedIndex = 0;
+            ViewTypePicker.SelectedIndex = HeaderPicker.SelectedIndex = 0;
             AddParagraph();
         }
 
@@ -32,28 +32,34 @@ namespace Notes
         protected override void OnAppearing()
         {
             base.OnAppearing();
-            string imgsString = string.Empty;
+            var notes = App.Database.GetNotesAsync().Result;
+            foreach (var note in notes)
+            {
+                DisplayAlert(note.Name, note.Path, "OK");
+            }
+            StringBuilder imgsString = new StringBuilder();
             var imgs = App.Database.GetImagesAsync().Result;
-            DisplayAlert("Type", $"{typeof(CustomView)}", "OK");
-            DisplayAlert("Images", $"{imgs.Count}", "OK");
+            imgsString.AppendLine(imgs.Count.ToString());
             foreach (var img in imgs)
             {
-                imgsString += img.Name + '\n';
+                imgsString.AppendLine(img.Name);
+                imgsString.AppendLine(img.Path);
+                imgsString.AppendLine();
             }
-            DisplayAlert("Images", imgsString, "OK");
+            DisplayAlert("Images", imgsString.ToString(), "OK");
         }
 #endif
 
         protected override void OnDisappearing()
         {
             base.OnDisappearing();
-            // CLEAR UNUSED IMAGES
+            /*// CLEAR UNUSED IMAGES
             int i = 0, j = 0;
             // Store image names from the page
             var pageImages = ContentLayout.Children.OfType<ImageView>()
                 .Where(img => img.Image != null);
-            var imageNames = new List<string>();
-            for (; i < pageImages.Count(); i++)
+            var imageNames = new List<string>(pageImages.Count());
+            for (; i < imageNames.Capacity; i++)
             {
                 imageNames.Add(pageImages.ElementAt(i).Image.Name);
             }
@@ -79,7 +85,7 @@ namespace Notes
                 ref Models.Image image = ref allDBImages[i];
                 if (File.Exists(image.Path)) File.Delete(image.Path);
                 App.Database.DeleteImageAsync(image);
-            }
+            }*/
         }
         #endregion
 
@@ -88,12 +94,12 @@ namespace Notes
             = new List<(string, Type)>
         {
             (Lang.Paragraph, typeof(ParagraphView)),
-            ($"{Lang.Header} 1", typeof(HeaderView)),
-            ($"{Lang.Header} 2", typeof(HeaderView)),
-            ($"{Lang.Header} 3", typeof(HeaderView)),
+            (Lang.Header, typeof(HeaderView)),
             (Lang.List, typeof(ListItemView)),
             (Lang.Image, typeof(ImageView))
         };
+
+        private CustomView ViewToAdd { get; set; }
 
         public bool UnsavedData
         {
@@ -112,8 +118,7 @@ namespace Notes
                 int zzz;
                 if (value is HeaderView)
                 {
-                    string headerName = Lang.Header + ' ' + (value as HeaderView).Level;
-                    zzz = CustomViewTypes.FindIndex(i => i.TypeName == headerName);
+                    zzz = CustomViewTypes.FindIndex(i => i.TypeName == Lang.Header);
                 }
                 else if (value is ListItemView)
                 {
@@ -165,16 +170,15 @@ namespace Notes
 
         private CustomView CreateView(Type type)
         {
+            CustomView res;
             if (type == typeof(HeaderView))
             {
-                int l = CustomViewTypes[ViewTypePicker.SelectedIndex]
-                    .TypeName.LastIndexOf(' ');
-                return new HeaderView(
-                    byte.Parse(CustomViewTypes[ViewTypePicker.SelectedIndex].TypeName
-                        .Substring(l + 1), CultureInfo.InvariantCulture));
+                res = new HeaderView(byte.Parse(
+                    HeaderPicker.SelectedItem.ToString(), CultureInfo.InvariantCulture));
             }
-            return type.GetConstructor(Array.Empty<Type>())
+            else res = type.GetConstructor(Array.Empty<Type>())
                 .Invoke(Array.Empty<object>()) as CustomView;
+            return res;
         }
         #endregion
         #region DeletingElement
@@ -199,6 +203,12 @@ namespace Notes
             {
                 await DisplayAlert(Lang.FileNotFound, null, "OK").ConfigureAwait(false);
             }
+#if DEBUG
+            catch (Exception x)
+            {
+                await DisplayAlert(x.Message, x.StackTrace, "OK").ConfigureAwait(false);
+            }
+#endif
         }
 
         private void Populate()
@@ -268,6 +278,12 @@ namespace Notes
         }
         #endregion
         #region Saving
+        /// <summary>
+        /// Parses the note content into a string
+        /// and generates a note name based on the first line
+        /// </summary>
+        /// <param name="name">The generated note name</param>
+        /// <returns>The note content as a string</returns>
         private string ContentParse(out string name)
         {
             string content = string.Empty;
@@ -276,7 +292,8 @@ namespace Notes
             for (int i = 0; i < ContentLayout.Children.Count; i++)
             {
                 view = ContentLayout.Children[i] as CustomView;
-                if (string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(view.Text)) name = view.Text;
+                if (string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(view.Text))
+                    name = view.Text;
                 if (view is ListItemView)
                 {
                     List<ListItemView> list = new List<ListItemView>
@@ -311,21 +328,21 @@ namespace Notes
             AddParagraph();
         }
 
-        async void OnOpenButtonClicked(object sender, EventArgs e)
+        private async void OnOpenButtonClicked(object sender, EventArgs e)
         {
             NoteLoadPage page = new NoteLoadPage();
             NavigationPage.SetHasBackButton(this, true);
             await Navigation.PushAsync(page).ConfigureAwait(false);
         }
 
-        async void OnSaveButtonClicked(object sender, EventArgs e)
+        private async void OnSaveButtonClicked(object sender, EventArgs e)
         {
             NoteContent = ContentParse(out string name);
             if (string.IsNullOrEmpty(NoteContent) || string.IsNullOrEmpty(name))
             {
-                UnsavedData = false; return;
+                UnsavedData = false;
             }
-            if (Note == null || App.Database.GetNoteAsync(Note.ID).Result == null)
+            else if (Note == null || App.Database.GetNoteAsync(Note.ID).Result == null)
                 OpenSavePage(name);
             else if (await DisplayActionSheet(Lang.OverwriteNotePrompt, Lang.No, Lang.Yes)
                 .ConfigureAwait(true) == Lang.Yes)
@@ -368,14 +385,13 @@ namespace Notes
             await Navigation.PushAsync(page).ConfigureAwait(true);
         }
 
-        async void OnDeleteButtonClicked(object sender, EventArgs e)
+        private async void OnDeleteButtonClicked(object sender, EventArgs e)
         {
             if (Note == null)
             {
                 DependencyService.Get<IPlatformSpecific>().SayShort(Lang.CantDo);
-                return;
             }
-            if (await DisplayActionSheet(Lang.DeleteNotePrompt, Lang.No, Lang.Yes)
+            else if (await DisplayActionSheet(Lang.DeleteNotePrompt, Lang.No, Lang.Yes)
                 .ConfigureAwait(true) == Lang.Yes)
             {
                 DeleteImagesAndNote(Note);
@@ -398,11 +414,25 @@ namespace Notes
         #endregion
 
         #region ElementInteraction
-        private void AddElementClicked(object sender, EventArgs e)
+        private void ViewTypePicker_SelectedIndexChanged(object sender, EventArgs e)
         {
             Type type = CustomViewTypes[ViewTypePicker.SelectedIndex].Type;
-            CustomView view = CreateView(type);
-            InsertElement(view, (SelectedView is null ? -1 : SelectedView.Index) + 1);
+            HeaderPicker.IsVisible = type == typeof(HeaderView);
+            ViewToAdd = CreateView(type);
+        }
+
+        private void HeaderPicker_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (ViewToAdd is HeaderView headerView)
+            {
+                headerView.Level = byte.Parse(
+                    HeaderPicker.SelectedItem.ToString(), CultureInfo.InvariantCulture);
+            }
+        }
+
+        private void AddElementClicked(object sender, EventArgs e)
+        {
+            InsertElement(ViewToAdd, (SelectedView is null ? -1 : SelectedView.Index) + 1);
         }
 
         private void ContentLayoutTapped(object sender, EventArgs e)
