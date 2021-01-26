@@ -34,36 +34,52 @@ namespace Notes
             set => NameEntry.Text = value;
         }
 
-        #region Save
-        async void OnSaveButtonClicked(object sender, EventArgs e)
+        public List<Models.Image> Images { get; } = new List<Models.Image>();
+
+        #region Common
+        /// <summary>
+        /// Turns "The input string !- 1" into "The_input_string__1"
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
+        private static string CreateNoteName(string s)
         {
-            string name = string.Empty;
-            for (int j = 0; j < Name.Length; j++)
+            StringBuilder name = new StringBuilder(s.Length);
+            for (int i = 0; i < s.Length; i++)
             {
-                if (char.IsLetterOrDigit(Name[j])) name += Name[j];
-                else if (char.IsWhiteSpace(Name[j])) name += '_';
+                if (char.IsLetterOrDigit(s[i])) name.Append(s[i]);
+                else if (char.IsWhiteSpace(s[i])) name.Append('_');
             }
+            return name.ToString();
+        }
+        #endregion
+
+        #region Save
+        private async void OnSaveButtonClicked(object sender, EventArgs e)
+        {
+            string name = CreateNoteName(Name);
+            string folderPath =
+                DependencyService.Get<IPlatformSpecific>().GetAppFilesDirectory();
             Note note = new Note
             {
                 Name = Name,
-                Path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), name + ".html"),
+                Path = Path.Combine(folderPath, name + ".html"),
                 DateTime = DateTime.UtcNow
             };
-            var notes = App.Database.GetNotesAsync().Result;
-            for (int i = 0; i < notes.Count; i++)
+            var existingNote = App.Database.GetNotesAsync().Result
+                .FirstOrDefault(i => i.Name == Name);
+            if (existingNote != null)
             {
-                if (notes[i].Name == Name)
-                {
-                    string replace = await DisplayActionSheet(
-                        Lang.OverwriteNotePrompt, Lang.No, Lang.Yes).ConfigureAwait(true);
-                    if (replace != Lang.Yes) return;
-                    if (File.Exists(notes[i].Path))
-                        File.Delete(notes[i].Path);
-                    await App.Database.DeleteNoteAsync(notes[i]).ConfigureAwait(true);
-                    break;
-                }
+                string replace = await DisplayActionSheet(
+                    Lang.OverwriteNotePrompt, Lang.No, Lang.Yes).ConfigureAwait(true);
+                if (replace != Lang.Yes) return;
+                if (File.Exists(existingNote.Path))
+                    File.Delete(existingNote.Path);
+                await App.Database.DeleteNoteAsync(existingNote).ConfigureAwait(true);
             }
-            File.WriteAllText(note.Path, (Navigation.NavigationStack[0] as MainPage).NoteContent);
+            if (!Directory.Exists(folderPath)) Directory.CreateDirectory(folderPath);
+            File.WriteAllText
+                (note.Path, (Navigation.NavigationStack[0] as MainPage).NoteContent);
             await App.Database.SaveNoteAsync(note).ConfigureAwait(true);
             DependencyService.Get<IPlatformSpecific>().SayShort(Lang.NoteSaved);
             (Navigation.NavigationStack[0] as MainPage).Note = note;
@@ -74,39 +90,39 @@ namespace Notes
         #endregion
 
         #region Export
-        public List<Models.Image> Images { get; } = new List<Models.Image>();
-
         private async void HTMLButton_Clicked(object sender, EventArgs e)
         {
-            string name = string.Empty; int i = 0;
-            for (; i < Name.Length; i++)
-            {
-                if (char.IsLetterOrDigit(Name[i])) name += Name[i];
-                else if (char.IsWhiteSpace(Name[i])) name += '_';
-            }
-            string content = (Navigation.NavigationStack.ElementAt(0) as MainPage).NoteContent.Replace("<br>", "");
+            string name = CreateNoteName(Name);
+            string content = (Navigation.NavigationStack.ElementAt(0) as MainPage)
+                .NoteContent.Replace("<br>", "");
             string html =
-                $"<!DOCTYPE HTML><html><head><meta charset=\"utf-8\"><title>{Name}</title>" +
-                $"<style type=\"text/css\">* {{ font-family: sans-serif; }} img {{ width: 300px; }} " +
+                $"<!DOCTYPE HTML><html>" +
+                $"<head><meta charset=\"utf-8\"><title>{Name}</title>" +
+                $"<style type=\"text/css\">* {{ font-family: sans-serif; }} " +
+                $"img {{ width: 300px; }} " +
                 $".imgdesc {{ color: #888; margin-top: 0; }}</style></head>" +
                 $"<body>{content}</body></html>";
-            string path = Path.Combine(DependencyService.Get<IPlatformSpecific>().GetDocsDirectory(), name + ".html");
-            if (File.Exists(path) && await DisplayActionSheet(
+            string folderPath = Path.Combine(
+                DependencyService.Get<IPlatformSpecific>().GetDocsDirectory(), Name);
+            if (!Directory.Exists(folderPath)) Directory.CreateDirectory(folderPath);
+            string filePath = Path.Combine(folderPath, $"{name}.html");
+            if (File.Exists(filePath) && await DisplayActionSheet(
                 Lang.OverwriteFilePrompt, Lang.No, Lang.Yes).ConfigureAwait(true) != Lang.Yes)
                 return;
             if (Images != null)
             {
-                string imgpath = Path.Combine(DependencyService.Get<IPlatformSpecific>().GetDocsDirectory(), "img"), imgname;
+                string imgpath = Path.Combine(folderPath, "img");
+                string imgname;
                 if (!Directory.Exists(imgpath)) Directory.CreateDirectory(imgpath);
-                for (i = 0; i < Images.Count; i++)
+                for (int i = 0; i < Images.Count; i++)
                 {
                     imgname = Path.Combine(imgpath, Images[i].Name);
                     if (File.Exists(imgname)) File.Delete(imgname);
                     File.Copy(Images[i].Path, imgname);
                 }
             }
-            File.WriteAllText(path, html);
-            await DisplayAlert(Lang.SavedAt, path, "OK").ConfigureAwait(false);
+            File.WriteAllText(filePath, html);
+            await DisplayAlert(Lang.SavedAt, folderPath, "OK").ConfigureAwait(false);
         }
         #endregion
     }
