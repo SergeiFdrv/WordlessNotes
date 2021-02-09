@@ -11,7 +11,7 @@
                 <customrenderer:TextEditor x:Name="TextEditor" Placeholder="{x:Static resources:Lang.Paragraph}" WidthRequest="100"
                                            TextChanged="TextEditor_TextChanged" Focused="Item_Focused"/>
             </StackLayout>
-            <Button x:Name="XBtn" Text="X" VerticalOptions="Start" HorizontalOptions="End" WidthRequest="40" BorderWidth="0" CornerRadius="0"
+            <Button x:Name="XBtn" Text="&#9587;" VerticalOptions="Start" HorizontalOptions="End" WidthRequest="40" BorderWidth="0" CornerRadius="0"
             Clicked="Button_Clicked"/>
         </StackLayout>
     </views:CustomView.Content>
