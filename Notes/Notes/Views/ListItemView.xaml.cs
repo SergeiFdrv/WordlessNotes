@@ -30,19 +30,6 @@ namespace Notes.Views
 
         public override string ToHTMLString() => "<li>" + Text + "</li><br>";
 
-        public static string HTMLUnorderedList(IEnumerable<ListItemView> list, ref int i)
-        {
-            if (list is null) return string.Empty;
-            i = list.Last().Index;
-            string content = "<ul><br>";
-            foreach (ListItemView view in list)
-            {
-                content += view.ToHTMLString();
-            }
-            content += "</ul><br>";
-            return content;
-        }
-
         private void SetListSize()
         {
             double _margin = XButton.HeightRequest / 2 - 5;

@@ -23,11 +23,6 @@ namespace Notes.Views
             Text = text;
         }
 
-        public ParagraphView(int index, string text = "") : this(text)
-        {
-            Index = index;
-        }
-
         public override TextEditor TextBox => TextEditor;
         public override Button XButton => XBtn;
 

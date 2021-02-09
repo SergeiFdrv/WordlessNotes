@@ -24,7 +24,7 @@ namespace Notes
             InitializeComponent();
             ViewTypePicker.ItemsSource = CustomViewTypes.Select(i => i.TypeName).ToList();
             ViewTypePicker.SelectedIndex = HeaderPicker.SelectedIndex = 0;
-            AddParagraph();
+            InsertElement(new ParagraphView());
         }
 
         #region Override
@@ -115,22 +115,9 @@ namespace Notes
             set
             {
                 if ((_SelectedView = value) == null) return;
-                int zzz;
-                if (value is HeaderView)
-                {
-                    zzz = CustomViewTypes.FindIndex(i => i.TypeName == Lang.Header);
-                }
-                else if (value is ListItemView)
-                {
-                    zzz = CustomViewTypes.FindIndex(i => i.TypeName == Lang.List);
-                }
-                else if (value is ImageView)
-                {
-                    zzz = CustomViewTypes.FindIndex(i => i.TypeName == Lang.Image);
-                }
-                else
-                    zzz = CustomViewTypes.FindIndex(i => i.Type == typeof(ParagraphView));
-                ViewTypePicker.SelectedIndex = zzz;
+                Type type = _SelectedView.GetType();
+                ViewTypePicker.SelectedIndex
+                    = CustomViewTypes.FindIndex(i => i.Type == type);
                 foreach (CustomView view in ContentLayout.Children)
                 {
                     view.BackgroundColor = Color.Transparent;
@@ -145,27 +132,18 @@ namespace Notes
         #endregion
 
         #region AddingElement
-        public void AddParagraph(int index = -1, string text = "")
-        {
-            InsertElement(new ParagraphView(index, text), index);
-        }
-
-        public void InsertElement(CustomView view, int index = -1)
+        public void InsertElement(CustomView view, CustomView prevView = null)
         {
             if (view is null) return;
-            if (index < 0) index = ContentLayout.Children.Count;
-            IncrementIndicesFrom(index);
-            view.Index = index;
-            ContentLayout.Children.Insert(index, view);
-        }
-
-        private void IncrementIndicesFrom(int index)
-        {
-            for (int i = index; i < ContentLayout.Children.Count; i++)
+            if (prevView is null)
             {
-                (ContentLayout.Children[i] as CustomView).Index++;
+                ContentLayout.Children.Add(view);
             }
-            UnsavedData = true;
+            else
+            {
+                int index = ContentLayout.Children.IndexOf(prevView) + 1;
+                ContentLayout.Children.Insert(index, view);
+            }
         }
 
         private CustomView CreateView(Type type)
@@ -182,9 +160,10 @@ namespace Notes
         }
         #endregion
         #region DeletingElement
-        public void DeleteElement(int index)
+        public void DeleteElement(Guid id)
         {
-            ContentLayout.Children.Remove(ContentLayout.Children.ElementAt(index));
+            ContentLayout.Children.Remove(
+                ContentLayout.Children.FirstOrDefault(i => i.Id == id));
             UnsavedData = true;
         }
         #endregion
@@ -220,33 +199,22 @@ namespace Notes
                 if (lines[i].StartsWith("<h1>", StringComparison.OrdinalIgnoreCase))
                 {
                     ContentLayout.Children.Add(
-                        new HeaderView(1, lines[i].Substring(4, lines[i].Length - 9))
-                        {
-                            Index = ContentLayout.Children.Count
-                        });
+                        new HeaderView(1, lines[i].Substring(4, lines[i].Length - 9)));
                 }
                 else if (lines[i].StartsWith("<h2>", StringComparison.OrdinalIgnoreCase))
                 {
                     ContentLayout.Children.Add(
-                        new HeaderView(2, lines[i].Substring(4, lines[i].Length - 9))
-                        {
-                            Index = ContentLayout.Children.Count
-                        });
+                        new HeaderView(2, lines[i].Substring(4, lines[i].Length - 9)));
                 }
                 else if (lines[i].StartsWith("<h3>", StringComparison.OrdinalIgnoreCase))
                 {
                     ContentLayout.Children.Add(
-                        new HeaderView(3, lines[i].Substring(4, lines[i].Length - 9))
-                        {
-                            Index = ContentLayout.Children.Count
-                        });
+                        new HeaderView(3, lines[i].Substring(4, lines[i].Length - 9)));
                 }
                 else if (lines[i].StartsWith("<p>", StringComparison.OrdinalIgnoreCase))
                 {
                     ContentLayout.Children.Add(
-                        new ParagraphView(
-                            ContentLayout.Children.Count,
-                            lines[i].Substring(3, lines[i].Length - 7)));
+                        new ParagraphView(lines[i].Substring(3, lines[i].Length - 7)));
                 }
                 else if (lines[i].StartsWith("<ul>", StringComparison.OrdinalIgnoreCase))
                 {
@@ -256,7 +224,6 @@ namespace Notes
                         ref string line = ref lines[j];
                         ContentLayout.Children.Add(new ListItemView
                         {
-                            Index = ContentLayout.Children.Count,
                             Text = line.Substring(4, line.Length - 9)
                         });
                     }
@@ -266,7 +233,6 @@ namespace Notes
                 {
                     ImageView ImageView = new ImageView
                     {
-                        Index = ContentLayout.Children.Count,
                         Text = lines[i + 1].Substring(19, lines[i + 1].Length - 23),
                         Image = App.Database.GetImageByNameAsync(
                             lines[i].Substring(14, lines[i].Length - 17)).Result
@@ -289,25 +255,23 @@ namespace Notes
             string content = string.Empty;
             name = Note?.Name ?? string.Empty;
             CustomView view;
+            bool isList = false;
             for (int i = 0; i < ContentLayout.Children.Count; i++)
             {
                 view = ContentLayout.Children[i] as CustomView;
                 if (string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(view.Text))
                     name = view.Text;
-                if (view is ListItemView)
+                if (view is ListItemView && !isList)
                 {
-                    List<ListItemView> list = new List<ListItemView>
-                    {
-                        view as ListItemView
-                    };
-                    for (int j = i + 1; j < ContentLayout.Children.Count &&
-                        ContentLayout.Children[j] is ListItemView; j++)
-                    {
-                        list.Add(ContentLayout.Children[j] as ListItemView);
-                    }
-                    content += ListItemView.HTMLUnorderedList(list, ref i);
+                    content += "<ul><br>";
+                    isList = true;
                 }
-                else content += view.ToHTMLString();
+                else if (isList && !(view is ListItemView))
+                {
+                    content += "</ul><br>";
+                    isList = false;
+                }
+                content += view.ToHTMLString();
             }
             return content;
         }
@@ -325,7 +289,7 @@ namespace Notes
             Note = null;
             ToolbarItems[0].Text = Lang.NewNote;
             ContentLayout.Children.Clear();
-            AddParagraph();
+            InsertElement(new ParagraphView());
         }
 
         private async void OnOpenButtonClicked(object sender, EventArgs e)
@@ -432,7 +396,14 @@ namespace Notes
 
         private void AddElementClicked(object sender, EventArgs e)
         {
-            InsertElement(ViewToAdd, (SelectedView is null ? -1 : SelectedView.Index) + 1);
+            InsertElement(ViewToAdd, SelectedView);
+            Type type = CustomViewTypes[ViewTypePicker.SelectedIndex].Type;
+            CustomView newView = CreateView(type);
+            if (newView is HeaderView hv)
+            {
+                hv.Level = (ViewToAdd as HeaderView).Level;
+            }
+            ViewToAdd = newView;
         }
 
         private void ContentLayoutTapped(object sender, EventArgs e)
@@ -446,19 +417,7 @@ namespace Notes
 
         private void ContentLayout_ChildRemoved(object sender, ElementEventArgs e)
         {
-            int index = (e.Element as CustomView).Index;
-            for (int i = index; i < ContentLayout.Children.Count; i++)
-            {
-                (ContentLayout.Children[i] as CustomView).Index--;
-            }
-            if (index == 0 || ContentLayout.Children.Count == 0)
-            {
-                SelectedView = null;
-            }
-            else
-            {
-                SelectedView = ContentLayout.Children[index - 1] as CustomView;
-            }
+            SelectedView = null;
         }
 
         private void ContentLayout_SizeChanged(object sender, EventArgs e)

@@ -17,8 +17,6 @@ namespace Notes.Views
             ParentResized += delegate { SetSize(); };
         }
 
-        public int Index { get; set; }
-
         public MainPage ParentPage => ParentOfType<MainPage>();
 
         public T ParentOfType<T>() where T : VisualElement
@@ -47,7 +45,7 @@ namespace Notes.Views
             {
                 TextBox.WidthRequest -= 100;
             }
-            XButton.HeightRequest = XButton.FontSize * 2.5;
+            XButton.HeightRequest = XButton.FontSize * 2.7;
         }
 
         public abstract TextEditor TextBox { get; }
@@ -64,7 +62,7 @@ namespace Notes.Views
 
         protected void Delete()
         {
-            ParentPage?.DeleteElement(Index);
+            ParentPage?.DeleteElement(Id);
         }
 
         protected void Highlight()
@@ -77,8 +75,7 @@ namespace Notes.Views
             if (Text.Contains('\n') && ParentPage != null)
             {
                 ParentPage.InsertElement(
-                    new ParagraphView(Text.Substring(Text.LastIndexOf('\n') + 1)),
-                    Index + 1);
+                    new ParagraphView(Text.Substring(Text.LastIndexOf('\n') + 1)), this);
                 Text = Text.Substring(0, Text.LastIndexOf('\n'));
             }
         }
