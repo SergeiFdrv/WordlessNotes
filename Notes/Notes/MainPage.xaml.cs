@@ -176,7 +176,17 @@ namespace Notes
                 if (note == null) return;
                 NoteContent = File.ReadAllText(note.Path);
                 Populate();
-                ToolbarItems[0].Text = note.Name;
+                if (note.Name.Length > 25)
+                {
+                    ToolbarItems[0].Text = note.Name.Substring(0, 25);
+                    if (ToolbarItems[0].Text.Contains(' '))
+                    {
+                        ToolbarItems[0].Text = ToolbarItems[0].Text
+                            .Substring(0, ToolbarItems[0].Text.LastIndexOf(' '));
+                    }
+                    ToolbarItems[0].Text += "...";
+                }
+                else ToolbarItems[0].Text = note.Name;
             }
             catch (FileNotFoundException)
             {
