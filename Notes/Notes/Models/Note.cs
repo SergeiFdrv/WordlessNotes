@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using SQLite;
+using SQLiteNetExtensions.Attributes;
 
 namespace Notes.Models
 {
@@ -12,5 +13,8 @@ namespace Notes.Models
         public string Name { get; set; }
         public string Path { get; set; }
         public DateTime DateTime { get; set; }
+
+        [ManyToMany(typeof(ImageNote))]
+        public List<Image> Images { get; set; }
     }
 }

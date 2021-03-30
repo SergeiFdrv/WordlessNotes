@@ -16,6 +16,7 @@ namespace Notes.Data
             _database = new SQLiteAsyncConnection(dbPath);
             _database.CreateTableAsync<Note>().Wait();
             _database.CreateTableAsync<Image>().Wait();
+            _database.CreateTableAsync<ImageNote>().Wait();
         }
 
         // Note

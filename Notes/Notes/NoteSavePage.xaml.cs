@@ -64,7 +64,8 @@ namespace Notes
             {
                 Name = Name,
                 Path = Path.Combine(folderPath, name + ".html"),
-                DateTime = DateTime.UtcNow
+                DateTime = DateTime.UtcNow,
+                Images = Images
             };
             var existingNote = App.Database.GetNotesAsync().Result
                 .FirstOrDefault(i => i.Name == Name);
