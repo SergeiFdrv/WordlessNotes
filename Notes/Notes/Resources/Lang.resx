@@ -132,6 +132,9 @@
   <data name="DeleteNotePrompt" xml:space="preserve">
     <value>Delete note?</value>
   </data>
+  <data name="ExportAsDocX" xml:space="preserve">
+    <value>Export as DocX</value>
+  </data>
   <data name="ExportAsHTML" xml:space="preserve">
     <value>Export as HTML</value>
   </data>

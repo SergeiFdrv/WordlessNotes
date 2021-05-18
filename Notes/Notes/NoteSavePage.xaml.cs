@@ -42,7 +42,7 @@ namespace Notes
         /// </summary>
         /// <param name="s"></param>
         /// <returns></returns>
-        private static string CreateNoteName(string s)
+        private static string CreateSpacelessString(string s)
         {
             StringBuilder name = new StringBuilder(s.Length);
             for (int i = 0; i < s.Length; i++)
@@ -57,7 +57,7 @@ namespace Notes
         #region Save
         private async void OnSaveButtonClicked(object sender, EventArgs e)
         {
-            string name = CreateNoteName(Name);
+            string name = CreateSpacelessString(Name);
             string folderPath =
                 DependencyService.Get<IPlatformSpecific>().GetAppFilesDirectory();
             Note note = new Note
@@ -93,7 +93,7 @@ namespace Notes
         #region Export
         private async void HTMLButton_Clicked(object sender, EventArgs e)
         {
-            string name = CreateNoteName(Name);
+            string name = CreateSpacelessString(Name);
             string content = (Navigation.NavigationStack.ElementAt(0) as MainPage)
                 .NoteContent.Replace("<br>", "");
             string html =
@@ -110,6 +110,12 @@ namespace Notes
             if (File.Exists(filePath) && await DisplayActionSheet(
                 Lang.OverwriteFilePrompt, Lang.No, Lang.Yes).ConfigureAwait(true) != Lang.Yes)
                 return;
+            ExportAsHTML(folderPath, filePath, html);
+            await DisplayAlert(Lang.SavedAt, folderPath, "OK").ConfigureAwait(false);
+        }
+
+        private void ExportAsHTML(string folderPath, string filePath, string html)
+        {
             if (Images != null)
             {
                 string imgpath = Path.Combine(folderPath, "img");
@@ -123,7 +129,6 @@ namespace Notes
                 }
             }
             File.WriteAllText(filePath, html);
-            await DisplayAlert(Lang.SavedAt, folderPath, "OK").ConfigureAwait(false);
         }
         #endregion
     }

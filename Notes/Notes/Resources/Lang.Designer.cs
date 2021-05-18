@@ -106,6 +106,15 @@ namespace Notes.Resources {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Export as DocX.
+        /// </summary>
+        internal static string ExportAsDocX {
+            get {
+                return ResourceManager.GetString("ExportAsDocX", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Export as HTML.
         /// </summary>
         internal static string ExportAsHTML {

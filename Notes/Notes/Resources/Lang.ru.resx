@@ -132,6 +132,9 @@
   <data name="DeleteNotePrompt" xml:space="preserve">
     <value>Удалить заметку?</value>
   </data>
+  <data name="ExportAsDocX" xml:space="preserve">
+    <value>Экспорт в DocX</value>
+  </data>
   <data name="ExportAsHTML" xml:space="preserve">
     <value>Экспорт в HTML</value>
   </data>
